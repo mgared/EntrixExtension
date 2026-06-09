@@ -102,7 +102,7 @@ function formatTime(d = new Date()) {
   const ampm = h >= 12 ? "PM" : "AM";
   h = h % 12;
   if (h === 0) h = 12;
-  return `${pad2(h)}:${pad2(m)}${ampm}`;
+  return `${pad2(h)}:${pad2(m)} ${ampm}`;
 }
 
 // Pull defaults from role + reason field definitions onto the value map
