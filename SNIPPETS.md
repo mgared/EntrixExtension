@@ -1,0 +1,190 @@
+# Phrase Snippets — Scenario Reference
+
+Every `;<rolecode><n>` shorthand, plus a filled example showing the
+`;;` popup output when the form fields are typed in. Regenerate:
+
+```
+node extension/generate-snippets-doc.mjs
+```
+
+`####` marks a required field the user still has to fill in (red-bold in the rich-text version, tab-cycled). Optional fields wrapped in `[…]` in the template (e.g. the resident name) drop out cleanly when left blank — see each "Empty" line.
+
+Every log is auto-prefixed with the current clock time, e.g. `10:00AM: Resident…`. The doc pins it to `10:00AM` for stable diffs.
+
+Sample values used in the "Filled" line for text/date fields: name=`John`, unit=`234`, recipient=`Helen`, description=`their kitchen sink is leaking`, date=`2026-05-02`, subject=`a maintenance follow-up`, item=`a rent check`, staff=`Sarah`, deliveredDate=`2026-04-25`, guestName=`Marcus`. Select/radio fields use the first option of each field.
+
+## Roles at a glance
+
+- `re` — Resident (8 reasons; role fields: name, unit, contact)
+- `gu` — Guest (4 reasons; role fields: name, unit, residentName, contact)
+- `fd` — Food Delivery (3 reasons; role fields: name, unit)
+- `gd` — Grocery Delivery (2 reasons; role fields: name, unit)
+- `dw` — Dog Walker (2 reasons; role fields: name, unit)
+- `cl` — Cleaner (2 reasons; role fields: name, unit)
+- `bs` — Baby Sitter (2 reasons; role fields: name, unit)
+- `lo` — Leasing Office (3 reasons; role fields: name)
+- `pr` — Prospect (3 reasons; role fields: name)
+
+## Resident — `re`
+
+### `;re1` — Drop keys for pickup
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored at ####)
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored at top drawer)
+
+### `;re2` — Pick up keys
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to pick up keys that were left for them.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to pick up keys that were left for them.
+
+### `;re3` — Report something
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to report that ####.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to report that their kitchen sink is leaking.
+
+### `;re4` — Missing package
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to inquire about a missing package that was delivered on ####.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to inquire about a missing package that was delivered on 2026-04-25.
+
+### `;re5` — Unit lockout
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to request entry into their unit because they forgot their keys.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to request entry into their unit because they forgot their keys.
+
+### `;re6` — Reserve loading dock
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to reserve the loading dock for ####.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to reserve the loading dock for 2026-05-02.
+
+### `;re7` — Request elevator access
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to request elevator access.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to request elevator access.
+
+### `;re8` — Send a guest up
+
+- **Empty:** 10:00AM: Resident from unit (####) came to the front desk to request that guest #### be sent up.
+- **Filled:** 10:00AM: Resident John from unit (234) came to the front desk to request that guest Marcus be sent up.
+
+## Guest — `gu`
+
+### `;gu1` — Visit resident
+
+- **Empty:** 10:00AM: Guest of unit (####) came to the front desk to visit resident, access ####.
+- **Filled:** 10:00AM: Guest John of unit (234 Marry) came to the front desk to visit resident, access granted after resident confirmation via call.
+
+### `;gu2` — Pick up keys
+
+- **Empty:** 10:00AM: Guest of unit (####) came to the front desk to pick up keys that were left for them.
+- **Filled:** 10:00AM: Guest John of unit (234 Marry) came to the front desk to pick up keys that were left for them.
+
+### `;gu3` — Drop keys
+
+- **Empty:** 10:00AM: Guest of unit (####) came to the front desk to drop keys for ####.
+- **Filled:** 10:00AM: Guest John of unit (234 Marry) came to the front desk to drop keys for Helen.
+
+### `;gu4` — Given unit keys
+
+- **Empty:** 10:00AM: Guest arrived for unit (####) and requested unit keys; ####.
+- **Filled:** 10:00AM: Guest John arrived for unit (234 Marry) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+
+## Food Delivery — `fd`
+
+### `;fd1` — Requested to be sent up
+
+- **Empty:** 10:00AM: Food delivery for unit (####) arrived and requested to be sent up; ####.
+- **Filled:** 10:00AM: Food delivery from John for unit (234) arrived and requested to be sent up; resident confirmed and it was sent up.
+
+### `;fd2` — Stayed in lobby >15 min
+
+- **Empty:** 10:00AM: Food delivery for unit (####) has not been picked-up for more than 15 minutes; ####.
+- **Filled:** 10:00AM: Food delivery from John for unit (234) has not been picked-up for more than 15 minutes; resident was reached and notified.
+
+### `;fd3` — Stayed in lobby >30 min — stored
+
+- **Empty:** 10:00AM: Food delivery for unit (####) has not been picked-up for more than 30 minutes; stored in the fridge.
+- **Filled:** 10:00AM: Food delivery from John for unit (234) has not been picked-up for more than 30 minutes; stored in the fridge.
+
+## Grocery Delivery — `gd`
+
+### `;gd1` — Requested to be sent up
+
+- **Empty:** 10:00AM: Grocery delivery for unit (####) arrived and requested to be sent up; ####.
+- **Filled:** 10:00AM: Grocery delivery from John for unit (234) arrived and requested to be sent up; resident confirmed and it was sent up.
+
+### `;gd2` — Stayed in lobby >30 min — stored
+
+- **Empty:** 10:00AM: Grocery delivery for unit (####) has not been picked-up for more than 30 minutes; stored in the fridge.
+- **Filled:** 10:00AM: Grocery delivery from John for unit (234) has not been picked-up for more than 30 minutes; stored in the fridge.
+
+## Dog Walker — `dw`
+
+### `;dw1` — Sent up
+
+- **Empty:** 10:00AM: Dog walker arrived for unit (####); ####.
+- **Filled:** 10:00AM: Dog walker John arrived for unit (234); sent up after resident confirmation via call.
+
+### `;dw2` — Given unit keys
+
+- **Empty:** 10:00AM: Dog walker arrived for unit (####) and requested unit keys; ####.
+- **Filled:** 10:00AM: Dog walker John arrived for unit (234) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+
+## Cleaner — `cl`
+
+### `;cl1` — Sent up
+
+- **Empty:** 10:00AM: Cleaner arrived for unit (####); ####.
+- **Filled:** 10:00AM: Cleaner John arrived for unit (234); sent up after resident confirmation via call.
+
+### `;cl2` — Given unit keys
+
+- **Empty:** 10:00AM: Cleaner arrived for unit (####) and requested unit keys; ####.
+- **Filled:** 10:00AM: Cleaner John arrived for unit (234) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+
+## Baby Sitter — `bs`
+
+### `;bs1` — Sent up
+
+- **Empty:** 10:00AM: Baby sitter arrived for unit (####); ####.
+- **Filled:** 10:00AM: Baby sitter John arrived for unit (234); sent up after resident confirmation via call.
+
+### `;bs2` — Given unit keys
+
+- **Empty:** 10:00AM: Baby sitter arrived for unit (####) and requested unit keys; ####.
+- **Filled:** 10:00AM: Baby sitter John arrived for unit (234) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+
+## Leasing Office — `lo`
+
+### `;lo1` — Staff arrived
+
+- **Empty:** 10:00AM: Leasing office staff arrived regarding ####.
+- **Filled:** 10:00AM: Leasing office staff John arrived regarding a maintenance follow-up.
+
+### `;lo2` — Dropped something off
+
+- **Empty:** 10:00AM: Leasing office staff dropped off #### for unit (####).
+- **Filled:** 10:00AM: Leasing office staff John dropped off a rent check for unit (234).
+
+### `;lo3` — Picked something up
+
+- **Empty:** 10:00AM: Leasing office staff picked up #### from the front desk.
+- **Filled:** 10:00AM: Leasing office staff John picked up a rent check from the front desk.
+
+## Prospect — `pr`
+
+### `;pr1` — Walk-in tour
+
+- **Empty:** 10:00AM: Prospect walked in for a tour; the leasing team was informed.
+- **Filled:** 10:00AM: Prospect John walked in for a tour; the leasing team was informed.
+
+### `;pr2` — Scheduled tour with leasing
+
+- **Empty:** 10:00AM: Prospect arrived for their scheduled tour with the leasing team; leasing was informed.
+- **Filled:** 10:00AM: Prospect John arrived for their scheduled tour with the leasing team; leasing was informed.
+
+### `;pr3` — Self-guided tour (Tour24)
+
+- **Empty:** 10:00AM: Prospect arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
+- **Filled:** 10:00AM: Prospect John arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
+
