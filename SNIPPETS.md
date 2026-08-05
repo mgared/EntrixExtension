@@ -24,13 +24,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (3 reasons; role fields: name)
+- `co` — Concierge (3 reasons; role fields: name)
+- `pp` — Pilgrim Parking (2 reasons; role fields: name)
 
 ## Resident — `re`
 
 ### `;re1` — Drop keys for pickup
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored at ####)
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored at top drawer)
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored ####)
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored by desk cabinet)
 
 ### `;re2` — Pick up keys
 
@@ -52,10 +54,10 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request entry into their unit because they forgot their keys.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request entry into their unit because they forgot their keys.
 
-### `;re6` — Reserve loading dock
+### `;re6` — Grabbed dolly
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to reserve the loading dock for ####.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to reserve the loading dock for 2026-05-02.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly.
 
 ### `;re7` — Request elevator access
 
@@ -187,4 +189,33 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Prospect arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
 - **Filled:** 10:00 AM: Prospect John arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
+
+## Concierge — `co`
+
+### `;co1` — On break
+
+- **Empty:** 10:00 AM: Concierge went on break.
+- **Filled:** 10:00 AM: Concierge John went on break.
+
+### `;co2` — Back from break
+
+- **Empty:** 10:00 AM: Concierge returned from break.
+- **Filled:** 10:00 AM: Concierge John returned from break.
+
+### `;co3` — On site touring
+
+- **Empty:** 10:00 AM: Concierge left the front desk for a site tour.
+- **Filled:** 10:00 AM: Concierge John left the front desk for a site tour.
+
+## Pilgrim Parking — `pp`
+
+### `;pp1` — Report something
+
+- **Empty:** 10:00 AM: Pilgrim Parking staff came to the front desk to report that ####.
+- **Filled:** 10:00 AM: Pilgrim Parking staff John came to the front desk to report that their kitchen sink is leaking.
+
+### `;pp2` — Drop something off
+
+- **Empty:** 10:00 AM: Pilgrim Parking staff dropped off #### at the front desk.
+- **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234).
 
