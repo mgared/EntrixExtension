@@ -97,17 +97,18 @@ export const HELPER = {
           id: "dropKeys",
           label: "Drop keys for pickup",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to drop keys for {recipient} to pick-up later. (stored at {storage})",
+            "Resident[ {name}] from unit ({unit}) {contact} to drop keys for {recipient} to pick-up later. (stored {storage})",
           fields: [
             { key: "recipient", label: "Drop for (name)", kind: "text" },
             {
               key: "storage",
-              label: "Stored at",
+              label: "Stored",
               kind: "select",
               options: [
-                { value: "top drawer", label: "Top drawer" },
-                { value: "package room", label: "Package room" },
-                { value: "bottom drawer", label: "Bottom drawer" },
+                { value: "by desk cabinet", label: "Desk cabinet" },
+                { value: "by key lock box", label: "Key lock box" },
+                { value: "inside package room", label: "Package room" },
+                { value: "in keytrack", label: "Keytrack" },
               ],
             },
           ],
@@ -143,11 +144,10 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to request entry into their unit because they forgot their keys.",
         },
         {
-          id: "loadingDock",
-          label: "Reserve loading dock",
+          id: "grabbedDolly",
+          label: "Grabbed dolly",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to reserve the loading dock for {date}.",
-          fields: [{ key: "date", label: "Reserve date", kind: "date" }],
+            "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly.",
         },
         {
           id: "elevatorAccess",
@@ -451,6 +451,62 @@ export const HELPER = {
           label: "Self-guided tour (Tour24)",
           template:
             "Prospect[ {name}] arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.",
+        },
+      ],
+    },
+    {
+      id: "concierge",
+      code: "co",
+      label: "Concierge",
+      fields: [NAME_FIELD],
+      reasons: [
+        {
+          id: "onBreak",
+          label: "On break",
+          template: "Concierge[ {name}] went on break.",
+        },
+        {
+          id: "backFromBreak",
+          label: "Back from break",
+          template: "Concierge[ {name}] returned from break.",
+        },
+        {
+          id: "siteTouring",
+          label: "On site touring",
+          template: "Concierge[ {name}] left the front desk for a site tour.",
+        },
+      ],
+    },
+    {
+      id: "pilgrimParking",
+      code: "pp",
+      label: "Pilgrim Parking",
+      fields: [NAME_FIELD],
+      reasons: [
+        {
+          id: "report",
+          label: "Report something",
+          template:
+            "Pilgrim Parking staff[ {name}] came to the front desk to report that {description}.",
+          fields: [
+            { key: "description", label: "Report details", kind: "text" },
+          ],
+        },
+        {
+          id: "dropOff",
+          label: "Drop something off",
+          template:
+            "Pilgrim Parking staff[ {name}] dropped off {item} at the front desk[ for unit ({unit})].",
+          fields: [
+            { key: "item", label: "Item", kind: "text" },
+            {
+              key: "unit",
+              label: "Unit #",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+          ],
         },
       ],
     },
