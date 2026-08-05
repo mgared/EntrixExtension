@@ -19,7 +19,7 @@ const OUT_PATH = path.join(__dirname, "SNIPPETS.md");
 // might appear in any role/reason. Keep these stable so the doc diffs
 // only when templates actually change.
 const SAMPLE = {
-  time: "10:00AM",
+  time: "10:00 AM",
   name: "John",
   unit: "234",
   recipient: "Helen",
@@ -80,7 +80,7 @@ push(
 push("");
 push(
   "Every log is auto-prefixed with the current clock time, e.g. " +
-    "`10:00AM: Resident…`. The doc pins it to `10:00AM` for stable diffs."
+    "`10:00 AM: Resident…`. The doc pins it to `10:00 AM` for stable diffs."
 );
 push("");
 push(
