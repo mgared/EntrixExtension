@@ -151,15 +151,15 @@ export function buildQuickLog(line) {
   return { html, text };
 }
 
-// Render an interactive site-tour chip: one line per area, each reporting
-// either "all clear" or whatever the walker typed into that area's issue
-// box. An issue wins over "all clear" — typing a problem is what marks the
-// area as not clear. Areas flagged `people: true` append an occupancy
-// count when one was entered.
+// Render an interactive site-tour chip as one flowing sentence: every area
+// reports either "all clear" or whatever the walker typed into that area's
+// issue box. An issue wins over "all clear" — typing a problem is what
+// marks the area as not clear. Areas flagged `people: true` append an
+// occupancy count when one was entered.
 export function buildSiteTour({ areas = [], state = {} }) {
   const time = formatTime();
-  const textLines = [`${time}: Site tour completed —`];
-  const htmlLines = [`<b>${esc(time)}</b>: Site tour completed —`];
+  const textParts = [];
+  const htmlParts = [];
 
   for (const area of areas) {
     const s = state[area.id] || {};
@@ -185,11 +185,22 @@ export function buildSiteTour({ areas = [], state = {} }) {
       html += ` (${esc(count)})`;
     }
 
-    textLines.push(`${area.label}: ${text}`);
-    htmlLines.push(`${esc(area.label)}: ${html}`);
+    textParts.push(`${area.label}: ${text}`);
+    htmlParts.push(`${esc(area.label)}: ${html}`);
   }
 
-  return { html: htmlLines.join("<br>"), text: textLines.join("\n") };
+  const head = "Site tour completed";
+  if (!textParts.length) {
+    return { html: `<b>${esc(time)}</b>: ${head}.`, text: `${time}: ${head}.` };
+  }
+
+  // A typed issue may already end in punctuation — don't double it up.
+  const tail = /[.!?]$/.test(textParts[textParts.length - 1]) ? "" : ".";
+
+  return {
+    html: `<b>${esc(time)}</b>: ${head} — ${htmlParts.join(", ")}${tail}`,
+    text: `${time}: ${head} — ${textParts.join(", ")}${tail}`,
+  };
 }
 
 export function buildSentence({ role, reason, values = {} }) {
