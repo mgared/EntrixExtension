@@ -105,6 +105,16 @@ function formatTime(d = new Date()) {
   return `${pad2(h)}:${pad2(m)} ${ampm}`;
 }
 
+// A field with `showWhen: { key, value }` only applies while another field
+// holds a given value — e.g. the free-text courier box that appears only
+// once "Other" is picked. Shared with the popup so the form and the
+// rendered sentence agree on which fields count.
+export function isFieldVisible(field, values) {
+  const cond = field?.showWhen;
+  if (!cond) return true;
+  return String(values?.[cond.key] ?? "") === String(cond.value);
+}
+
 // Pull defaults from role + reason field definitions onto the value map
 // so the shorthand path (which passes no form input) still picks up the
 // contact dropdown's default and any other defaulted selects.
@@ -118,6 +128,16 @@ function applyDefaults({ role, reason }, values) {
       }
     }
   }
+  // `replaces: "otherKey"` hands this field's value to another key once it
+  // is both visible and filled, so templates reference only the one key.
+  // Visible-but-empty deliberately blanks the target, turning the sentinel
+  // option ("Other") into a #### the user still has to fill.
+  for (const fields of groups) {
+    for (const f of fields || []) {
+      if (!f.replaces || !isFieldVisible(f, out)) continue;
+      out[f.replaces] = isEmpty(out[f.key]) ? "" : out[f.key];
+    }
+  }
   return out;
 }
 
@@ -129,6 +149,47 @@ export function buildQuickLog(line) {
   const text = `${time}: ${trimmed}`;
   const html = `<b>${esc(time)}</b>: ${esc(trimmed)}`;
   return { html, text };
+}
+
+// Render an interactive site-tour chip: one line per area, each reporting
+// either "all clear" or whatever the walker typed into that area's issue
+// box. An issue wins over "all clear" — typing a problem is what marks the
+// area as not clear. Areas flagged `people: true` append an occupancy
+// count when one was entered.
+export function buildSiteTour({ areas = [], state = {} }) {
+  const time = formatTime();
+  const textLines = [`${time}: Site tour completed —`];
+  const htmlLines = [`<b>${esc(time)}</b>: Site tour completed —`];
+
+  for (const area of areas) {
+    const s = state[area.id] || {};
+    const issue = String(s.issue ?? "").trim();
+    const people = String(s.people ?? "").trim();
+
+    let text;
+    let html;
+    if (issue) {
+      text = issue;
+      html = `<b>${esc(issue)}</b>`;
+    } else if (s.clear) {
+      text = "all clear";
+      html = "all clear";
+    } else {
+      text = "not checked";
+      html = "<i>not checked</i>";
+    }
+
+    if (area.people && people) {
+      const count = people === "1" ? "1 person" : `${people} people`;
+      text += ` (${count})`;
+      html += ` (${esc(count)})`;
+    }
+
+    textLines.push(`${area.label}: ${text}`);
+    htmlLines.push(`${esc(area.label)}: ${html}`);
+  }
+
+  return { html: htmlLines.join("<br>"), text: textLines.join("\n") };
 }
 
 export function buildSentence({ role, reason, values = {} }) {

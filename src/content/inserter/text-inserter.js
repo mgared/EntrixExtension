@@ -57,8 +57,10 @@ export function replaceRange(element, start, end, { html, text }) {
     template.innerHTML = html || "";
     const fragment = template.content.cloneNode(true);
 
-    // Capture the first blank before we lose the fragment.
+    // Capture the first blank and the tail node before insertNode empties
+    // the fragment.
     const firstBlank = fragment.querySelector("[data-ph]");
+    const lastNode = fragment.lastChild;
 
     range.insertNode(fragment);
 
@@ -67,16 +69,30 @@ export function replaceRange(element, start, end, { html, text }) {
 
     installBlankHandlers(element);
 
-    const sel = doc.getSelection();
-    if (firstBlank && firstBlank.isConnected) {
-      selectBlank(firstBlank, sel, doc);
-    } else {
-      // No blanks — just place caret at the end of the inserted content.
-      const after = doc.createRange();
-      after.setStart(endPos.node, endPos.offset);
-      after.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(after);
+    // Caret placement is best-effort: contenteditable DOMs vary enough
+    // across sites that a failure here must not stop the input event
+    // below from firing, or the host page never learns of the edit.
+    try {
+      const sel = doc.getSelection();
+      if (firstBlank && firstBlank.isConnected) {
+        selectBlank(firstBlank, sel, doc);
+      } else {
+        // No blanks — drop the caret just past what we inserted. The
+        // pre-insert offsets are stale by now (deleteContents emptied the
+        // node they pointed into), so anchor off the inserted tail.
+        const after = doc.createRange();
+        if (lastNode && lastNode.isConnected) {
+          after.setStartAfter(lastNode);
+          after.collapse(true);
+        } else {
+          after.selectNodeContents(element);
+          after.collapse(false);
+        }
+        sel.removeAllRanges();
+        sel.addRange(after);
+      }
+    } catch {
+      /* caret stays where the browser left it */
     }
 
     element.dispatchEvent(

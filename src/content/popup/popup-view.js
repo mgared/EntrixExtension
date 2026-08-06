@@ -17,7 +17,12 @@ import {
   getDefaultRoleId,
   getQuickLogs,
 } from "../../config/form-schema.js";
-import { buildSentence, buildQuickLog } from "../sentence-builder.js";
+import {
+  buildSentence,
+  buildQuickLog,
+  buildSiteTour,
+  isFieldVisible,
+} from "../sentence-builder.js";
 
 const HOST_TAG = "phrase-snippets-popup";
 
@@ -41,6 +46,10 @@ export function createPopupView() {
   let reasonId = "";
   let values = {};
 
+  // Non-null while a quick-log chip's sub-form is open, which takes over
+  // the popup entirely: { chip, state: { [areaId]: {clear, issue, people} } }
+  let chipForm = null;
+
   // Keep the same input element across renders so the user's keystrokes
   // don't lose focus mid-typing. Re-rendered field defs swap into
   // pre-existing inputs by `data-key`, and stale inputs are removed.
@@ -62,7 +71,7 @@ export function createPopupView() {
       const tag = e.target?.tagName;
       if (tag === "INPUT" && e.target.type === "text") return;
       e.preventDefault();
-      if (reasonId) submitHandler?.(buildCurrentSentence());
+      if (chipForm || reasonId) submitHandler?.(buildCurrentSentence());
     } else if (e.key === "Escape") {
       e.preventDefault();
       dismissHandler?.();
@@ -73,14 +82,23 @@ export function createPopupView() {
     roleId = getDefaultRoleId();
     reasonId = "";
     values = {};
+    chipForm = null;
     inputCache.clear();
     seedDefaults();
   }
 
-  function seedDefaults() {
+  // Role + reason fields that currently apply, honouring each field's
+  // `showWhen` condition against the values entered so far.
+  function currentFields() {
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    for (const f of [...(role?.fields || []), ...(reason?.fields || [])]) {
+    return [...(role?.fields || []), ...(reason?.fields || [])].filter((f) =>
+      isFieldVisible(f, values)
+    );
+  }
+
+  function seedDefaults() {
+    for (const f of currentFields()) {
       if (f.default !== undefined && values[f.key] === undefined) {
         values[f.key] = f.default;
       }
@@ -88,13 +106,10 @@ export function createPopupView() {
   }
 
   // Drop values for fields no longer visible so a stale typed name
-  // doesn't reappear after switching roles or reasons.
+  // doesn't reappear after switching roles, reasons, or a `showWhen`
+  // parent (e.g. moving the courier off "Other").
   function pruneStaleValues() {
-    const role = getRole(roleId);
-    const reason = getReason(roleId, reasonId);
-    const visible = new Set(
-      [...(role?.fields || []), ...(reason?.fields || [])].map((f) => f.key)
-    );
+    const visible = new Set(currentFields().map((f) => f.key));
     for (const k of Object.keys(values)) {
       if (!visible.has(k)) delete values[k];
     }
@@ -105,6 +120,11 @@ export function createPopupView() {
 
   function render() {
     root.innerHTML = "";
+    root.classList.toggle("wide", !!chipForm);
+    if (chipForm) {
+      renderChipForm();
+      return;
+    }
 
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
@@ -113,23 +133,17 @@ export function createPopupView() {
     formRow.className = "row";
     formRow.appendChild(renderRoleSelect());
     for (const field of role?.fields || []) {
+      if (!isFieldVisible(field, values)) continue;
       formRow.appendChild(renderField(field));
     }
     formRow.appendChild(renderReasonSelect());
     for (const field of reason?.fields || []) {
+      if (!isFieldVisible(field, values)) continue;
       formRow.appendChild(renderField(field));
     }
     root.appendChild(formRow);
 
-    const previewLabel = document.createElement("div");
-    previewLabel.className = "preview-label";
-    previewLabel.textContent = "Preview";
-    root.appendChild(previewLabel);
-
-    const preview = document.createElement("div");
-    preview.className = "preview";
-    preview.innerHTML = buildCurrentSentence().html;
-    root.appendChild(preview);
+    renderPreview();
 
     const chips = getQuickLogs();
     if (chips.length) {
@@ -144,10 +158,11 @@ export function createPopupView() {
         const chip = document.createElement("button");
         chip.type = "button";
         chip.className = "chip";
-        chip.textContent = c.label;
-        chip.title = c.text;
+        chip.textContent = c.form ? `${c.label}…` : c.label;
+        chip.title = c.form ? "Opens a checklist" : c.text;
         chip.addEventListener("click", (e) => {
           e.preventDefault();
+          if (c.form) return openChipForm(c);
           submitHandler?.(buildQuickLog(c.text));
         });
         chipsRow.appendChild(chip);
@@ -155,8 +170,140 @@ export function createPopupView() {
       root.appendChild(chipsRow);
     }
 
+    renderActions(!!reasonId);
+  }
+
+  // A chip carrying a `form` takes the popup over: the role/reason picker
+  // is replaced by that form's own controls until Back or Insert.
+  function openChipForm(chip) {
+    const state = {};
+    for (const area of chip.form.areas || []) {
+      // Default every area to clear — a clean tour is the common case, so
+      // the walker only has to touch the areas that had a problem.
+      state[area.id] = { clear: true, issue: "", people: "" };
+    }
+    chipForm = { chip, state };
+    render();
+    reposition();
+  }
+
+  function renderChipForm() {
+    const { chip, state } = chipForm;
+
+    const head = document.createElement("div");
+    head.className = "form-head";
+
+    const title = document.createElement("div");
+    title.className = "form-title";
+    title.textContent = chip.form.title || chip.label;
+    head.appendChild(title);
+
+    const back = document.createElement("button");
+    back.type = "button";
+    back.className = "secondary";
+    back.textContent = "← Back";
+    back.addEventListener("click", () => {
+      chipForm = null;
+      render();
+      reposition();
+    });
+    head.appendChild(back);
+    root.appendChild(head);
+
+    const list = document.createElement("div");
+    list.className = "tour";
+    for (const area of chip.form.areas || []) {
+      list.appendChild(renderTourRow(area, state[area.id]));
+    }
+    root.appendChild(list);
+
+    renderPreview();
+    renderActions(true);
+  }
+
+  function renderTourRow(area, s) {
+    const row = document.createElement("div");
+    row.className = "tour-row";
+
+    const name = document.createElement("div");
+    name.className = "tour-name";
+    name.textContent = area.label;
+    row.appendChild(name);
+
+    const clearLabel = document.createElement("label");
+    clearLabel.className = "check";
+    const clear = document.createElement("input");
+    clear.type = "checkbox";
+    clear.checked = !!s.clear;
+    clearLabel.appendChild(clear);
+    clearLabel.appendChild(document.createTextNode("All clear"));
+    row.appendChild(clearLabel);
+
+    const issue = document.createElement("input");
+    issue.type = "text";
+    issue.className = "tour-issue";
+    issue.placeholder = "Something to report…";
+    issue.value = s.issue;
+    row.appendChild(issue);
+
+    clear.addEventListener("change", () => {
+      s.clear = clear.checked;
+      // "All clear" and a reported issue are mutually exclusive — ticking
+      // the box discards whatever was typed.
+      if (clear.checked && issue.value) {
+        issue.value = "";
+        s.issue = "";
+      }
+      updatePreview();
+    });
+
+    issue.addEventListener("input", () => {
+      s.issue = issue.value;
+      // Typing a problem is what un-clears the area; emptying the box
+      // hands it back to "all clear".
+      const nowClear = issue.value.trim() === "";
+      if (s.clear !== nowClear) {
+        s.clear = nowClear;
+        clear.checked = nowClear;
+      }
+      updatePreview();
+    });
+
+    if (area.people) {
+      const people = document.createElement("input");
+      people.type = "text";
+      people.className = "tour-people";
+      people.inputMode = "numeric";
+      people.placeholder = "# ppl";
+      people.value = s.people;
+      people.addEventListener("input", () => {
+        const digits = people.value.replace(/[^0-9]/g, "");
+        if (people.value !== digits) people.value = digits;
+        s.people = digits;
+        updatePreview();
+      });
+      row.appendChild(people);
+    }
+
+    return row;
+  }
+
+  function renderPreview() {
+    const previewLabel = document.createElement("div");
+    previewLabel.className = "preview-label";
+    previewLabel.textContent = "Preview";
+    root.appendChild(previewLabel);
+
+    const preview = document.createElement("div");
+    preview.className = "preview";
+    preview.innerHTML = buildCurrentSentence().html;
+    root.appendChild(preview);
+  }
+
+  function renderActions(canInsert) {
     const actions = document.createElement("div");
     actions.className = "actions";
+
     const hint = document.createElement("div");
     hint.className = "hint";
     hint.textContent = "Enter = Insert · Esc = Cancel";
@@ -170,9 +317,9 @@ export function createPopupView() {
     const insert = document.createElement("button");
     insert.className = "primary";
     insert.textContent = "Insert";
-    insert.disabled = !reasonId;
+    insert.disabled = !canInsert;
     insert.addEventListener("click", () => {
-      if (!reasonId) return;
+      if (!canInsert) return;
       submitHandler?.(buildCurrentSentence());
     });
 
@@ -292,6 +439,8 @@ export function createPopupView() {
     select.value = values[def.key] ?? def.default ?? "";
     select.addEventListener("change", (e) => {
       values[def.key] = e.target.value;
+      // A select can gate a `showWhen` field, so re-check what still applies.
+      pruneStaleValues();
       render();
       shadow.querySelector(`select[data-key="${def.key}"]`)?.focus();
     });
@@ -360,10 +509,21 @@ export function createPopupView() {
   }
 
   function buildCurrentSentence() {
+    if (chipForm) {
+      return buildSiteTour({
+        areas: chipForm.chip.form.areas || [],
+        state: chipForm.state,
+      });
+    }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
     return buildSentence({ role, reason, values: { ...values } });
   }
+
+  // Anchor the popup was opened at, kept so we can re-place it whenever the
+  // content changes height — opening a chip's checklist can triple it, and
+  // a stale position would push Insert off the bottom of the screen.
+  let anchor = { x: 0, y: 0 };
 
   function position(x, y) {
     const margin = 8;
@@ -379,10 +539,15 @@ export function createPopupView() {
     root.style.top = `${Math.max(margin, top)}px`;
   }
 
+  function reposition() {
+    requestAnimationFrame(() => position(anchor.x, anchor.y));
+  }
+
   return {
     show({ x, y }) {
       reset();
       render();
+      anchor = { x, y };
       document.documentElement.appendChild(host);
       requestAnimationFrame(() => {
         position(x, y);

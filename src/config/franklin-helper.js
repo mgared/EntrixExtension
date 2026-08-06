@@ -84,6 +84,34 @@ const SERVICE_KEYS_OUTCOME = {
   ],
 };
 
+// Courier picker for the Package role. "Other" is a sentinel: picking it
+// reveals COURIER_OTHER_FIELD, whose `replaces` hands its typed value back
+// to {courier} so every template references only {courier}.
+const COURIER_FIELD = {
+  key: "courier",
+  label: "Courier",
+  kind: "select",
+  options: [
+    "Amazon",
+    "UPS",
+    "FedEx",
+    "USPS",
+    "DHL",
+    "OnTrac",
+    "Veho",
+    "Other",
+  ],
+};
+
+const COURIER_OTHER_FIELD = {
+  key: "courierOther",
+  label: "Courier name",
+  kind: "text",
+  placeholder: "Courier name",
+  replaces: "courier",
+  showWhen: { key: "courier", value: "Other" },
+};
+
 export const HELPER = {
   defaultRoleId: "resident",
   roles: [
@@ -455,6 +483,33 @@ export const HELPER = {
       ],
     },
     {
+      id: "package",
+      code: "pk",
+      label: "Package",
+      fields: [COURIER_FIELD, COURIER_OTHER_FIELD],
+      reasons: [
+        {
+          id: "droppedBulk",
+          label: "Dropped a bulk of packages",
+          template: "{courier} dropped off a bulk of packages at the front desk.",
+        },
+        {
+          id: "pickedUpReturns",
+          label: "Picked up returns",
+          template: "{courier} picked up returns from the front desk.",
+        },
+        {
+          id: "report",
+          label: "Report something",
+          template:
+            "{courier} came to the front desk to report that {description}.",
+          fields: [
+            { key: "description", label: "Report details", kind: "text" },
+          ],
+        },
+      ],
+    },
+    {
       id: "concierge",
       code: "co",
       label: "Concierge",
@@ -513,12 +568,33 @@ export const HELPER = {
   ],
 };
 
-// One-click "quick log" chips rendered under the popup preview. Each chip
-// inserts the time prefix + `text`. `label` is what shows on the chip.
+// Areas walked on a site tour, in walking order. Each renders a row with
+// an "all clear" checkbox and an issue box; typing an issue is what marks
+// the area as not clear. `people: true` adds an occupancy count box for
+// areas where how busy it was is worth logging.
+export const SITE_TOUR_AREAS = [
+  { id: "mailRoom", label: "Mail room" },
+  { id: "meetingRooms", label: "Meeting rooms" },
+  { id: "coffee1", label: "Coffee machine #1" },
+  { id: "dogWash", label: "Dog wash room" },
+  { id: "terrace2", label: "Second floor terrace" },
+  { id: "trashChute", label: "Trash chute" },
+  { id: "floor12Interior", label: "12th floor interior" },
+  { id: "coffee2", label: "Coffee machine #2" },
+  { id: "pool", label: "Pool area", people: true },
+  { id: "grill", label: "Grill area", people: true },
+  { id: "floor12Reservable", label: "12th floor reservable area" },
+];
+
+// One-click "quick log" chips rendered under the popup preview. A plain
+// chip inserts the time prefix + `text`. A chip carrying `form` instead
+// opens a sub-form in the popup and builds its sentence from what the
+// user fills in.
 export const QUICK_LOGS = [
   {
     label: "Site tour",
     text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
+    form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
   },
   {
     label: "Desk organized",
