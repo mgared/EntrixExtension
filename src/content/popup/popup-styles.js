@@ -23,6 +23,53 @@ export const POPUP_STYLES = `
     min-width: 480px;
     max-width: 760px;
   }
+  .root.wide {
+    min-width: 620px;
+  }
+  .form-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: auto;
+  }
+  /* The area checklist is the one part tall enough to need its own
+     scroller — keeping it here rather than on .root means the popup's
+     measured height stays stable for viewport-flip positioning. */
+  .tour {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 40vh;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .tour-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+  }
+  .tour-name {
+    flex: 0 0 165px;
+    font-size: 12.5px;
+    color: #333;
+  }
+  .tour-row .check {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .tour-issue {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+  .tour-people {
+    flex: 0 0 68px;
+    text-align: center;
+  }
   .row {
     display: flex;
     gap: 10px;
@@ -107,6 +154,8 @@ export const POPUP_STYLES = `
     color: #1a1a1a;
     white-space: normal;
     overflow-wrap: anywhere;
+    max-height: 24vh;
+    overflow-y: auto;
   }
   .chips {
     display: flex;

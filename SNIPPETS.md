@@ -24,6 +24,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (3 reasons; role fields: name)
+- `pk` — Package (3 reasons; role fields: courier, courierOther)
 - `co` — Concierge (3 reasons; role fields: name)
 - `pp` — Pilgrim Parking (2 reasons; role fields: name)
 
@@ -189,6 +190,23 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Prospect arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
 - **Filled:** 10:00 AM: Prospect John arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
+
+## Package — `pk`
+
+### `;pk1` — Dropped a bulk of packages
+
+- **Empty:** 10:00 AM: #### dropped off a bulk of packages at the front desk.
+- **Filled:** 10:00 AM: Amazon dropped off a bulk of packages at the front desk.
+
+### `;pk2` — Picked up returns
+
+- **Empty:** 10:00 AM: #### picked up returns from the front desk.
+- **Filled:** 10:00 AM: Amazon picked up returns from the front desk.
+
+### `;pk3` — Report something
+
+- **Empty:** 10:00 AM: #### came to the front desk to report that ####.
+- **Filled:** 10:00 AM: Amazon came to the front desk to report that their kitchen sink is leaking.
 
 ## Concierge — `co`
 
