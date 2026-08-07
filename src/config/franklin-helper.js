@@ -615,3 +615,17 @@ export const QUICK_LOGS = [
     text: "Lobby area inspected; all clear.",
   },
 ];
+
+// Flags shown above the preview in every popup mode. Ticking one tints the
+// inserted sentence so a reader scanning the log can spot it at a glance.
+// Backgrounds are deliberately pale — the log's own black text has to stay
+// readable on top of them in whatever client the log lives in.
+//
+// Order matters: only one background can render on a sentence, so when
+// several are ticked the first one listed here supplies the colour.
+export const HIGHLIGHTS = [
+  { key: "concierge", label: "Notify concierge", color: "#cfe2ff" },
+  { key: "propertyManager", label: "Notify property manager", color: "#e4d5f7" },
+  { key: "maintenance", label: "Notify maintenance", color: "#ffe0a3" },
+  { key: "incident", label: "Incident", color: "#ffcccc" },
+];

@@ -141,6 +141,17 @@ function applyDefaults({ role, reason }, values) {
   return out;
 }
 
+// Tint a built sentence so a reader scanning the log can spot it. Only the
+// HTML form can carry a colour — a plain textarea has nowhere to put one,
+// so the text form is returned untouched rather than faked with a marker.
+export function applyHighlight({ html, text }, color) {
+  if (!color) return { html, text };
+  return {
+    html: `<span style="background-color:${esc(color)}">${html}</span>`,
+    text,
+  };
+}
+
 // Quick-log chips bypass the role/reason form: they're a fixed sentence
 // that just needs the standard time prefix added.
 export function buildQuickLog(line) {

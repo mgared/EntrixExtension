@@ -16,11 +16,13 @@ import {
   getReason,
   getDefaultRoleId,
   getQuickLogs,
+  getHighlights,
 } from "../../config/form-schema.js";
 import {
   buildSentence,
   buildQuickLog,
   buildSiteTour,
+  applyHighlight,
   isFieldVisible,
 } from "../sentence-builder.js";
 
@@ -49,6 +51,11 @@ export function createPopupView() {
   // Non-null while a quick-log chip's sub-form is open, which takes over
   // the popup entirely: { chip, state: { [areaId]: {clear, issue, people} } }
   let chipForm = null;
+
+  // Ticked notify/incident flags, keyed by HIGHLIGHTS[].key. These sit
+  // outside the role/reason model — they apply to whatever is about to be
+  // inserted, in every popup mode.
+  let flags = {};
 
   // Keep the same input element across renders so the user's keystrokes
   // don't lose focus mid-typing. Re-rendered field defs swap into
@@ -83,8 +90,15 @@ export function createPopupView() {
     reasonId = "";
     values = {};
     chipForm = null;
+    flags = {};
     inputCache.clear();
     seedDefaults();
+  }
+
+  // The colour the ticked flags give the sentence. Only one background can
+  // render, so the first flag listed in config wins when several are on.
+  function activeHighlight() {
+    return getHighlights().find((h) => flags[h.key])?.color || "";
   }
 
   // Role + reason fields that currently apply, honouring each field's
@@ -163,7 +177,7 @@ export function createPopupView() {
         chip.addEventListener("click", (e) => {
           e.preventDefault();
           if (c.form) return openChipForm(c);
-          submitHandler?.(buildQuickLog(c.text));
+          submitHandler?.(applyHighlight(buildQuickLog(c.text), activeHighlight()));
         });
         chipsRow.appendChild(chip);
       }
@@ -300,7 +314,36 @@ export function createPopupView() {
     return row;
   }
 
+  // Rendered by renderPreview() so the flags appear directly above the
+  // preview in every mode — the role/reason form and any chip sub-form.
+  function renderFlags() {
+    const row = document.createElement("div");
+    row.className = "flags";
+    for (const h of getHighlights()) {
+      const item = document.createElement("label");
+      item.className = "check flag";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.dataset.flag = h.key;
+      box.checked = !!flags[h.key];
+      box.addEventListener("change", () => {
+        flags[h.key] = box.checked;
+        updatePreview();
+      });
+      const swatch = document.createElement("span");
+      swatch.className = "swatch";
+      swatch.style.background = h.color;
+      item.appendChild(box);
+      item.appendChild(swatch);
+      item.appendChild(document.createTextNode(h.label));
+      row.appendChild(item);
+    }
+    root.appendChild(row);
+  }
+
   function renderPreview() {
+    renderFlags();
+
     const previewLabel = document.createElement("div");
     previewLabel.className = "preview-label";
     previewLabel.textContent = "Preview";
@@ -521,15 +564,18 @@ export function createPopupView() {
   }
 
   function buildCurrentSentence() {
+    const color = activeHighlight();
     if (chipForm) {
-      return buildSiteTour({
+      const tour = buildSiteTour({
         areas: chipForm.chip.form.areas || [],
         state: chipForm.state,
       });
+      return applyHighlight(tour, color);
     }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    return buildSentence({ role, reason, values: { ...values } });
+    const sentence = buildSentence({ role, reason, values: { ...values } });
+    return applyHighlight(sentence, color);
   }
 
   // Anchor the popup was opened at, kept so we can re-place it whenever the

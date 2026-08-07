@@ -142,6 +142,24 @@ export const POPUP_STYLES = `
   .check input {
     margin: 0;
   }
+  .flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    padding: 4px 0 2px;
+  }
+  .flag {
+    gap: 5px;
+  }
+  /* The swatch doubles as the legend — it is the only thing telling the
+     user which colour a given flag will tint the sentence. */
+  .swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    flex: 0 0 auto;
+  }
   .preview-label {
     font-size: 10.5px;
     color: #666;
