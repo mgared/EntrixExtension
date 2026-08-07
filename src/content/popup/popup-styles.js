@@ -63,11 +63,11 @@ export const POPUP_STYLES = `
     flex: 0 0 auto;
     white-space: nowrap;
   }
-  .tour-status,
-  .tour-status-gap {
+  .tour-status {
     flex: 0 0 155px;
+    font-size: 12.5px;
+    padding: 4px 6px;
   }
-  .tour-status { font-size: 12.5px; padding: 4px 6px; }
   .tour-issue {
     flex: 1 1 auto;
     min-width: 120px;

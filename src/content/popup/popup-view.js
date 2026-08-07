@@ -246,9 +246,9 @@ export function createPopupView() {
 
     // Areas with a fixed set of states (the coffee machines) get a picker
     // beside the tick. Every control on a row is additive — ticking,
-    // picking a status and typing a note all end up in the sentence — so
-    // rows without a picker still reserve its width to keep the issue
-    // boxes lined up down the column.
+    // picking a status and typing a note all end up in the sentence. Rows
+    // without a picker leave no gap in its place; the issue box just runs
+    // the full width instead.
     if (area.options?.length) {
       const status = document.createElement("select");
       status.className = "tour-status";
@@ -268,10 +268,6 @@ export function createPopupView() {
         updatePreview();
       });
       row.appendChild(status);
-    } else {
-      const gap = document.createElement("div");
-      gap.className = "tour-status-gap";
-      row.appendChild(gap);
     }
 
     const issue = document.createElement("input");
