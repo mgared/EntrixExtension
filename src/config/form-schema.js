@@ -2,7 +2,7 @@
 // (each reason owns its full sentence), so all the field-resolution logic
 // the old form-schema needed is gone — only role/reason lookups remain.
 
-import { HELPER, QUICK_LOGS } from "./franklin-helper.js";
+import { HELPER, QUICK_LOGS, HIGHLIGHTS } from "./franklin-helper.js";
 
 export function getRoles() {
   return HELPER.roles || [];
@@ -23,4 +23,8 @@ export function getDefaultRoleId() {
 
 export function getQuickLogs() {
   return QUICK_LOGS || [];
+}
+
+export function getHighlights() {
+  return HIGHLIGHTS || [];
 }

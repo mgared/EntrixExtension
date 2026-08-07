@@ -16,11 +16,13 @@ import {
   getReason,
   getDefaultRoleId,
   getQuickLogs,
+  getHighlights,
 } from "../../config/form-schema.js";
 import {
   buildSentence,
   buildQuickLog,
   buildSiteTour,
+  applyHighlight,
   isFieldVisible,
 } from "../sentence-builder.js";
 
@@ -49,6 +51,11 @@ export function createPopupView() {
   // Non-null while a quick-log chip's sub-form is open, which takes over
   // the popup entirely: { chip, state: { [areaId]: {clear, issue, people} } }
   let chipForm = null;
+
+  // Ticked notify/incident flags, keyed by HIGHLIGHTS[].key. These sit
+  // outside the role/reason model — they apply to whatever is about to be
+  // inserted, in every popup mode.
+  let flags = {};
 
   // Keep the same input element across renders so the user's keystrokes
   // don't lose focus mid-typing. Re-rendered field defs swap into
@@ -83,8 +90,15 @@ export function createPopupView() {
     reasonId = "";
     values = {};
     chipForm = null;
+    flags = {};
     inputCache.clear();
     seedDefaults();
+  }
+
+  // The colour the ticked flags give the sentence. Only one background can
+  // render, so the first flag listed in config wins when several are on.
+  function activeHighlight() {
+    return getHighlights().find((h) => flags[h.key])?.color || "";
   }
 
   // Role + reason fields that currently apply, honouring each field's
@@ -163,7 +177,7 @@ export function createPopupView() {
         chip.addEventListener("click", (e) => {
           e.preventDefault();
           if (c.form) return openChipForm(c);
-          submitHandler?.(buildQuickLog(c.text));
+          submitHandler?.(applyHighlight(buildQuickLog(c.text), activeHighlight()));
         });
         chipsRow.appendChild(chip);
       }
@@ -178,9 +192,10 @@ export function createPopupView() {
   function openChipForm(chip) {
     const state = {};
     for (const area of chip.form.areas || []) {
-      // Default every area to clear — a clean tour is the common case, so
-      // the walker only has to touch the areas that had a problem.
-      state[area.id] = { clear: true, issue: "", people: "" };
+      // Everything starts untouched. An area the walker never ticks stays
+      // out of the sentence entirely, so the log can only ever claim what
+      // was actually looked at.
+      state[area.id] = { clear: false, status: "", issue: "", people: "" };
     }
     chipForm = { chip, state };
     render();
@@ -235,39 +250,50 @@ export function createPopupView() {
     const clear = document.createElement("input");
     clear.type = "checkbox";
     clear.checked = !!s.clear;
+    clear.addEventListener("change", () => {
+      s.clear = clear.checked;
+      updatePreview();
+    });
     clearLabel.appendChild(clear);
     clearLabel.appendChild(document.createTextNode("All clear"));
     row.appendChild(clearLabel);
+
+    // Areas with a fixed set of states (the coffee machines) get a picker
+    // beside the tick. Every control on a row is additive — ticking,
+    // picking a status and typing a note all end up in the sentence. Rows
+    // without a picker leave no gap in its place; the issue box just runs
+    // the full width instead.
+    if (area.options?.length) {
+      const status = document.createElement("select");
+      status.className = "tour-status";
+      const blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "—";
+      status.appendChild(blank);
+      for (const opt of area.options) {
+        const o = document.createElement("option");
+        o.value = opt;
+        o.textContent = opt;
+        status.appendChild(o);
+      }
+      status.value = s.status;
+      status.addEventListener("change", () => {
+        s.status = status.value;
+        updatePreview();
+      });
+      row.appendChild(status);
+    }
 
     const issue = document.createElement("input");
     issue.type = "text";
     issue.className = "tour-issue";
     issue.placeholder = "Something to report…";
     issue.value = s.issue;
-    row.appendChild(issue);
-
-    clear.addEventListener("change", () => {
-      s.clear = clear.checked;
-      // "All clear" and a reported issue are mutually exclusive — ticking
-      // the box discards whatever was typed.
-      if (clear.checked && issue.value) {
-        issue.value = "";
-        s.issue = "";
-      }
-      updatePreview();
-    });
-
     issue.addEventListener("input", () => {
       s.issue = issue.value;
-      // Typing a problem is what un-clears the area; emptying the box
-      // hands it back to "all clear".
-      const nowClear = issue.value.trim() === "";
-      if (s.clear !== nowClear) {
-        s.clear = nowClear;
-        clear.checked = nowClear;
-      }
       updatePreview();
     });
+    row.appendChild(issue);
 
     if (area.people) {
       const people = document.createElement("input");
@@ -288,7 +314,36 @@ export function createPopupView() {
     return row;
   }
 
+  // Rendered by renderPreview() so the flags appear directly above the
+  // preview in every mode — the role/reason form and any chip sub-form.
+  function renderFlags() {
+    const row = document.createElement("div");
+    row.className = "flags";
+    for (const h of getHighlights()) {
+      const item = document.createElement("label");
+      item.className = "check flag";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.dataset.flag = h.key;
+      box.checked = !!flags[h.key];
+      box.addEventListener("change", () => {
+        flags[h.key] = box.checked;
+        updatePreview();
+      });
+      const swatch = document.createElement("span");
+      swatch.className = "swatch";
+      swatch.style.background = h.color;
+      item.appendChild(box);
+      item.appendChild(swatch);
+      item.appendChild(document.createTextNode(h.label));
+      row.appendChild(item);
+    }
+    root.appendChild(row);
+  }
+
   function renderPreview() {
+    renderFlags();
+
     const previewLabel = document.createElement("div");
     previewLabel.className = "preview-label";
     previewLabel.textContent = "Preview";
@@ -509,15 +564,18 @@ export function createPopupView() {
   }
 
   function buildCurrentSentence() {
+    const color = activeHighlight();
     if (chipForm) {
-      return buildSiteTour({
+      const tour = buildSiteTour({
         areas: chipForm.chip.form.areas || [],
         state: chipForm.state,
       });
+      return applyHighlight(tour, color);
     }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    return buildSentence({ role, reason, values: { ...values } });
+    const sentence = buildSentence({ role, reason, values: { ...values } });
+    return applyHighlight(sentence, color);
   }
 
   // Anchor the popup was opened at, kept so we can re-place it whenever the

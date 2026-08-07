@@ -141,6 +141,17 @@ function applyDefaults({ role, reason }, values) {
   return out;
 }
 
+// Tint a built sentence so a reader scanning the log can spot it. Only the
+// HTML form can carry a colour — a plain textarea has nowhere to put one,
+// so the text form is returned untouched rather than faked with a marker.
+export function applyHighlight({ html, text }, color) {
+  if (!color) return { html, text };
+  return {
+    html: `<span style="background-color:${esc(color)}">${html}</span>`,
+    text,
+  };
+}
+
 // Quick-log chips bypass the role/reason form: they're a fixed sentence
 // that just needs the standard time prefix added.
 export function buildQuickLog(line) {
@@ -151,45 +162,80 @@ export function buildQuickLog(line) {
   return { html, text };
 }
 
-// Render an interactive site-tour chip: one line per area, each reporting
-// either "all clear" or whatever the walker typed into that area's issue
-// box. An issue wins over "all clear" — typing a problem is what marks the
-// area as not clear. Areas flagged `people: true` append an occupancy
-// count when one was entered.
+// Render an interactive site-tour chip as one flowing sentence. Every
+// control the walker actually used contributes a clause: the "all clear"
+// tick, the status picker some areas carry, and the free-text issue box
+// all combine rather than override one another. An area nobody touched
+// contributes nothing and stays out of the sentence entirely, so the log
+// only ever claims what was really looked at. Areas flagged `people: true`
+// also carry an occupancy count.
+//
+// Areas are separated by semicolons because an area's own clauses are
+// comma-separated — commas alone could not tell the two levels apart.
 export function buildSiteTour({ areas = [], state = {} }) {
   const time = formatTime();
-  const textLines = [`${time}: Site tour completed —`];
-  const htmlLines = [`<b>${esc(time)}</b>: Site tour completed —`];
+  const textParts = [];
+  const htmlParts = [];
 
   for (const area of areas) {
     const s = state[area.id] || {};
     const issue = String(s.issue ?? "").trim();
+    const status = String(s.status ?? "").trim();
     const people = String(s.people ?? "").trim();
 
-    let text;
-    let html;
+    const count =
+      area.people && people
+        ? people === "1"
+          ? "1 person"
+          : `${people} people`
+        : "";
+
+    const text = [];
+    const html = [];
+    if (s.clear) {
+      text.push("all clear");
+      html.push("all clear");
+    }
+    if (status) {
+      text.push(status);
+      html.push(esc(status));
+    }
     if (issue) {
-      text = issue;
-      html = `<b>${esc(issue)}</b>`;
-    } else if (s.clear) {
-      text = "all clear";
-      html = "all clear";
-    } else {
-      text = "not checked";
-      html = "<i>not checked</i>";
+      text.push(issue);
+      html.push(`<b>${esc(issue)}</b>`);
     }
 
-    if (area.people && people) {
-      const count = people === "1" ? "1 person" : `${people} people`;
-      text += ` (${count})`;
-      html += ` (${esc(count)})`;
+    // An occupancy count on its own still counts as having walked the area.
+    if (!text.length) {
+      if (!count) continue;
+      textParts.push(`${area.label}: ${count}`);
+      htmlParts.push(`${esc(area.label)}: ${esc(count)}`);
+      continue;
     }
 
-    textLines.push(`${area.label}: ${text}`);
-    htmlLines.push(`${esc(area.label)}: ${html}`);
+    let t = text.join(", ");
+    let h = html.join(", ");
+    if (count) {
+      t += ` (${count})`;
+      h += ` (${esc(count)})`;
+    }
+
+    textParts.push(`${area.label}: ${t}`);
+    htmlParts.push(`${esc(area.label)}: ${h}`);
   }
 
-  return { html: htmlLines.join("<br>"), text: textLines.join("\n") };
+  const head = "Site tour completed";
+  if (!textParts.length) {
+    return { html: `<b>${esc(time)}</b>: ${head}.`, text: `${time}: ${head}.` };
+  }
+
+  // A typed issue may already end in punctuation — don't double it up.
+  const tail = /[.!?]$/.test(textParts[textParts.length - 1]) ? "" : ".";
+
+  return {
+    html: `<b>${esc(time)}</b>: ${head} — ${htmlParts.join("; ")}${tail}`,
+    text: `${time}: ${head} — ${textParts.join("; ")}${tail}`,
+  };
 }
 
 export function buildSentence({ role, reason, values = {} }) {

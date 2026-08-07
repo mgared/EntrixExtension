@@ -24,7 +24,8 @@ export const POPUP_STYLES = `
     max-width: 760px;
   }
   .root.wide {
-    min-width: 620px;
+    min-width: 700px;
+    max-width: 860px;
   }
   .form-head {
     display: flex;
@@ -61,6 +62,11 @@ export const POPUP_STYLES = `
   .tour-row .check {
     flex: 0 0 auto;
     white-space: nowrap;
+  }
+  .tour-status {
+    flex: 0 0 155px;
+    font-size: 12.5px;
+    padding: 4px 6px;
   }
   .tour-issue {
     flex: 1 1 auto;
@@ -135,6 +141,24 @@ export const POPUP_STYLES = `
   }
   .check input {
     margin: 0;
+  }
+  .flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    padding: 4px 0 2px;
+  }
+  .flag {
+    gap: 5px;
+  }
+  /* The swatch doubles as the legend — it is the only thing telling the
+     user which colour a given flag will tint the sentence. */
+  .swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    flex: 0 0 auto;
   }
   .preview-label {
     font-size: 10.5px;
