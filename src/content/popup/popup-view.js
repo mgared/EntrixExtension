@@ -178,9 +178,10 @@ export function createPopupView() {
   function openChipForm(chip) {
     const state = {};
     for (const area of chip.form.areas || []) {
-      // Default every area to clear — a clean tour is the common case, so
-      // the walker only has to touch the areas that had a problem.
-      state[area.id] = { clear: true, issue: "", people: "" };
+      // Everything starts untouched. An area the walker never ticks stays
+      // out of the sentence entirely, so the log can only ever claim what
+      // was actually looked at.
+      state[area.id] = { clear: false, status: "", issue: "", people: "" };
     }
     chipForm = { chip, state };
     render();
@@ -235,39 +236,54 @@ export function createPopupView() {
     const clear = document.createElement("input");
     clear.type = "checkbox";
     clear.checked = !!s.clear;
+    clear.addEventListener("change", () => {
+      s.clear = clear.checked;
+      updatePreview();
+    });
     clearLabel.appendChild(clear);
     clearLabel.appendChild(document.createTextNode("All clear"));
     row.appendChild(clearLabel);
+
+    // Areas with a fixed set of states (the coffee machines) get a picker
+    // beside the tick. Every control on a row is additive — ticking,
+    // picking a status and typing a note all end up in the sentence — so
+    // rows without a picker still reserve its width to keep the issue
+    // boxes lined up down the column.
+    if (area.options?.length) {
+      const status = document.createElement("select");
+      status.className = "tour-status";
+      const blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "—";
+      status.appendChild(blank);
+      for (const opt of area.options) {
+        const o = document.createElement("option");
+        o.value = opt;
+        o.textContent = opt;
+        status.appendChild(o);
+      }
+      status.value = s.status;
+      status.addEventListener("change", () => {
+        s.status = status.value;
+        updatePreview();
+      });
+      row.appendChild(status);
+    } else {
+      const gap = document.createElement("div");
+      gap.className = "tour-status-gap";
+      row.appendChild(gap);
+    }
 
     const issue = document.createElement("input");
     issue.type = "text";
     issue.className = "tour-issue";
     issue.placeholder = "Something to report…";
     issue.value = s.issue;
-    row.appendChild(issue);
-
-    clear.addEventListener("change", () => {
-      s.clear = clear.checked;
-      // "All clear" and a reported issue are mutually exclusive — ticking
-      // the box discards whatever was typed.
-      if (clear.checked && issue.value) {
-        issue.value = "";
-        s.issue = "";
-      }
-      updatePreview();
-    });
-
     issue.addEventListener("input", () => {
       s.issue = issue.value;
-      // Typing a problem is what un-clears the area; emptying the box
-      // hands it back to "all clear".
-      const nowClear = issue.value.trim() === "";
-      if (s.clear !== nowClear) {
-        s.clear = nowClear;
-        clear.checked = nowClear;
-      }
       updatePreview();
     });
+    row.appendChild(issue);
 
     if (area.people) {
       const people = document.createElement("input");

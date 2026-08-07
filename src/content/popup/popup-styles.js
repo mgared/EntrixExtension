@@ -24,7 +24,8 @@ export const POPUP_STYLES = `
     max-width: 760px;
   }
   .root.wide {
-    min-width: 620px;
+    min-width: 700px;
+    max-width: 860px;
   }
   .form-head {
     display: flex;
@@ -62,6 +63,11 @@ export const POPUP_STYLES = `
     flex: 0 0 auto;
     white-space: nowrap;
   }
+  .tour-status,
+  .tour-status-gap {
+    flex: 0 0 155px;
+  }
+  .tour-status { font-size: 12.5px; padding: 4px 6px; }
   .tour-issue {
     flex: 1 1 auto;
     min-width: 120px;

@@ -151,11 +151,16 @@ export function buildQuickLog(line) {
   return { html, text };
 }
 
-// Render an interactive site-tour chip as one flowing sentence: every area
-// reports either "all clear" or whatever the walker typed into that area's
-// issue box. An issue wins over "all clear" — typing a problem is what
-// marks the area as not clear. Areas flagged `people: true` append an
-// occupancy count when one was entered.
+// Render an interactive site-tour chip as one flowing sentence. Every
+// control the walker actually used contributes a clause: the "all clear"
+// tick, the status picker some areas carry, and the free-text issue box
+// all combine rather than override one another. An area nobody touched
+// contributes nothing and stays out of the sentence entirely, so the log
+// only ever claims what was really looked at. Areas flagged `people: true`
+// also carry an occupancy count.
+//
+// Areas are separated by semicolons because an area's own clauses are
+// comma-separated — commas alone could not tell the two levels apart.
 export function buildSiteTour({ areas = [], state = {} }) {
   const time = formatTime();
   const textParts = [];
@@ -164,29 +169,48 @@ export function buildSiteTour({ areas = [], state = {} }) {
   for (const area of areas) {
     const s = state[area.id] || {};
     const issue = String(s.issue ?? "").trim();
+    const status = String(s.status ?? "").trim();
     const people = String(s.people ?? "").trim();
 
-    let text;
-    let html;
+    const count =
+      area.people && people
+        ? people === "1"
+          ? "1 person"
+          : `${people} people`
+        : "";
+
+    const text = [];
+    const html = [];
+    if (s.clear) {
+      text.push("all clear");
+      html.push("all clear");
+    }
+    if (status) {
+      text.push(status);
+      html.push(esc(status));
+    }
     if (issue) {
-      text = issue;
-      html = `<b>${esc(issue)}</b>`;
-    } else if (s.clear) {
-      text = "all clear";
-      html = "all clear";
-    } else {
-      text = "not checked";
-      html = "<i>not checked</i>";
+      text.push(issue);
+      html.push(`<b>${esc(issue)}</b>`);
     }
 
-    if (area.people && people) {
-      const count = people === "1" ? "1 person" : `${people} people`;
-      text += ` (${count})`;
-      html += ` (${esc(count)})`;
+    // An occupancy count on its own still counts as having walked the area.
+    if (!text.length) {
+      if (!count) continue;
+      textParts.push(`${area.label}: ${count}`);
+      htmlParts.push(`${esc(area.label)}: ${esc(count)}`);
+      continue;
     }
 
-    textParts.push(`${area.label}: ${text}`);
-    htmlParts.push(`${esc(area.label)}: ${html}`);
+    let t = text.join(", ");
+    let h = html.join(", ");
+    if (count) {
+      t += ` (${count})`;
+      h += ` (${esc(count)})`;
+    }
+
+    textParts.push(`${area.label}: ${t}`);
+    htmlParts.push(`${esc(area.label)}: ${h}`);
   }
 
   const head = "Site tour completed";
@@ -198,8 +222,8 @@ export function buildSiteTour({ areas = [], state = {} }) {
   const tail = /[.!?]$/.test(textParts[textParts.length - 1]) ? "" : ".";
 
   return {
-    html: `<b>${esc(time)}</b>: ${head} — ${htmlParts.join(", ")}${tail}`,
-    text: `${time}: ${head} — ${textParts.join(", ")}${tail}`,
+    html: `<b>${esc(time)}</b>: ${head} — ${htmlParts.join("; ")}${tail}`,
+    text: `${time}: ${head} — ${textParts.join("; ")}${tail}`,
   };
 }
 
