@@ -18,8 +18,8 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `re` — Resident (8 reasons; role fields: name, unit, contact)
 - `gu` — Guest (4 reasons; role fields: name, unit, residentName, contact)
 - `ad` — App delivery (2 reasons; role fields: name, unit)
-- `dw` — Dog Walker (2 reasons; role fields: name, unit)
-- `cl` — Cleaner (2 reasons; role fields: name, unit)
+- `dw` — Dog Walker (3 reasons; role fields: name, unit)
+- `cl` — Cleaner (3 reasons; role fields: name, unit)
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (3 reasons; role fields: name)
@@ -110,10 +110,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Dog walker arrived for unit (####); ####.
 - **Filled:** 10:00 AM: Dog walker John arrived for unit (234); sent up after resident confirmation via call.
 
-### `;dw2` — Given unit keys
+### `;dw2` — Picked up unit keys
 
 - **Empty:** 10:00 AM: Dog walker arrived for unit (####) and requested unit keys; ####.
 - **Filled:** 10:00 AM: Dog walker John arrived for unit (234) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+### `;dw3` — Returned unit keys
+
+- **Empty:** 10:00 AM: Dog walker returned the unit keys for unit (####) to the front desk and their ID was handed back.
+- **Filled:** 10:00 AM: Dog walker John returned the unit keys for unit (234) to the front desk and their ID was handed back.
 
 ## Cleaner — `cl`
 
@@ -122,10 +127,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Cleaner arrived for unit (####); ####.
 - **Filled:** 10:00 AM: Cleaner John arrived for unit (234); sent up after resident confirmation via call.
 
-### `;cl2` — Given unit keys
+### `;cl2` — Picked up unit keys
 
 - **Empty:** 10:00 AM: Cleaner arrived for unit (####) and requested unit keys; ####.
 - **Filled:** 10:00 AM: Cleaner John arrived for unit (234) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+### `;cl3` — Returned unit keys
+
+- **Empty:** 10:00 AM: Cleaner returned the unit keys for unit (####) to the front desk and their ID was handed back.
+- **Filled:** 10:00 AM: Cleaner John returned the unit keys for unit (234) to the front desk and their ID was handed back.
 
 ## Baby Sitter — `bs`
 

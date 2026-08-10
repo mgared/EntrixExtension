@@ -299,11 +299,17 @@ export const HELPER = {
           fields: [SERVICE_SENT_UP_OUTCOME],
         },
         {
-          id: "givenKeys",
-          label: "Given unit keys",
+          id: "pickedUpKeys",
+          label: "Picked up unit keys",
           template:
             "Dog walker[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+        {
+          id: "returnedKeys",
+          label: "Returned unit keys",
+          template:
+            "Dog walker[ {name}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
         },
       ],
     },
@@ -320,11 +326,17 @@ export const HELPER = {
           fields: [SERVICE_SENT_UP_OUTCOME],
         },
         {
-          id: "givenKeys",
-          label: "Given unit keys",
+          id: "pickedUpKeys",
+          label: "Picked up unit keys",
           template:
             "Cleaner[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+        {
+          id: "returnedKeys",
+          label: "Returned unit keys",
+          template:
+            "Cleaner[ {name}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
         },
       ],
     },
