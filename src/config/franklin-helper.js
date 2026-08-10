@@ -89,6 +89,31 @@ const SERVICE_KEYS_OUTCOME = {
   ],
 };
 
+// Vendors are let in by whoever has authority over the space, which may be
+// the resident or the leasing / maintenance team — unlike a dog walker or
+// cleaner, who are always there for a specific resident.
+const VENDOR_KEYS_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "radio",
+  options: [
+    {
+      value: "confirmed with the resident via call, keys exchanged for an ID",
+      label: "Granted — resident confirmed",
+    },
+    {
+      value:
+        "confirmed with the leasing/maintenance team, keys exchanged for an ID",
+      label: "Granted — leasing/maintenance",
+    },
+    {
+      value:
+        "denied, failed to confirm with the resident or the leasing/maintenance team",
+      label: "Denied — couldn't confirm",
+    },
+  ],
+};
+
 // Courier picker for the Package role. "Other" is a sentinel: picking it
 // reveals COURIER_OTHER_FIELD, whose `replaces` hands its typed value back
 // to {courier} so every template references only {courier}.
@@ -359,6 +384,32 @@ export const HELPER = {
           template:
             "Baby sitter[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+      ],
+    },
+    {
+      id: "vendor",
+      code: "ve",
+      label: "Vendor",
+      // A vendor may be working on a unit or on a common area, so the unit
+      // is optional and drops out of the sentence when left empty.
+      fields: [
+        NAME_FIELD,
+        { ...UNIT_FIELD, optional: true, placeholder: "(optional)" },
+      ],
+      reasons: [
+        {
+          id: "pickedUpKeys",
+          label: "Picked up vendor keys",
+          template:
+            "Vendor[ {name}] requested vendor keys[ for unit ({unit})]; {outcome}.",
+          fields: [VENDOR_KEYS_OUTCOME],
+        },
+        {
+          id: "returnedKeys",
+          label: "Returned vendor keys",
+          template:
+            "Vendor[ {name}] returned the vendor keys[ for unit ({unit})] to the front desk and their ID was handed back.",
         },
       ],
     },

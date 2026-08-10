@@ -21,6 +21,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `dw` — Dog Walker (3 reasons; role fields: name, unit)
 - `cl` — Cleaner (3 reasons; role fields: name, unit)
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
+- `ve` — Vendor (2 reasons; role fields: name, unit)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (3 reasons; role fields: name)
 - `pk` — Package (3 reasons; role fields: courier, courierOther)
@@ -148,6 +149,18 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Baby sitter arrived for unit (####) and requested unit keys; ####.
 - **Filled:** 10:00 AM: Baby sitter John arrived for unit (234) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+## Vendor — `ve`
+
+### `;ve1` — Picked up vendor keys
+
+- **Empty:** 10:00 AM: Vendor requested vendor keys; ####.
+- **Filled:** 10:00 AM: Vendor John requested vendor keys for unit (234); confirmed with the resident via call, keys exchanged for an ID.
+
+### `;ve2` — Returned vendor keys
+
+- **Empty:** 10:00 AM: Vendor returned the vendor keys to the front desk and their ID was handed back.
+- **Filled:** 10:00 AM: Vendor John returned the vendor keys for unit (234) to the front desk and their ID was handed back.
 
 ## Leasing Office — `lo`
 
