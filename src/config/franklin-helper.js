@@ -606,8 +606,13 @@ const SHIFTS = [
 ];
 
 // Trailing sections of the shift log, each seeded with one empty bullet
-// for the concierge to fill in over the course of the shift.
-const SHIFT_SECTIONS = [
+// for the concierge to fill in over the course of the shift. Exported
+// because the inserter needs the full list to know where one section ends
+// and the next begins when filing a note.
+//
+// The `section` values in HIGHLIGHTS below must match entries here — a name
+// that drifts simply stops filing rather than filing somewhere wrong.
+export const SHIFT_SECTIONS = [
   "KEYS REMAINING OUT",
   "MOVE IN/MOVE OUT KEYS",
   "PROPERTY MANAGEMENT NOTES",
@@ -660,9 +665,32 @@ export const QUICK_LOGS = [
 //
 // Order matters: only one background can render on a sentence, so when
 // several are ticked the first one listed here supplies the colour.
+// `section` also files a copy of the sentence as a bullet under that
+// heading further down the log, so a flagged note lands both where the
+// concierge is typing and where the shift summary expects to find it.
 export const HIGHLIGHTS = [
-  { key: "concierge", label: "Notify concierge", color: "#cfe2ff" },
-  { key: "propertyManager", label: "Notify property manager", color: "#e4d5f7" },
-  { key: "maintenance", label: "Notify maintenance", color: "#ffe0a3" },
-  { key: "incident", label: "Incident", color: "#ffcccc" },
+  {
+    key: "concierge",
+    label: "Notify concierge",
+    color: "#cfe2ff",
+    section: "CONCIERGE TEAM NOTES",
+  },
+  {
+    key: "propertyManager",
+    label: "Notify property manager",
+    color: "#e4d5f7",
+    section: "PROPERTY MANAGEMENT NOTES",
+  },
+  {
+    key: "maintenance",
+    label: "Notify maintenance",
+    color: "#ffe0a3",
+    section: "FACILITY/MAINTENANCE NOTES",
+  },
+  {
+    key: "incident",
+    label: "Incident",
+    color: "#ffcccc",
+    section: "INCIDENTS OF NOTE",
+  },
 ];

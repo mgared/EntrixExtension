@@ -102,6 +102,22 @@ export function createPopupView() {
     return getHighlights().find((h) => flags[h.key])?.color || "";
   }
 
+  // Unlike the colour, filing isn't limited to one flag — a note can belong
+  // under several headings at once, so every ticked flag contributes.
+  function activeSections() {
+    return getHighlights()
+      .filter((h) => flags[h.key] && h.section)
+      .map((h) => h.section);
+  }
+
+  // Everything the popup submits carries the same flag-derived extras.
+  function decorate(sentence) {
+    return {
+      ...applyHighlight(sentence, activeHighlight()),
+      sections: activeSections(),
+    };
+  }
+
   // Role + reason fields that currently apply, honouring each field's
   // `showWhen` condition against the values entered so far.
   function currentFields() {
@@ -178,7 +194,7 @@ export function createPopupView() {
         chip.addEventListener("click", (e) => {
           e.preventDefault();
           if (c.form) return openChipForm(c);
-          submitHandler?.(applyHighlight(buildQuickLog(c.text), activeHighlight()));
+          submitHandler?.(decorate(buildQuickLog(c.text)));
         });
         chipsRow.appendChild(chip);
       }
@@ -659,33 +675,28 @@ export function createPopupView() {
   }
 
   function buildCurrentSentence() {
-    const color = activeHighlight();
     if (chipForm) {
       const form = chipForm.chip.form;
       if (form.kind === "beginShift") {
         const shift =
           (form.shifts || []).find((s) => s.value === chipForm.state.shift) ||
           null;
-        return applyHighlight(
+        return decorate(
           buildShiftLog({
             site: form.site,
             shift,
             sections: form.sections,
             state: chipForm.state,
-          }),
-          color
+          })
         );
       }
-      const tour = buildSiteTour({
-        areas: form.areas || [],
-        state: chipForm.state,
-      });
-      return applyHighlight(tour, color);
+      return decorate(
+        buildSiteTour({ areas: form.areas || [], state: chipForm.state })
+      );
     }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    const sentence = buildSentence({ role, reason, values: { ...values } });
-    return applyHighlight(sentence, color);
+    return decorate(buildSentence({ role, reason, values: { ...values } }));
   }
 
   // Anchor the popup was opened at, kept so we can re-place it whenever the

@@ -371,9 +371,10 @@ export function buildSentence({ role, reason, values = {} }) {
 // Each insertion starts on its own line, so logs stack vertically instead
 // of running into prior content. Both popup and shorthand paths wrap their
 // outgoing sentence with this before handing it to the inserter.
-export function withLeadingLineBreak({ html, text }) {
+export function withLeadingLineBreak(sentence) {
   return {
-    html: `<br>${html ?? ""}`,
-    text: `\n${text ?? ""}`,
+    ...sentence,
+    html: `<br>${sentence?.html ?? ""}`,
+    text: `\n${sentence?.text ?? ""}`,
   };
 }
