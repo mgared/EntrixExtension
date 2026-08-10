@@ -141,6 +141,10 @@ function applyDefaults({ role, reason }, values) {
   return out;
 }
 
+function redHtml(s) {
+  return `<b style="color:${RED}">${esc(s)}</b>`;
+}
+
 function hourLabel(h) {
   const ampm = h >= 12 ? "PM" : "AM";
   let hr = h % 12;
@@ -192,10 +196,12 @@ export function buildShiftLog({
     h.push(html === undefined ? esc(text) : html);
   };
 
+  // Names carry the blanks' red so the people on and off site stand out at
+  // a glance in a log that is otherwise a wall of timestamps.
   const nameT = name || BLANK;
-  const nameH = name ? `<b>${esc(name)}</b>` : blankHtml("name");
+  const nameH = name ? redHtml(name) : blankHtml("name");
   const prevT = prevName || BLANK;
-  const prevH = prevName ? esc(prevName) : blankHtml("prevName");
+  const prevH = prevName ? redHtml(prevName) : blankHtml("prevName");
   const shiftT = shift?.value || BLANK;
   const shiftH = shift?.value ? esc(shift.value) : blankHtml("shift");
   const date = formatDate();
