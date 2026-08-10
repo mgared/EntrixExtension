@@ -17,11 +17,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - `re` — Resident (8 reasons; role fields: name, unit, contact)
 - `gu` — Guest (4 reasons; role fields: name, unit, residentName, contact)
-- `fd` — Food Delivery (3 reasons; role fields: name, unit)
-- `gd` — Grocery Delivery (2 reasons; role fields: name, unit)
-- `dw` — Dog Walker (2 reasons; role fields: name, unit)
-- `cl` — Cleaner (2 reasons; role fields: name, unit)
+- `ad` — App delivery (2 reasons; role fields: name, unit)
+- `dw` — Dog Walker (3 reasons; role fields: name, unit)
+- `cl` — Cleaner (3 reasons; role fields: name, unit)
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
+- `ve` — Vendor (2 reasons; role fields: name, unit)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (3 reasons; role fields: name)
 - `pk` — Package (3 reasons; role fields: courier, courierOther)
@@ -90,36 +90,19 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### `;gu4` — Given unit keys
 
 - **Empty:** 10:00 AM: Guest arrived for unit (####) and requested unit keys; ####.
-- **Filled:** 10:00 AM: Guest John arrived for unit (234 Marry) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+- **Filled:** 10:00 AM: Guest John arrived for unit (234 Marry) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
 
-## Food Delivery — `fd`
+## App delivery — `ad`
 
-### `;fd1` — Requested to be sent up
+### `;ad1` — Delivered — awaiting pickup
 
-- **Empty:** 10:00 AM: Food delivery for unit (####) arrived and requested to be sent up; ####.
-- **Filled:** 10:00 AM: Food delivery from John for unit (234) arrived and requested to be sent up; resident confirmed and it was sent up.
+- **Empty:** 10:00 AM: App delivery for unit (####) was delivered and is awaiting pick-up at the front desk.
+- **Filled:** 10:00 AM: App delivery from John for unit (234) was delivered and is awaiting pick-up at the front desk.
 
-### `;fd2` — Stayed in lobby >15 min
+### `;ad2` — Not picked up >30 min — stored
 
-- **Empty:** 10:00 AM: Food delivery for unit (####) has not been picked-up for more than 15 minutes; ####.
-- **Filled:** 10:00 AM: Food delivery from John for unit (234) has not been picked-up for more than 15 minutes; resident was reached and notified.
-
-### `;fd3` — Stayed in lobby >30 min — stored
-
-- **Empty:** 10:00 AM: Food delivery for unit (####) has not been picked-up for more than 30 minutes; stored in the fridge.
-- **Filled:** 10:00 AM: Food delivery from John for unit (234) has not been picked-up for more than 30 minutes; stored in the fridge.
-
-## Grocery Delivery — `gd`
-
-### `;gd1` — Requested to be sent up
-
-- **Empty:** 10:00 AM: Grocery delivery for unit (####) arrived and requested to be sent up; ####.
-- **Filled:** 10:00 AM: Grocery delivery from John for unit (234) arrived and requested to be sent up; resident confirmed and it was sent up.
-
-### `;gd2` — Stayed in lobby >30 min — stored
-
-- **Empty:** 10:00 AM: Grocery delivery for unit (####) has not been picked-up for more than 30 minutes; stored in the fridge.
-- **Filled:** 10:00 AM: Grocery delivery from John for unit (234) has not been picked-up for more than 30 minutes; stored in the fridge.
+- **Empty:** 10:00 AM: App delivery for unit (####) has not been picked-up for more than 30 minutes; resident notified and the delivery was stored in the fridge.
+- **Filled:** 10:00 AM: App delivery from John for unit (234) has not been picked-up for more than 30 minutes; resident notified and the delivery was stored in the fridge.
 
 ## Dog Walker — `dw`
 
@@ -128,10 +111,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Dog walker arrived for unit (####); ####.
 - **Filled:** 10:00 AM: Dog walker John arrived for unit (234); sent up after resident confirmation via call.
 
-### `;dw2` — Given unit keys
+### `;dw2` — Picked up unit keys
 
 - **Empty:** 10:00 AM: Dog walker arrived for unit (####) and requested unit keys; ####.
-- **Filled:** 10:00 AM: Dog walker John arrived for unit (234) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+- **Filled:** 10:00 AM: Dog walker John arrived for unit (234) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+### `;dw3` — Returned unit keys
+
+- **Empty:** 10:00 AM: Dog walker returned the unit keys for unit (####) to the front desk and their ID was handed back.
+- **Filled:** 10:00 AM: Dog walker John returned the unit keys for unit (234) to the front desk and their ID was handed back.
 
 ## Cleaner — `cl`
 
@@ -140,10 +128,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Cleaner arrived for unit (####); ####.
 - **Filled:** 10:00 AM: Cleaner John arrived for unit (234); sent up after resident confirmation via call.
 
-### `;cl2` — Given unit keys
+### `;cl2` — Picked up unit keys
 
 - **Empty:** 10:00 AM: Cleaner arrived for unit (####) and requested unit keys; ####.
-- **Filled:** 10:00 AM: Cleaner John arrived for unit (234) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+- **Filled:** 10:00 AM: Cleaner John arrived for unit (234) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+### `;cl3` — Returned unit keys
+
+- **Empty:** 10:00 AM: Cleaner returned the unit keys for unit (####) to the front desk and their ID was handed back.
+- **Filled:** 10:00 AM: Cleaner John returned the unit keys for unit (234) to the front desk and their ID was handed back.
 
 ## Baby Sitter — `bs`
 
@@ -155,7 +148,19 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### `;bs2` — Given unit keys
 
 - **Empty:** 10:00 AM: Baby sitter arrived for unit (####) and requested unit keys; ####.
-- **Filled:** 10:00 AM: Baby sitter John arrived for unit (234) and requested unit keys; confirmed on the visitor list, keys exchanged for an ID.
+- **Filled:** 10:00 AM: Baby sitter John arrived for unit (234) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+## Vendor — `ve`
+
+### `;ve1` — Picked up vendor keys
+
+- **Empty:** 10:00 AM: Vendor requested vendor keys; ####.
+- **Filled:** 10:00 AM: Vendor John requested vendor keys for unit (234); confirmed with the resident via call, keys exchanged for an ID.
+
+### `;ve2` — Returned vendor keys
+
+- **Empty:** 10:00 AM: Vendor returned the vendor keys to the front desk and their ID was handed back.
+- **Filled:** 10:00 AM: Vendor John returned the vendor keys for unit (234) to the front desk and their ID was handed back.
 
 ## Leasing Office — `lo`
 

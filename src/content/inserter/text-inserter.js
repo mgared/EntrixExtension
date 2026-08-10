@@ -105,6 +105,155 @@ export function replaceRange(element, start, end, { html, text }) {
   }
 }
 
+// File a copy of the sentence as a bullet under a named heading elsewhere
+// in the same editable — the shift log's standing note sections.
+//
+// Returns false when the heading isn't in the document, which is the normal
+// case for any editable that doesn't hold a shift log. Callers treat that
+// as a no-op: a flag still tints the sentence, it just has nowhere to file.
+//
+// `headings` is the full list of section names, used to find where the
+// target section ends. Without it there's no reliable way to tell a heading
+// from any other line of shouty text.
+export function appendUnderHeading(element, heading, { html, text }, headings = []) {
+  const kind = getEditableKind(element);
+  if (kind === "input" || kind === "textarea") {
+    return fileIntoPlain(element, heading, text || stripHtml(html || ""), headings);
+  }
+  if (kind === "contenteditable") {
+    return fileIntoRich(element, heading, html || "", text || "", headings);
+  }
+  return false;
+}
+
+const EMPTY_BULLET = /^\*\s*$/;
+
+function sameHeading(line, heading) {
+  return String(line).trim().toUpperCase() === String(heading).trim().toUpperCase();
+}
+
+function lineOfOffset(value, offset) {
+  let line = 0;
+  for (let i = 0; i < offset && i < value.length; i++) {
+    if (value[i] === "\n") line++;
+  }
+  return line;
+}
+
+function fileIntoPlain(element, heading, sentence, headings) {
+  const before = element.value;
+  const lines = before.split("\n");
+  const start = lines.findIndex((l) => sameHeading(l, heading));
+  if (start === -1) return false;
+
+  // The section runs until the next known heading, or the end of the log.
+  let end = lines.length;
+  for (let i = start + 1; i < lines.length; i++) {
+    if (headings.some((h) => sameHeading(lines[i], h))) {
+      end = i;
+      break;
+    }
+  }
+
+  let last = -1;
+  for (let i = end - 1; i > start; i--) {
+    if (lines[i].trim()) {
+      last = i;
+      break;
+    }
+  }
+
+  const bullet = `* ${sentence}`;
+  let at;
+  if (last !== -1 && EMPTY_BULLET.test(lines[last].trim())) {
+    // A section still holding its seeded empty bullet gets filled rather
+    // than grown, so the first note doesn't strand a bare "*" above it.
+    at = last;
+    lines[at] = bullet;
+  } else {
+    at = (last === -1 ? start : last) + 1;
+    lines.splice(at, 0, bullet);
+  }
+
+  const selStart = element.selectionStart;
+  const selEnd = element.selectionEnd;
+  const caretLine = lineOfOffset(before, selStart);
+  const after = lines.join("\n");
+  element.value = after;
+
+  // Filing usually happens below the caret and leaves it alone, but a
+  // section above the caret shifts every offset after it.
+  const shift = at <= caretLine ? after.length - before.length : 0;
+  element.setSelectionRange(selStart + shift, selEnd + shift);
+  fireInput(element, sentence);
+  return true;
+}
+
+function fileIntoRich(element, heading, html, text, headings) {
+  const doc = element.ownerDocument;
+  const walker = doc.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) nodes.push(n);
+
+  const start = nodes.findIndex((n) => sameHeading(n.nodeValue, heading));
+  if (start === -1) return false;
+
+  let end = nodes.length;
+  for (let i = start + 1; i < nodes.length; i++) {
+    if (headings.some((h) => sameHeading(nodes[i].nodeValue, h))) {
+      end = i;
+      break;
+    }
+  }
+
+  let last = null;
+  for (let i = end - 1; i > start; i--) {
+    if (nodes[i].nodeValue.trim()) {
+      last = nodes[i];
+      break;
+    }
+  }
+
+  if (last && EMPTY_BULLET.test(last.nodeValue.trim()) && last.parentNode) {
+    last.parentNode.replaceChild(fragmentFrom(doc, `* ${html}`), last);
+    fireInput(element, text);
+    return true;
+  }
+
+  // Insert after whichever top-level node owns the section's last line, so
+  // the new bullet lands outside any <b> the heading or a note sits in.
+  const anchor = topLevelOf(last || nodes[start], element);
+  if (!anchor) return false;
+  anchor.parentNode.insertBefore(
+    fragmentFrom(doc, `<br>* ${html}`),
+    anchor.nextSibling
+  );
+  fireInput(element, text);
+  return true;
+}
+
+function fragmentFrom(doc, html) {
+  const template = doc.createElement("template");
+  template.innerHTML = html;
+  return template.content.cloneNode(true);
+}
+
+function topLevelOf(node, root) {
+  let n = node;
+  while (n && n.parentNode && n.parentNode !== root) n = n.parentNode;
+  return n && n.parentNode === root ? n : null;
+}
+
+function fireInput(element, data) {
+  element.dispatchEvent(
+    new InputEvent("input", {
+      bubbles: true,
+      inputType: "insertText",
+      data: data || "",
+    })
+  );
+}
+
 function selectBlank(span, sel, doc) {
   const range = doc.createRange();
   range.selectNodeContents(span);

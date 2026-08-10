@@ -15,7 +15,13 @@ export function createPopupController({ onInsert, onDismiss }) {
     if (!context) return;
     const ctx = context;
     close();
-    onInsert({ ...ctx, sentence: withLeadingLineBreak(sentence) });
+    onInsert({
+      ...ctx,
+      sentence: withLeadingLineBreak(sentence),
+      // Section copies become bullets, so they take the sentence without
+      // the leading line break the caret insertion needs.
+      filing: sentence,
+    });
   });
 
   view.onDismiss(() => {

@@ -22,6 +22,7 @@ import {
   buildSentence,
   buildQuickLog,
   buildSiteTour,
+  buildShiftLog,
   applyHighlight,
   isFieldVisible,
 } from "../sentence-builder.js";
@@ -101,6 +102,22 @@ export function createPopupView() {
     return getHighlights().find((h) => flags[h.key])?.color || "";
   }
 
+  // Unlike the colour, filing isn't limited to one flag — a note can belong
+  // under several headings at once, so every ticked flag contributes.
+  function activeSections() {
+    return getHighlights()
+      .filter((h) => flags[h.key] && h.section)
+      .map((h) => h.section);
+  }
+
+  // Everything the popup submits carries the same flag-derived extras.
+  function decorate(sentence) {
+    return {
+      ...applyHighlight(sentence, activeHighlight()),
+      sections: activeSections(),
+    };
+  }
+
   // Role + reason fields that currently apply, honouring each field's
   // `showWhen` condition against the values entered so far.
   function currentFields() {
@@ -177,7 +194,7 @@ export function createPopupView() {
         chip.addEventListener("click", (e) => {
           e.preventDefault();
           if (c.form) return openChipForm(c);
-          submitHandler?.(applyHighlight(buildQuickLog(c.text), activeHighlight()));
+          submitHandler?.(decorate(buildQuickLog(c.text)));
         });
         chipsRow.appendChild(chip);
       }
@@ -190,16 +207,40 @@ export function createPopupView() {
   // A chip carrying a `form` takes the popup over: the role/reason picker
   // is replaced by that form's own controls until Back or Insert.
   function openChipForm(chip) {
-    const state = {};
-    for (const area of chip.form.areas || []) {
-      // Everything starts untouched. An area the walker never ticks stays
-      // out of the sentence entirely, so the log can only ever claim what
-      // was actually looked at.
-      state[area.id] = { clear: false, status: "", issue: "", people: "" };
+    let state;
+    if (chip.form.kind === "beginShift") {
+      state = {
+        name: "",
+        prevName: "",
+        // Pre-pick the shift the clock is currently inside, since that is
+        // almost always the one being started.
+        shift: currentShiftValue(chip.form.shifts || []),
+        keys: false,
+      };
+    } else {
+      state = {};
+      for (const area of chip.form.areas || []) {
+        // Everything starts untouched. An area the walker never ticks stays
+        // out of the sentence entirely, so the log can only ever claim what
+        // was actually looked at.
+        state[area.id] = { clear: false, status: "", issue: "", people: "" };
+      }
     }
     chipForm = { chip, state };
     render();
     reposition();
+  }
+
+  // Shift ranges are start-inclusive / end-exclusive so the hour they meet
+  // on (3pm ends one and starts the next) picks the shift beginning then.
+  function currentShiftValue(shifts) {
+    const h = new Date().getHours();
+    const hit = shifts.find((s) =>
+      s.start <= s.end
+        ? h >= s.start && h < s.end
+        : h >= s.start || h < s.end
+    );
+    return (hit || shifts[0])?.value || "";
   }
 
   function renderChipForm() {
@@ -225,15 +266,85 @@ export function createPopupView() {
     head.appendChild(back);
     root.appendChild(head);
 
-    const list = document.createElement("div");
-    list.className = "tour";
-    for (const area of chip.form.areas || []) {
-      list.appendChild(renderTourRow(area, state[area.id]));
+    if (chip.form.kind === "beginShift") {
+      root.appendChild(renderShiftForm(chip.form, state));
+    } else {
+      const list = document.createElement("div");
+      list.className = "tour";
+      for (const area of chip.form.areas || []) {
+        list.appendChild(renderTourRow(area, state[area.id]));
+      }
+      root.appendChild(list);
     }
-    root.appendChild(list);
 
     renderPreview();
     renderActions(true);
+  }
+
+  function renderShiftForm(form, state) {
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const field = (labelText, control) => {
+      const wrap = document.createElement("div");
+      wrap.className = "field";
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = labelText;
+      wrap.appendChild(label);
+      wrap.appendChild(control);
+      row.appendChild(wrap);
+    };
+
+    const textBox = (key, placeholder) => {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.dataset.key = key;
+      input.placeholder = placeholder;
+      input.value = state[key];
+      input.addEventListener("input", () => {
+        state[key] = input.value;
+        updatePreview();
+      });
+      return input;
+    };
+
+    field("Your name", textBox("name", "Coming on"));
+    field("Off-going", textBox("prevName", "Going off"));
+
+    const shiftSelect = document.createElement("select");
+    shiftSelect.dataset.key = "shift";
+    for (const s of form.shifts || []) {
+      const o = document.createElement("option");
+      o.value = s.value;
+      o.textContent = s.value;
+      shiftSelect.appendChild(o);
+    }
+    shiftSelect.value = state.shift;
+    shiftSelect.addEventListener("change", () => {
+      state.shift = shiftSelect.value;
+      updatePreview();
+    });
+    field("Shift", shiftSelect);
+
+    const keysWrap = document.createElement("div");
+    keysWrap.className = "field";
+    const keysLabel = document.createElement("label");
+    keysLabel.className = "check";
+    const keysBox = document.createElement("input");
+    keysBox.type = "checkbox";
+    keysBox.dataset.key = "keys";
+    keysBox.checked = !!state.keys;
+    keysBox.addEventListener("change", () => {
+      state.keys = keysBox.checked;
+      updatePreview();
+    });
+    keysLabel.appendChild(keysBox);
+    keysLabel.appendChild(document.createTextNode("Concierge keys received"));
+    keysWrap.appendChild(keysLabel);
+    row.appendChild(keysWrap);
+
+    return row;
   }
 
   function renderTourRow(area, s) {
@@ -255,7 +366,10 @@ export function createPopupView() {
       updatePreview();
     });
     clearLabel.appendChild(clear);
-    clearLabel.appendChild(document.createTextNode("All clear"));
+    // The box says exactly what ticking it will report, which for most
+    // areas is "all clear" but for some is the specific thing being
+    // confirmed — no guessing what a tick means.
+    clearLabel.appendChild(document.createTextNode(area.clear || "all clear"));
     row.appendChild(clearLabel);
 
     // Areas with a fixed set of states (the coffee machines) get a picker
@@ -564,18 +678,28 @@ export function createPopupView() {
   }
 
   function buildCurrentSentence() {
-    const color = activeHighlight();
     if (chipForm) {
-      const tour = buildSiteTour({
-        areas: chipForm.chip.form.areas || [],
-        state: chipForm.state,
-      });
-      return applyHighlight(tour, color);
+      const form = chipForm.chip.form;
+      if (form.kind === "beginShift") {
+        const shift =
+          (form.shifts || []).find((s) => s.value === chipForm.state.shift) ||
+          null;
+        return decorate(
+          buildShiftLog({
+            site: form.site,
+            shift,
+            sections: form.sections,
+            state: chipForm.state,
+          })
+        );
+      }
+      return decorate(
+        buildSiteTour({ areas: form.areas || [], state: chipForm.state })
+      );
     }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    const sentence = buildSentence({ role, reason, values: { ...values } });
-    return applyHighlight(sentence, color);
+    return decorate(buildSentence({ role, reason, values: { ...values } }));
   }
 
   // Anchor the popup was opened at, kept so we can re-place it whenever the

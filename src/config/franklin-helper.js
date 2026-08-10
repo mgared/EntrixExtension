@@ -74,12 +74,42 @@ const SERVICE_KEYS_OUTCOME = {
   kind: "radio",
   options: [
     {
-      value: "confirmed on the visitor list, keys exchanged for an ID",
-      label: "Granted — keys exchanged for ID",
+      value: "confirmed with the resident via call, keys exchanged for an ID",
+      label: "Granted — call confirmation",
+    },
+    {
+      value:
+        "confirmed on the resident visitor list, keys exchanged for an ID",
+      label: "Granted — visitor list",
     },
     {
       value: "denied, failed to confirm with resident",
       label: "Denied — couldn't reach",
+    },
+  ],
+};
+
+// Vendors are let in by whoever has authority over the space, which may be
+// the resident or the leasing / maintenance team — unlike a dog walker or
+// cleaner, who are always there for a specific resident.
+const VENDOR_KEYS_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "radio",
+  options: [
+    {
+      value: "confirmed with the resident via call, keys exchanged for an ID",
+      label: "Granted — resident confirmed",
+    },
+    {
+      value:
+        "confirmed with the leasing/maintenance team, keys exchanged for an ID",
+      label: "Granted — leasing/maintenance",
+    },
+    {
+      value:
+        "denied, failed to confirm with the resident or the leasing/maintenance team",
+      label: "Denied — couldn't confirm",
     },
   ],
 };
@@ -261,101 +291,22 @@ export const HELPER = {
       ],
     },
     {
-      id: "foodDelivery",
-      code: "fd",
-      label: "Food Delivery",
+      id: "appDelivery",
+      code: "ad",
+      label: "App delivery",
       fields: [NAME_FIELD, UNIT_FIELD],
       reasons: [
         {
-          id: "requestSentUp",
-          label: "Requested to be sent up",
+          id: "delivered",
+          label: "Delivered — awaiting pickup",
           template:
-            "Food delivery[ from {name}] for unit ({unit}) arrived and requested to be sent up; {outcome}.",
-          fields: [
-            {
-              key: "outcome",
-              label: "Outcome",
-              kind: "radio",
-              options: [
-                {
-                  value: "resident confirmed and it was sent up",
-                  label: "Granted — resident confirmed",
-                },
-                {
-                  value:
-                    "resident couldn't be reached for confirmation, food left at the lobby",
-                  label: "Denied — no confirmation",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: "lobby15",
-          label: "Stayed in lobby >15 min",
-          template:
-            "Food delivery[ from {name}] for unit ({unit}) has not been picked-up for more than 15 minutes; {outcome}.",
-          fields: [
-            {
-              key: "outcome",
-              label: "Outcome",
-              kind: "radio",
-              options: [
-                {
-                  value: "resident was reached and notified",
-                  label: "Resident reached & notified",
-                },
-                {
-                  value: "resident couldn't be reached to be notified",
-                  label: "Couldn't reach resident",
-                },
-              ],
-            },
-          ],
+            "App delivery[ from {name}] for unit ({unit}) was delivered and is awaiting pick-up at the front desk.",
         },
         {
           id: "lobby30",
-          label: "Stayed in lobby >30 min — stored",
+          label: "Not picked up >30 min — stored",
           template:
-            "Food delivery[ from {name}] for unit ({unit}) has not been picked-up for more than 30 minutes; stored in the fridge.",
-        },
-      ],
-    },
-    {
-      id: "groceryDelivery",
-      code: "gd",
-      label: "Grocery Delivery",
-      fields: [NAME_FIELD, UNIT_FIELD],
-      reasons: [
-        {
-          id: "requestSentUp",
-          label: "Requested to be sent up",
-          template:
-            "Grocery delivery[ from {name}] for unit ({unit}) arrived and requested to be sent up; {outcome}.",
-          fields: [
-            {
-              key: "outcome",
-              label: "Outcome",
-              kind: "radio",
-              options: [
-                {
-                  value: "resident confirmed and it was sent up",
-                  label: "Granted — resident confirmed",
-                },
-                {
-                  value:
-                    "resident couldn't be reached for confirmation, groceries left at the lobby",
-                  label: "Denied — no confirmation",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: "lobby30",
-          label: "Stayed in lobby >30 min — stored",
-          template:
-            "Grocery delivery[ from {name}] for unit ({unit}) has not been picked-up for more than 30 minutes; stored in the fridge.",
+            "App delivery[ from {name}] for unit ({unit}) has not been picked-up for more than 30 minutes; resident notified and the delivery was stored in the fridge.",
         },
       ],
     },
@@ -373,11 +324,17 @@ export const HELPER = {
           fields: [SERVICE_SENT_UP_OUTCOME],
         },
         {
-          id: "givenKeys",
-          label: "Given unit keys",
+          id: "pickedUpKeys",
+          label: "Picked up unit keys",
           template:
             "Dog walker[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+        {
+          id: "returnedKeys",
+          label: "Returned unit keys",
+          template:
+            "Dog walker[ {name}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
         },
       ],
     },
@@ -394,11 +351,17 @@ export const HELPER = {
           fields: [SERVICE_SENT_UP_OUTCOME],
         },
         {
-          id: "givenKeys",
-          label: "Given unit keys",
+          id: "pickedUpKeys",
+          label: "Picked up unit keys",
           template:
             "Cleaner[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+        {
+          id: "returnedKeys",
+          label: "Returned unit keys",
+          template:
+            "Cleaner[ {name}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
         },
       ],
     },
@@ -421,6 +384,32 @@ export const HELPER = {
           template:
             "Baby sitter[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+      ],
+    },
+    {
+      id: "vendor",
+      code: "ve",
+      label: "Vendor",
+      // A vendor may be working on a unit or on a common area, so the unit
+      // is optional and drops out of the sentence when left empty.
+      fields: [
+        NAME_FIELD,
+        { ...UNIT_FIELD, optional: true, placeholder: "(optional)" },
+      ],
+      reasons: [
+        {
+          id: "pickedUpKeys",
+          label: "Picked up vendor keys",
+          template:
+            "Vendor[ {name}] requested vendor keys[ for unit ({unit})]; {outcome}.",
+          fields: [VENDOR_KEYS_OUTCOME],
+        },
+        {
+          id: "returnedKeys",
+          label: "Returned vendor keys",
+          template:
+            "Vendor[ {name}] returned the vendor keys[ for unit ({unit})] to the front desk and their ID was handed back.",
         },
       ],
     },
@@ -578,22 +567,74 @@ const COFFEE_STATUSES = [
 ];
 
 // Areas walked on a site tour, in walking order. Each renders a row with
-// an "all clear" checkbox and an issue box, and every control is optional:
-// an area left untouched is simply not mentioned in the log. `options`
-// adds a status dropdown, and `people: true` adds an occupancy count box
-// for areas where how busy it was is worth logging.
+// a tick box and an issue box, and every control is optional: an area left
+// untouched is simply not mentioned in the log.
+//
+// `clear` is what ticking that area reports, on the box and in the
+// sentence — most areas are just "all clear", but some have a specific
+// thing the walker is confirming. `options` adds a status dropdown, and
+// `people: true` adds an occupancy count box.
 export const SITE_TOUR_AREAS = [
+  {
+    id: "lobby",
+    label: "Lobby area",
+    clear: "waiting area chairs organized, all clear",
+  },
   { id: "mailRoom", label: "Mail room" },
-  { id: "meetingRooms", label: "Meeting rooms" },
+  { id: "geniusBar", label: "Genius bar" },
+  { id: "leasingOffice", label: "Leasing Office" },
+  { id: "meetingRooms", label: "Meeting rooms", clear: "organized and neat" },
   { id: "coffee1", label: "Coffee machine #1", options: COFFEE_STATUSES },
-  { id: "dogWash", label: "Dog wash room" },
-  { id: "terrace2", label: "Second floor terrace" },
-  { id: "trashChute", label: "Trash chute" },
-  { id: "floor12Interior", label: "12th floor interior" },
+  { id: "gym", label: "GYM" },
+  { id: "dogWash", label: "Dog wash", clear: "clean" },
+  { id: "emergencyExit", label: "Emergency exit door", clear: "secured" },
+  { id: "terrace2", label: "2nd floor terrace" },
+  { id: "trashChute", label: "Trash Chute by Moxies" },
+  { id: "serviceElevator", label: "Service elevator and access" },
+  {
+    id: "electrical11",
+    label: "11th floor electrical room",
+    clear: "music turned on and operational",
+  },
+  { id: "patio12", label: "12th floor reservable patio and area" },
+  {
+    id: "tvGameRoom",
+    label: "TV and game room",
+    clear: "TV turned on, pool table and shuffle board set",
+  },
   { id: "coffee2", label: "Coffee machine #2", options: COFFEE_STATUSES },
+  {
+    id: "fireplace12",
+    label: "12th floor Fire place",
+    clear: "turned off and all clear",
+  },
   { id: "pool", label: "Pool area", people: true },
   { id: "grill", label: "Grill area", people: true },
-  { id: "floor12Reservable", label: "12th floor reservable area" },
+];
+
+// Concierge shifts as [start, end) hours on a 24h clock. The hours are
+// stored rather than parsed back out of the label because the overnight
+// shift wraps midnight, which a label alone can't express.
+const SHIFTS = [
+  { value: "7am-3pm", start: 7, end: 15 },
+  { value: "3pm-11pm", start: 15, end: 23 },
+  { value: "11pm-7am", start: 23, end: 7 },
+];
+
+// Trailing sections of the shift log, each seeded with one empty bullet
+// for the concierge to fill in over the course of the shift. Exported
+// because the inserter needs the full list to know where one section ends
+// and the next begins when filing a note.
+//
+// The `section` values in HIGHLIGHTS below must match entries here — a name
+// that drifts simply stops filing rather than filing somewhere wrong.
+export const SHIFT_SECTIONS = [
+  "KEYS REMAINING OUT",
+  "MOVE IN/MOVE OUT KEYS",
+  "PROPERTY MANAGEMENT NOTES",
+  "CONCIERGE TEAM NOTES",
+  "FACILITY/MAINTENANCE NOTES",
+  "INCIDENTS OF NOTE",
 ];
 
 // One-click "quick log" chips rendered under the popup preview. A plain
@@ -601,6 +642,23 @@ export const SITE_TOUR_AREAS = [
 // opens a sub-form in the popup and builds its sentence from what the
 // user fills in.
 export const QUICK_LOGS = [
+  {
+    // Empty text leaves just the time prefix the builder adds to every
+    // quick log — a bare stamp to start a line under.
+    label: "Time",
+    text: "",
+  },
+  {
+    label: "Begin shift",
+    text: "Shift started.",
+    form: {
+      kind: "beginShift",
+      title: "Begin shift",
+      site: "ORA",
+      shifts: SHIFTS,
+      sections: SHIFT_SECTIONS,
+    },
+  },
   {
     label: "Site tour",
     text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
@@ -623,9 +681,35 @@ export const QUICK_LOGS = [
 //
 // Order matters: only one background can render on a sentence, so when
 // several are ticked the first one listed here supplies the colour.
+// One shared tint: the flags differ in where they file, not in colour.
+const HIGHLIGHT_YELLOW = "#ffef9e";
+
+// `section` also files a copy of the sentence as a bullet under that
+// heading further down the log, so a flagged note lands both where the
+// concierge is typing and where the shift summary expects to find it.
 export const HIGHLIGHTS = [
-  { key: "concierge", label: "Notify concierge", color: "#cfe2ff" },
-  { key: "propertyManager", label: "Notify property manager", color: "#e4d5f7" },
-  { key: "maintenance", label: "Notify maintenance", color: "#ffe0a3" },
-  { key: "incident", label: "Incident", color: "#ffcccc" },
+  {
+    key: "concierge",
+    label: "Notify concierge",
+    color: HIGHLIGHT_YELLOW,
+    section: "CONCIERGE TEAM NOTES",
+  },
+  {
+    key: "propertyManager",
+    label: "Notify property manager",
+    color: HIGHLIGHT_YELLOW,
+    section: "PROPERTY MANAGEMENT NOTES",
+  },
+  {
+    key: "maintenance",
+    label: "Notify maintenance",
+    color: HIGHLIGHT_YELLOW,
+    section: "FACILITY/MAINTENANCE NOTES",
+  },
+  {
+    key: "incident",
+    label: "Incident",
+    color: HIGHLIGHT_YELLOW,
+    section: "INCIDENTS OF NOTE",
+  },
 ];

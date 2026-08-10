@@ -141,6 +141,108 @@ function applyDefaults({ role, reason }, values) {
   return out;
 }
 
+function hourLabel(h) {
+  const ampm = h >= 12 ? "PM" : "AM";
+  let hr = h % 12;
+  if (hr === 0) hr = 12;
+  return `${pad2(hr)}:00 ${ampm}`;
+}
+
+function formatDate(d = new Date()) {
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${yy}`;
+}
+
+// Every hour the shift covers, inclusive of both ends. Walks forward one
+// hour at a time so the overnight shift (23 → 7) wraps midnight correctly.
+function shiftHours(shift) {
+  if (!shift) return [];
+  const out = [];
+  let h = shift.start;
+  for (let i = 0; i < 24; i++) {
+    out.push(h);
+    if (h === shift.end) break;
+    h = (h + 1) % 24;
+  }
+  return out;
+}
+
+// Build the skeleton a concierge fills in over a whole shift: a header, one
+// timestamped line per hour, and the standing note sections. The first and
+// last hour lines carry the handover; the hours between are left blank on
+// purpose, as slots to log into as the shift goes.
+//
+// The relieving concierge's name isn't known when the shift starts, so it
+// renders as a #### blank the inserter can tab to later — same treatment
+// any unfilled field gets.
+export function buildShiftLog({
+  site = "ORA",
+  shift = null,
+  sections = [],
+  state = {},
+}) {
+  const name = String(state.name ?? "").trim();
+  const prevName = String(state.prevName ?? "").trim();
+  const keys = !!state.keys;
+
+  const t = [];
+  const h = [];
+  const line = (text, html) => {
+    t.push(text);
+    h.push(html === undefined ? esc(text) : html);
+  };
+
+  const nameT = name || BLANK;
+  const nameH = name ? `<b>${esc(name)}</b>` : blankHtml("name");
+  const prevT = prevName || BLANK;
+  const prevH = prevName ? esc(prevName) : blankHtml("prevName");
+  const shiftT = shift?.value || BLANK;
+  const shiftH = shift?.value ? esc(shift.value) : blankHtml("shift");
+  const date = formatDate();
+
+  line(
+    `${site} | ${shiftT} | ${date} | ${nameT}`,
+    `${esc(site)} | ${shiftH} | ${esc(date)} | ${nameH}`
+  );
+  line("");
+
+  const hours = shiftHours(shift);
+  hours.forEach((hr, i) => {
+    const stamp = hourLabel(hr);
+    const stampH = `<b>${esc(stamp)}</b>`;
+    if (i === 0) {
+      const tail = keys ? " Received concierge keys." : "";
+      line(
+        `${stamp}: (${nameT}) on site. (${prevT}) off site.${tail}`,
+        `${stampH}: (${nameH}) on site. (${prevH}) off site.${esc(tail)}`
+      );
+    } else if (i === hours.length - 1) {
+      const tail = keys ? " Handed over concierge keys." : "";
+      line(
+        `${stamp}: (${nameT}) off site. (${BLANK}) on site.${tail}`,
+        `${stampH}: (${nameH}) off site. (${blankHtml("relief")}) on site.${esc(tail)}`
+      );
+    } else {
+      line(`${stamp}:`, `${stampH}:`);
+    }
+    line("");
+  });
+
+  for (const s of sections) {
+    line(s, `<b>${esc(s)}</b>`);
+    line("");
+    line("* ");
+    line("");
+  }
+
+  while (t.length && t[t.length - 1] === "") {
+    t.pop();
+    h.pop();
+  }
+
+  return { html: h.join("<br>"), text: t.join("\n") };
+}
+
 // Tint a built sentence so a reader scanning the log can spot it. Only the
 // HTML form can carry a colour — a plain textarea has nowhere to put one,
 // so the text form is returned untouched rather than faked with a marker.
@@ -158,7 +260,12 @@ export function buildQuickLog(line) {
   const trimmed = String(line ?? "").trim();
   const time = formatTime();
   const text = `${time}: ${trimmed}`;
-  const html = `<b>${esc(time)}</b>: ${esc(trimmed)}`;
+  // A bare stamp (no body text) leaves the separator space trailing, and
+  // HTML collapses trailing whitespace — the caret would land flush against
+  // the colon. A non-breaking space survives, so the line is ready to type
+  // into. With body text the space is interior and needs no help.
+  const gap = trimmed ? " " : "&nbsp;";
+  const html = `<b>${esc(time)}</b>:${gap}${esc(trimmed)}`;
   return { html, text };
 }
 
@@ -193,8 +300,9 @@ export function buildSiteTour({ areas = [], state = {} }) {
     const text = [];
     const html = [];
     if (s.clear) {
-      text.push("all clear");
-      html.push("all clear");
+      const cleared = area.clear || "all clear";
+      text.push(cleared);
+      html.push(esc(cleared));
     }
     if (status) {
       text.push(status);
@@ -264,9 +372,10 @@ export function buildSentence({ role, reason, values = {} }) {
 // Each insertion starts on its own line, so logs stack vertically instead
 // of running into prior content. Both popup and shorthand paths wrap their
 // outgoing sentence with this before handing it to the inserter.
-export function withLeadingLineBreak({ html, text }) {
+export function withLeadingLineBreak(sentence) {
   return {
-    html: `<br>${html ?? ""}`,
-    text: `\n${text ?? ""}`,
+    ...sentence,
+    html: `<br>${sentence?.html ?? ""}`,
+    text: `\n${sentence?.text ?? ""}`,
   };
 }
