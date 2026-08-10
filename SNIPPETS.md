@@ -25,7 +25,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (2 reasons; role fields: name)
 - `pk` — Package (3 reasons; role fields: courier, courierOther)
-- `co` — Concierge (3 reasons; role fields: name)
+- `co` — Concierge (4 reasons; role fields: name)
 - `pp` — Pilgrim Parking (2 reasons; role fields: name)
 
 ## Resident — `re`
@@ -229,6 +229,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Concierge left the front desk for a site tour.
 - **Filled:** 10:00 AM: Concierge John left the front desk for a site tour.
+
+### `;co4` — Contacted resident
+
+- **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) and informed them ####.
+- **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) and informed them ####.
 
 ## Pilgrim Parking — `pp`
 

@@ -519,6 +519,16 @@ export const HELPER = {
           label: "On site touring",
           template: "Concierge[ {name}] left the front desk for a site tour.",
         },
+        {
+          id: "contactedResident",
+          label: "Contacted resident",
+          template:
+            "Concierge[ {name}] contacted the resident in unit ({unit}) and informed them {message}.",
+          fields: [
+            UNIT_FIELD,
+            { key: "message", label: "Informed them", kind: "text" },
+          ],
+        },
       ],
     },
     {
