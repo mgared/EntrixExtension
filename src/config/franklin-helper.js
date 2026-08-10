@@ -596,11 +596,42 @@ export const SITE_TOUR_AREAS = [
   { id: "floor12Reservable", label: "12th floor reservable area" },
 ];
 
+// Concierge shifts as [start, end) hours on a 24h clock. The hours are
+// stored rather than parsed back out of the label because the overnight
+// shift wraps midnight, which a label alone can't express.
+const SHIFTS = [
+  { value: "7am-3pm", start: 7, end: 15 },
+  { value: "3pm-11pm", start: 15, end: 23 },
+  { value: "11pm-7am", start: 23, end: 7 },
+];
+
+// Trailing sections of the shift log, each seeded with one empty bullet
+// for the concierge to fill in over the course of the shift.
+const SHIFT_SECTIONS = [
+  "KEYS REMAINING OUT",
+  "MOVE IN/MOVE OUT KEYS",
+  "PROPERTY MANAGEMENT NOTES",
+  "CONCIERGE TEAM NOTES",
+  "FACILITY/MAINTENANCE NOTES",
+  "INCIDENTS OF NOTE",
+];
+
 // One-click "quick log" chips rendered under the popup preview. A plain
 // chip inserts the time prefix + `text`. A chip carrying `form` instead
 // opens a sub-form in the popup and builds its sentence from what the
 // user fills in.
 export const QUICK_LOGS = [
+  {
+    label: "Begin shift",
+    text: "Shift started.",
+    form: {
+      kind: "beginShift",
+      title: "Begin shift",
+      site: "ORA",
+      shifts: SHIFTS,
+      sections: SHIFT_SECTIONS,
+    },
+  },
   {
     label: "Site tour",
     text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
