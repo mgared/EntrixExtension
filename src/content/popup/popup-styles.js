@@ -24,8 +24,8 @@ export const POPUP_STYLES = `
     max-width: 760px;
   }
   .root.wide {
-    min-width: 700px;
-    max-width: 860px;
+    min-width: 840px;
+    max-width: 1000px;
   }
   .form-head {
     display: flex;
@@ -55,13 +55,17 @@ export const POPUP_STYLES = `
     padding: 2px 0;
   }
   .tour-name {
-    flex: 0 0 165px;
+    flex: 0 0 185px;
     font-size: 12.5px;
     color: #333;
   }
+  /* Tick labels carry each area's own wording, so they vary from two words
+     to most of a sentence. A fixed basis keeps the issue boxes aligned
+     down the column and lets the long ones wrap rather than shove. */
   .tour-row .check {
-    flex: 0 0 auto;
-    white-space: nowrap;
+    flex: 0 0 250px;
+    align-items: flex-start;
+    line-height: 1.3;
   }
   .tour-status {
     flex: 0 0 155px;

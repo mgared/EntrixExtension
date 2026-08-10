@@ -366,7 +366,10 @@ export function createPopupView() {
       updatePreview();
     });
     clearLabel.appendChild(clear);
-    clearLabel.appendChild(document.createTextNode("All clear"));
+    // The box says exactly what ticking it will report, which for most
+    // areas is "all clear" but for some is the specific thing being
+    // confirmed — no guessing what a tick means.
+    clearLabel.appendChild(document.createTextNode(area.clear || "all clear"));
     row.appendChild(clearLabel);
 
     // Areas with a fixed set of states (the coffee machines) get a picker

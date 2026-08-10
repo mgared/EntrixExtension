@@ -300,8 +300,9 @@ export function buildSiteTour({ areas = [], state = {} }) {
     const text = [];
     const html = [];
     if (s.clear) {
-      text.push("all clear");
-      html.push("all clear");
+      const cleared = area.clear || "all clear";
+      text.push(cleared);
+      html.push(esc(cleared));
     }
     if (status) {
       text.push(status);
