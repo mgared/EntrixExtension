@@ -108,20 +108,21 @@ export function replaceRange(element, start, end, { html, text }) {
 // File a copy of the sentence as a bullet under a named heading elsewhere
 // in the same editable — the shift log's standing note sections.
 //
+// The newest note goes directly under its heading, pushing older ones down.
+// That only needs the heading itself to be found — never where the section
+// ends — so a note can't be stranded at the bottom of the document when the
+// editor's markup doesn't split into lines the way we'd guess.
+//
 // Returns false when the heading isn't in the document, which is the normal
 // case for any editable that doesn't hold a shift log. Callers treat that
 // as a no-op: a flag still tints the sentence, it just has nowhere to file.
-//
-// `headings` is the full list of section names, used to find where the
-// target section ends. Without it there's no reliable way to tell a heading
-// from any other line of shouty text.
-export function appendUnderHeading(element, heading, { html, text }, headings = []) {
+export function appendUnderHeading(element, heading, { html, text }) {
   const kind = getEditableKind(element);
   if (kind === "input" || kind === "textarea") {
-    return fileIntoPlain(element, heading, text || stripHtml(html || ""), headings);
+    return fileIntoPlain(element, heading, text || stripHtml(html || ""));
   }
   if (kind === "contenteditable") {
-    return fileIntoRich(element, heading, html || "", text || "", headings);
+    return fileIntoRich(element, heading, html || "", text || "");
   }
   return false;
 }
@@ -140,38 +141,23 @@ function lineOfOffset(value, offset) {
   return line;
 }
 
-function fileIntoPlain(element, heading, sentence, headings) {
+function fileIntoPlain(element, heading, sentence) {
   const before = element.value;
   const lines = before.split("\n");
   const start = lines.findIndex((l) => sameHeading(l, heading));
   if (start === -1) return false;
 
-  // The section runs until the next known heading, or the end of the log.
-  let end = lines.length;
-  for (let i = start + 1; i < lines.length; i++) {
-    if (headings.some((h) => sameHeading(lines[i], h))) {
-      end = i;
-      break;
-    }
-  }
-
-  let last = -1;
-  for (let i = end - 1; i > start; i--) {
-    if (lines[i].trim()) {
-      last = i;
-      break;
-    }
-  }
+  // Skip the blank line the log leaves under each heading, so notes stack
+  // directly beneath the title rather than above that gap.
+  let at = start + 1;
+  while (at < lines.length && !lines[at].trim()) at++;
 
   const bullet = `* ${sentence}`;
-  let at;
-  if (last !== -1 && EMPTY_BULLET.test(lines[last].trim())) {
+  if (at < lines.length && EMPTY_BULLET.test(lines[at].trim())) {
     // A section still holding its seeded empty bullet gets filled rather
     // than grown, so the first note doesn't strand a bare "*" above it.
-    at = last;
     lines[at] = bullet;
   } else {
-    at = (last === -1 ? start : last) + 1;
     lines.splice(at, 0, bullet);
   }
 
@@ -189,7 +175,7 @@ function fileIntoPlain(element, heading, sentence, headings) {
   return true;
 }
 
-function fileIntoRich(element, heading, html, text, headings) {
+function fileIntoRich(element, heading, html, text) {
   const doc = element.ownerDocument;
   const walker = doc.createTreeWalker(element, NodeFilter.SHOW_TEXT);
   const nodes = [];
@@ -198,38 +184,62 @@ function fileIntoRich(element, heading, html, text, headings) {
   const start = nodes.findIndex((n) => sameHeading(n.nodeValue, heading));
   if (start === -1) return false;
 
-  let end = nodes.length;
+  // First thing with content under the heading — the note already filed
+  // there, the seeded empty bullet, or whatever follows an empty section.
+  let next = null;
   for (let i = start + 1; i < nodes.length; i++) {
-    if (headings.some((h) => sameHeading(nodes[i].nodeValue, h))) {
-      end = i;
-      break;
-    }
-  }
-
-  let last = null;
-  for (let i = end - 1; i > start; i--) {
     if (nodes[i].nodeValue.trim()) {
-      last = nodes[i];
+      next = nodes[i];
       break;
     }
   }
 
-  if (last && EMPTY_BULLET.test(last.nodeValue.trim()) && last.parentNode) {
-    last.parentNode.replaceChild(fragmentFrom(doc, `* ${html}`), last);
+  // A filed note leads with its own "* " text node, which on its own is
+  // indistinguishable from the seeded empty bullet — without the marker,
+  // the next note would replace the last one instead of stacking above it.
+  if (
+    next &&
+    !inFiledNote(next) &&
+    EMPTY_BULLET.test(next.nodeValue.trim()) &&
+    next.parentNode
+  ) {
+    next.parentNode.replaceChild(fragmentFrom(doc, noteHtml(html)), next);
     fireInput(element, text);
     return true;
   }
 
-  // Insert after whichever top-level node owns the section's last line, so
-  // the new bullet lands outside any <b> the heading or a note sits in.
-  const anchor = topLevelOf(last || nodes[start], element);
-  if (!anchor) return false;
-  anchor.parentNode.insertBefore(
-    fragmentFrom(doc, `<br>* ${html}`),
-    anchor.nextSibling
+  // Land the bullet on its own line above whatever is there now. Anchoring
+  // on the top-level node keeps it outside any <b> the heading or an
+  // existing note happens to sit inside.
+  const anchor = next && topLevelOf(next, element);
+  if (anchor) {
+    anchor.parentNode.insertBefore(
+      fragmentFrom(doc, `${noteHtml(html)}<br>`),
+      anchor
+    );
+    fireInput(element, text);
+    return true;
+  }
+
+  // Nothing follows the heading at all — hang the note straight off it.
+  const head = topLevelOf(nodes[start], element);
+  if (!head) return false;
+  head.parentNode.insertBefore(
+    fragmentFrom(doc, `<br>${noteHtml(html)}`),
+    head.nextSibling
   );
   fireInput(element, text);
   return true;
+}
+
+const NOTE_MARK = "data-filed-note";
+
+function noteHtml(html) {
+  return `<span ${NOTE_MARK}>* ${html}</span>`;
+}
+
+function inFiledNote(node) {
+  return !!node.parentElement?.closest(`[${NOTE_MARK}]`);
 }
 
 function fragmentFrom(doc, html) {

@@ -14,7 +14,6 @@ import { resolveShorthand } from "./shorthand/decoder.js";
 import { createPopupController } from "./popup/popup-controller.js";
 import { getCaretViewportRect } from "./positioning/caret-position.js";
 import { replaceRange, appendUnderHeading } from "./inserter/text-inserter.js";
-import { SHIFT_SECTIONS } from "../config/franklin-helper.js";
 import { buildSentence, withLeadingLineBreak } from "./sentence-builder.js";
 import { TRIGGER_SEQUENCE } from "../config/triggers.js";
 
@@ -34,7 +33,7 @@ function boot() {
       // the log in this editable has one. Done after the caret insertion so
       // the section scan sees the document as it now stands.
       for (const heading of filing?.sections || []) {
-        appendUnderHeading(element, heading, filing, SHIFT_SECTIONS);
+        appendUnderHeading(element, heading, filing);
       }
       detector?.suppress(element);
     },

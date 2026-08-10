@@ -214,6 +214,12 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to request elevator access.",
         },
         {
+          id: "pickedUpPackages",
+          label: "Picked up packages",
+          template:
+            "Resident[ {name}] from unit ({unit}) {contact} to pick up packages.",
+        },
+        {
           id: "sendUpGuest",
           label: "Send a guest up",
           template:
@@ -243,7 +249,7 @@ export const HELPER = {
           id: "visitResident",
           label: "Visit resident",
           template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to visit resident, access {outcome}.",
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to visit resident, elevator access {outcome}.",
           fields: [
             {
               key: "outcome",
@@ -463,12 +469,6 @@ export const HELPER = {
           template:
             "Prospect[ {name}] arrived for their scheduled tour with the leasing team; leasing was informed.",
         },
-        {
-          id: "selfTour",
-          label: "Self-guided tour (Tour24)",
-          template:
-            "Prospect[ {name}] arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.",
-        },
       ],
     },
     {
@@ -518,6 +518,16 @@ export const HELPER = {
           id: "siteTouring",
           label: "On site touring",
           template: "Concierge[ {name}] left the front desk for a site tour.",
+        },
+        {
+          id: "contactedResident",
+          label: "Contacted resident",
+          template:
+            "Concierge[ {name}] contacted the resident in unit ({unit}) and informed them {message}.",
+          fields: [
+            UNIT_FIELD,
+            { key: "message", label: "Informed them", kind: "text" },
+          ],
         },
       ],
     },
