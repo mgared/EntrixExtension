@@ -260,7 +260,12 @@ export function buildQuickLog(line) {
   const trimmed = String(line ?? "").trim();
   const time = formatTime();
   const text = `${time}: ${trimmed}`;
-  const html = `<b>${esc(time)}</b>: ${esc(trimmed)}`;
+  // A bare stamp (no body text) leaves the separator space trailing, and
+  // HTML collapses trailing whitespace — the caret would land flush against
+  // the colon. A non-breaking space survives, so the line is ready to type
+  // into. With body text the space is interior and needs no help.
+  const gap = trimmed ? " " : "&nbsp;";
+  const html = `<b>${esc(time)}</b>:${gap}${esc(trimmed)}`;
   return { html, text };
 }
 

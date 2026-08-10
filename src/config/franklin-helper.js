@@ -622,6 +622,12 @@ const SHIFT_SECTIONS = [
 // user fills in.
 export const QUICK_LOGS = [
   {
+    // Empty text leaves just the time prefix the builder adds to every
+    // quick log — a bare stamp to start a line under.
+    label: "Time",
+    text: "",
+  },
+  {
     label: "Begin shift",
     text: "Shift started.",
     form: {
