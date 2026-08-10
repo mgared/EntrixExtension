@@ -15,7 +15,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Roles at a glance
 
-- `re` — Resident (8 reasons; role fields: name, unit, contact)
+- `re` — Resident (9 reasons; role fields: name, unit, contact)
 - `gu` — Guest (4 reasons; role fields: name, unit, residentName, contact)
 - `ad` — App delivery (2 reasons; role fields: name, unit)
 - `dw` — Dog Walker (3 reasons; role fields: name, unit)
@@ -23,7 +23,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
 - `ve` — Vendor (2 reasons; role fields: name, unit)
 - `lo` — Leasing Office (3 reasons; role fields: name)
-- `pr` — Prospect (3 reasons; role fields: name)
+- `pr` — Prospect (2 reasons; role fields: name)
 - `pk` — Package (3 reasons; role fields: courier, courierOther)
 - `co` — Concierge (3 reasons; role fields: name)
 - `pp` — Pilgrim Parking (2 reasons; role fields: name)
@@ -65,7 +65,12 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request elevator access.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request elevator access.
 
-### `;re8` — Send a guest up
+### `;re8` — Picked up packages
+
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to pick up packages.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to pick up packages.
+
+### `;re9` — Send a guest up
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request that guest #### be sent up.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request that guest Marcus be sent up.
@@ -190,11 +195,6 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Prospect arrived for their scheduled tour with the leasing team; leasing was informed.
 - **Filled:** 10:00 AM: Prospect John arrived for their scheduled tour with the leasing team; leasing was informed.
-
-### `;pr3` — Self-guided tour (Tour24)
-
-- **Empty:** 10:00 AM: Prospect arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
-- **Filled:** 10:00 AM: Prospect John arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.
 
 ## Package — `pk`
 

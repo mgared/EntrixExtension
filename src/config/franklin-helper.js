@@ -214,6 +214,12 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to request elevator access.",
         },
         {
+          id: "pickedUpPackages",
+          label: "Picked up packages",
+          template:
+            "Resident[ {name}] from unit ({unit}) {contact} to pick up packages.",
+        },
+        {
           id: "sendUpGuest",
           label: "Send a guest up",
           template:
@@ -462,12 +468,6 @@ export const HELPER = {
           label: "Scheduled tour with leasing",
           template:
             "Prospect[ {name}] arrived for their scheduled tour with the leasing team; leasing was informed.",
-        },
-        {
-          id: "selfTour",
-          label: "Self-guided tour (Tour24)",
-          template:
-            "Prospect[ {name}] arrived for a self-guided tour signed up through Tour24; tour keys were exchanged for an ID.",
         },
       ],
     },
