@@ -79,8 +79,8 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;gu1` — Visit resident
 
-- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to visit resident, access ####.
-- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to visit resident, access granted after resident confirmation via call.
+- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to visit resident, elevator access ####.
+- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to visit resident, elevator access granted after resident confirmation via call.
 
 ### `;gu2` — Pick up keys
 

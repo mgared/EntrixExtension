@@ -249,7 +249,7 @@ export const HELPER = {
           id: "visitResident",
           label: "Visit resident",
           template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to visit resident, access {outcome}.",
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to visit resident, elevator access {outcome}.",
           fields: [
             {
               key: "outcome",
