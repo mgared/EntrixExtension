@@ -22,11 +22,14 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `cl` — Cleaner (3 reasons; role fields: name, unit)
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
 - `ve` — Vendor (2 reasons; role fields: name, unit)
+- `it` — Item / property (4 reasons; role fields: name, unit)
+- `mo` — Move in/out keys (2 reasons; role fields: name, unit)
+- `mt` — Maintenance (2 reasons; role fields: name)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (2 reasons; role fields: name)
-- `pk` — Package (3 reasons; role fields: courier, courierOther)
-- `co` — Concierge (4 reasons; role fields: name)
-- `pp` — Pilgrim Parking (2 reasons; role fields: name)
+- `pk` — Package (4 reasons; role fields: courier, courierOther)
+- `co` — Concierge (7 reasons; role fields: name)
+- `pp` — Pilgrim Parking (3 reasons; role fields: name)
 
 ## Resident — `re`
 
@@ -101,8 +104,8 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;ad1` — Delivered — awaiting pickup
 
-- **Empty:** 10:00 AM: App delivery for unit (####) was delivered and is awaiting pick-up at the front desk.
-- **Filled:** 10:00 AM: App delivery from John for unit (234) was delivered and is awaiting pick-up at the front desk.
+- **Empty:** 10:00 AM: App delivery for unit (####) was delivered and is awaiting pick-up at the front desk; ####.
+- **Filled:** 10:00 AM: App delivery from John for unit (234) was delivered and is awaiting pick-up at the front desk; the resident was reached and notified.
 
 ### `;ad2` — Not picked up >30 min — stored
 
@@ -167,6 +170,52 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Vendor returned the vendor keys to the front desk and their ID was handed back.
 - **Filled:** 10:00 AM: Vendor John returned the vendor keys for unit (234) to the front desk and their ID was handed back.
 
+## Item / property — `it`
+
+### `;it1` — Dropped off for someone
+
+- **Empty:** 10:00 AM: Resident of unit (####) dropped off #### at the front desk for #### to collect. Stored ####.
+- **Filled:** 10:00 AM: Resident John of unit (234) dropped off a rent check at the front desk for Helen to collect. Stored by desk cabinet.
+
+### `;it2` — Collected from the desk
+
+- **Empty:** 10:00 AM: #### collected #### from the front desk; identification confirmed.
+- **Filled:** 10:00 AM: John collected a rent check from the front desk for unit (234); identification confirmed.
+
+### `;it3` — Left for storage
+
+- **Empty:** 10:00 AM: Resident of unit (####) left #### at the front desk to collect later. Stored ####.
+- **Filled:** 10:00 AM: Resident John of unit (234) left a rent check at the front desk to collect later. Stored by desk cabinet.
+
+### `;it4` — Found property
+
+- **Empty:** 10:00 AM: #### was found at #### and turned in to the front desk. ####
+- **Filled:** 10:00 AM: a rent check was found at #### and turned in to the front desk. Marked unknown and left at the leasing office.
+
+## Move in/out keys — `mo`
+
+### `;mo1` — Keys returned
+
+- **Empty:** 10:00 AM: #### keys for unit (####) were returned to the front desk and ####.
+- **Filled:** 10:00 AM: Move-out keys for unit (234) were returned to the front desk by John and delivered to the leasing office.
+
+### `;mo2` — Keys released
+
+- **Empty:** 10:00 AM: #### keys for unit (####) were released; identification confirmed.
+- **Filled:** 10:00 AM: Move-out keys for unit (234) were released to John; identification confirmed.
+
+## Maintenance — `mt`
+
+### `;mt1` — Resident reported an issue
+
+- **Empty:** 10:00 AM: Resident of unit (####) reported ####; ####.
+- **Filled:** 10:00 AM: Resident of unit (234) reported ####; Emergency Maintenance contact information was provided, the resident was advised same-evening response could not be guaranteed, and the maintenance team will be notified for follow-up.
+
+### `;mt2` — Maintenance on site
+
+- **Empty:** 10:00 AM: Maintenance arrived on site regarding ####.
+- **Filled:** 10:00 AM: Maintenance John arrived on site regarding #### for unit (234).
+
 ## Leasing Office — `lo`
 
 ### `;lo1` — Staff arrived
@@ -203,12 +252,17 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: #### dropped off a bulk of packages at the front desk.
 - **Filled:** 10:00 AM: Amazon dropped off a bulk of packages at the front desk.
 
-### `;pk2` — Picked up returns
+### `;pk2` — On site
+
+- **Empty:** 10:00 AM: #### arrived on site.
+- **Filled:** 10:00 AM: Amazon arrived on site.
+
+### `;pk3` — Picked up returns
 
 - **Empty:** 10:00 AM: #### picked up returns from the front desk.
 - **Filled:** 10:00 AM: Amazon picked up returns from the front desk.
 
-### `;pk3` — Report something
+### `;pk4` — Report something
 
 - **Empty:** 10:00 AM: #### came to the front desk to report that ####.
 - **Filled:** 10:00 AM: Amazon came to the front desk to report that their kitchen sink is leaking.
@@ -232,8 +286,23 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;co4` — Contacted resident
 
-- **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) and informed them ####.
-- **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) and informed them ####.
+- **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) regarding ####; ####.
+- **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) regarding ####; the resident was reached and notified.
+
+### `;co5` — Sorted/processed packages
+
+- **Empty:** 10:00 AM: Concierge sorted and processed packages in the package room while maintaining visibility at the front desk.
+- **Filled:** 10:00 AM: Concierge John sorted and processed packages in the package room while maintaining visibility at the front desk.
+
+### `;co6` — Cleaned up / made safe
+
+- **Empty:** 10:00 AM: Concierge addressed #### at ####. ####
+- **Filled:** 10:00 AM: Concierge John addressed #### at ####. Caution Wet Floor signage was placed.
+
+### `;co7` — Reviewed cameras
+
+- **Empty:** 10:00 AM: Concierge reviewed the security cameras; ####.
+- **Filled:** 10:00 AM: Concierge John reviewed the security cameras; no suspicious activity was observed.
 
 ## Pilgrim Parking — `pp`
 
@@ -242,7 +311,12 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Pilgrim Parking staff came to the front desk to report that ####.
 - **Filled:** 10:00 AM: Pilgrim Parking staff John came to the front desk to report that their kitchen sink is leaking.
 
-### `;pp2` — Drop something off
+### `;pp2` — Resident parking inquiry
+
+- **Empty:** 10:00 AM: Resident of unit (####) inquired about #### for a #### (#### plate ####); ####.
+- **Filled:** 10:00 AM: Resident of unit (234) inquired about overnight parking for a #### (#### plate ####); the resident was advised the concierge would follow up once parking guidance is confirmed.
+
+### `;pp3` — Drop something off
 
 - **Empty:** 10:00 AM: Pilgrim Parking staff dropped off #### at the front desk.
 - **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234).

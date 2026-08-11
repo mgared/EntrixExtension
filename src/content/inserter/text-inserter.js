@@ -208,10 +208,8 @@ function fileIntoRich(element, heading, html, text) {
     return true;
   }
 
-  // Land the bullet on its own line above whatever is there now. Anchoring
-  // on the top-level node keeps it outside any <b> the heading or an
-  // existing note happens to sit inside.
-  const anchor = next && topLevelOf(next, element);
+  // Land the bullet on its own line above whatever is there now.
+  const anchor = next && lineAnchor(next, element);
   if (anchor) {
     anchor.parentNode.insertBefore(
       fragmentFrom(doc, `${noteHtml(html)}<br>`),
@@ -222,7 +220,7 @@ function fileIntoRich(element, heading, html, text) {
   }
 
   // Nothing follows the heading at all — hang the note straight off it.
-  const head = topLevelOf(nodes[start], element);
+  const head = lineAnchor(nodes[start], element);
   if (!head) return false;
   head.parentNode.insertBefore(
     fragmentFrom(doc, `<br>${noteHtml(html)}`),
@@ -248,10 +246,30 @@ function fragmentFrom(doc, html) {
   return template.content.cloneNode(true);
 }
 
-function topLevelOf(node, root) {
+// Inline wrappers a note may safely be hoisted out of when placing it —
+// we don't want a bullet nested inside the heading's <b>. Anything else is
+// a block boundary.
+const INLINE_TAGS = new Set([
+  "A", "B", "CODE", "EM", "FONT", "I", "MARK", "S",
+  "SMALL", "SPAN", "STRONG", "SUB", "SUP", "U",
+]);
+
+// The node a filed note should be placed next to. Climbing stops at the
+// first block ancestor rather than continuing to the editable's top level:
+// an editor that wraps the whole log in one container would otherwise hand
+// back that wrapper, and inserting before it puts the note above the entire
+// document instead of under its heading.
+function lineAnchor(node, root) {
   let n = node;
-  while (n && n.parentNode && n.parentNode !== root) n = n.parentNode;
-  return n && n.parentNode === root ? n : null;
+  while (
+    n.parentNode &&
+    n.parentNode !== root &&
+    n.parentNode.nodeType === 1 &&
+    INLINE_TAGS.has(n.parentNode.nodeName)
+  ) {
+    n = n.parentNode;
+  }
+  return n.parentNode ? n : null;
 }
 
 function fireInput(element, data) {
