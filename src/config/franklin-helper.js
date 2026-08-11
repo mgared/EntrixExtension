@@ -142,6 +142,50 @@ const COURIER_OTHER_FIELD = {
   showWhen: { key: "courier", value: "Other" },
 };
 
+// Where something handed to the desk ends up. Shared by every reason that
+// takes custody of an item, so the log names the same four places each time.
+const STORAGE_FIELD = {
+  key: "storage",
+  label: "Stored",
+  kind: "select",
+  options: [
+    { value: "by desk cabinet", label: "Desk cabinet" },
+    { value: "by key lock box", label: "Key lock box" },
+    { value: "inside package room", label: "Package room" },
+    { value: "in keytrack", label: "Keytrack" },
+  ],
+};
+
+// How an attempt to reach a resident actually went. Whether they picked up
+// is the whole point of the entry, so it can't be left implied.
+const CONTACT_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "radio",
+  options: [
+    {
+      value: "the resident was reached and notified",
+      label: "Reached & notified",
+    },
+    {
+      value:
+        "the resident was reached and advised they would retrieve it shortly",
+      label: "Will retrieve shortly",
+    },
+    {
+      value: "there was no answer and a voicemail was left",
+      label: "No answer — voicemail",
+    },
+    { value: "there was no answer", label: "No answer" },
+  ],
+};
+
+const OPTIONAL_UNIT_FIELD = {
+  ...UNIT_FIELD,
+  optional: true,
+  placeholder: "(optional)",
+};
+
 export const HELPER = {
   defaultRoleId: "resident",
   roles: [
@@ -158,17 +202,7 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to drop keys for {recipient} to pick-up later. (stored {storage})",
           fields: [
             { key: "recipient", label: "Drop for (name)", kind: "text" },
-            {
-              key: "storage",
-              label: "Stored",
-              kind: "select",
-              options: [
-                { value: "by desk cabinet", label: "Desk cabinet" },
-                { value: "by key lock box", label: "Key lock box" },
-                { value: "inside package room", label: "Package room" },
-                { value: "in keytrack", label: "Keytrack" },
-              ],
-            },
+            STORAGE_FIELD,
           ],
         },
         {
@@ -306,7 +340,8 @@ export const HELPER = {
           id: "delivered",
           label: "Delivered — awaiting pickup",
           template:
-            "App delivery[ from {name}] for unit ({unit}) was delivered and is awaiting pick-up at the front desk.",
+            "App delivery[ from {name}] for unit ({unit}) was delivered and is awaiting pick-up at the front desk; {outcome}.",
+          fields: [CONTACT_OUTCOME],
         },
         {
           id: "lobby30",
@@ -420,6 +455,176 @@ export const HELPER = {
       ],
     },
     {
+      id: "item",
+      code: "it",
+      label: "Item / property",
+      // Anything the desk takes custody of that isn't a unit key: parking
+      // passes, forgotten belongings, found property.
+      fields: [NAME_FIELD, OPTIONAL_UNIT_FIELD],
+      reasons: [
+        {
+          id: "droppedForPickup",
+          label: "Dropped off for someone",
+          template:
+            "Resident[ {name}] of unit ({unit}) dropped off {item} at the front desk for {recipient} to collect. Stored {storage}.",
+          fields: [
+            { key: "item", label: "Item", kind: "text" },
+            { key: "recipient", label: "For (name)", kind: "text" },
+            STORAGE_FIELD,
+          ],
+        },
+        {
+          id: "collected",
+          label: "Collected from the desk",
+          template:
+            "{name} collected {item} from the front desk[ for unit ({unit})]; identification confirmed.",
+          fields: [{ key: "item", label: "Item", kind: "text" }],
+        },
+        {
+          id: "leftForStorage",
+          label: "Left for storage",
+          template:
+            "Resident[ {name}] of unit ({unit}) left {item} at the front desk to collect later. Stored {storage}.",
+          fields: [
+            { key: "item", label: "Item", kind: "text" },
+            STORAGE_FIELD,
+          ],
+        },
+        {
+          id: "found",
+          label: "Found property",
+          template:
+            "{item} was found at {location} and turned in to the front desk. {disposition}",
+          fields: [
+            { key: "item", label: "Item", kind: "text" },
+            { key: "location", label: "Found at", kind: "text" },
+            {
+              key: "disposition",
+              label: "Disposition",
+              kind: "select",
+              options: [
+                {
+                  value: "Marked unknown and left at the leasing office.",
+                  label: "Left at leasing office",
+                },
+                {
+                  value: "Secured at the front desk pending claim.",
+                  label: "Held at desk",
+                },
+                {
+                  value: "Returned to the owner.",
+                  label: "Returned to owner",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "moveKeys",
+      code: "mo",
+      label: "Move in/out keys",
+      // Tracked apart from unit keys because the shift log reports them in
+      // their own section.
+      fields: [NAME_FIELD, UNIT_FIELD],
+      reasons: [
+        {
+          id: "returned",
+          label: "Keys returned",
+          template:
+            "{moveType} keys for unit ({unit}) were returned to the front desk[ by {name}] and {disposition}.",
+          fields: [
+            {
+              key: "moveType",
+              label: "Type",
+              kind: "radio",
+              options: ["Move-out", "Move-in"],
+            },
+            {
+              key: "disposition",
+              label: "Disposition",
+              kind: "select",
+              options: [
+                {
+                  value: "delivered to the leasing office",
+                  label: "To leasing office",
+                },
+                {
+                  value: "secured at the front desk",
+                  label: "Held at desk",
+                },
+                { value: "left in the key lock box", label: "Key lock box" },
+              ],
+            },
+          ],
+        },
+        {
+          id: "released",
+          label: "Keys released",
+          template:
+            "{moveType} keys for unit ({unit}) were released[ to {name}]; identification confirmed.",
+          fields: [
+            {
+              key: "moveType",
+              label: "Type",
+              kind: "radio",
+              options: ["Move-out", "Move-in"],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "maintenance",
+      code: "mt",
+      label: "Maintenance",
+      fields: [NAME_FIELD],
+      reasons: [
+        {
+          id: "residentReported",
+          label: "Resident reported an issue",
+          template:
+            "Resident of unit ({unit}) reported {issue}; {action}.",
+          fields: [
+            UNIT_FIELD,
+            { key: "issue", label: "Issue", kind: "text" },
+            {
+              key: "action",
+              label: "Action taken",
+              kind: "radio",
+              options: [
+                {
+                  value:
+                    "Emergency Maintenance contact information was provided, the resident was advised same-evening response could not be guaranteed, and the maintenance team will be notified for follow-up",
+                  label: "Emergency Maintenance referral",
+                },
+                {
+                  value:
+                    "a maintenance request was submitted on the resident's behalf",
+                  label: "Request submitted",
+                },
+                {
+                  value: "the maintenance team was notified directly",
+                  label: "Team notified",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "onSite",
+          label: "Maintenance on site",
+          template:
+            "Maintenance[ {name}] arrived on site regarding {issue}[ for unit ({unit})].",
+          fields: [
+            { key: "issue", label: "Regarding", kind: "text" },
+            OPTIONAL_UNIT_FIELD,
+          ],
+        },
+      ],
+    },
+    {
       id: "leasingOffice",
       code: "lo",
       label: "Leasing Office",
@@ -483,6 +688,11 @@ export const HELPER = {
           template: "{courier} dropped off a bulk of packages at the front desk.",
         },
         {
+          id: "onSite",
+          label: "On site",
+          template: "{courier} arrived on site.",
+        },
+        {
           id: "pickedUpReturns",
           label: "Picked up returns",
           template: "{courier} picked up returns from the front desk.",
@@ -522,11 +732,68 @@ export const HELPER = {
         {
           id: "contactedResident",
           label: "Contacted resident",
+          // Phrased as "regarding" rather than "informed them" so the reason
+          // still reads correctly when nobody picked up.
           template:
-            "Concierge[ {name}] contacted the resident in unit ({unit}) and informed them {message}.",
+            "Concierge[ {name}] contacted the resident in unit ({unit}) regarding {message}; {outcome}.",
           fields: [
             UNIT_FIELD,
-            { key: "message", label: "Informed them", kind: "text" },
+            { key: "message", label: "Regarding", kind: "text" },
+            CONTACT_OUTCOME,
+          ],
+        },
+        {
+          id: "packages",
+          label: "Sorted/processed packages",
+          template:
+            "Concierge[ {name}] sorted and processed packages in the package room while maintaining visibility at the front desk.",
+        },
+        {
+          id: "cleanup",
+          label: "Cleaned up / made safe",
+          template:
+            "Concierge[ {name}] addressed {issue} at {location}. {precaution}",
+          fields: [
+            { key: "issue", label: "Issue", kind: "text" },
+            { key: "location", label: "Location", kind: "text" },
+            {
+              key: "precaution",
+              label: "Precaution",
+              kind: "select",
+              options: [
+                {
+                  value: "Caution Wet Floor signage was placed.",
+                  label: "Wet floor signage",
+                },
+                { value: "The area was cordoned off.", label: "Cordoned off" },
+                {
+                  value: "No further action was required.",
+                  label: "No further action",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "cameras",
+          label: "Reviewed cameras",
+          template: "Concierge[ {name}] reviewed the security cameras; {outcome}.",
+          fields: [
+            {
+              key: "outcome",
+              label: "Outcome",
+              kind: "radio",
+              options: [
+                {
+                  value: "no suspicious activity was observed",
+                  label: "Nothing suspicious",
+                },
+                {
+                  value: "activity was observed and is noted below",
+                  label: "Activity observed",
+                },
+              ],
+            },
           ],
         },
       ],
@@ -544,6 +811,48 @@ export const HELPER = {
             "Pilgrim Parking staff[ {name}] came to the front desk to report that {description}.",
           fields: [
             { key: "description", label: "Report details", kind: "text" },
+          ],
+        },
+        {
+          id: "residentInquiry",
+          label: "Resident parking inquiry",
+          // Voiced from the resident rather than the vendor: the role groups
+          // parking matters, and this is the parking question residents ask.
+          template:
+            "Resident of unit ({unit}) inquired about {topic} for a {vehicle} ({plateState} plate {plate}); {action}.",
+          fields: [
+            UNIT_FIELD,
+            {
+              key: "topic",
+              label: "Topic",
+              kind: "select",
+              options: [
+                "overnight parking",
+                "guest parking",
+                "a parking pass",
+                "a parking violation",
+              ],
+            },
+            { key: "vehicle", label: "Vehicle", kind: "text", placeholder: "Honda Accord" },
+            { key: "plateState", label: "Plate state", kind: "text", placeholder: "NJ" },
+            { key: "plate", label: "Plate #", kind: "text", placeholder: "W14WWJ" },
+            {
+              key: "action",
+              label: "Action",
+              kind: "select",
+              options: [
+                {
+                  value:
+                    "the resident was advised the concierge would follow up once parking guidance is confirmed",
+                  label: "Will follow up",
+                },
+                {
+                  value: "Pilgrim Parking was contacted for guidance",
+                  label: "Contacted Pilgrim",
+                },
+                { value: "a parking pass was issued", label: "Pass issued" },
+              ],
+            },
           ],
         },
         {
@@ -673,6 +982,10 @@ export const QUICK_LOGS = [
     label: "Site tour",
     text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
     form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
+  },
+  {
+    label: "Night lockup",
+    text: "No activity in the lobby. Music volume reduced and lighting dimmed. Resident vestibule and inner vestibule checked, locked and secured. Remaining at the front desk.",
   },
   {
     label: "Desk organized",
