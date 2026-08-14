@@ -347,8 +347,8 @@ export function buildSiteTour({ areas = [], state = {} }) {
   const tail = /[.!?]$/.test(textParts[textParts.length - 1]) ? "" : ".";
 
   return {
-    html: `<b>${esc(time)}</b>: ${head} — ${htmlParts.join("; ")}${tail}`,
-    text: `${time}: ${head} — ${textParts.join("; ")}${tail}`,
+    html: `<b>${esc(time)}</b>: ${head}. ${htmlParts.join("; ")}${tail}`,
+    text: `${time}: ${head}. ${textParts.join("; ")}${tail}`,
   };
 }
 
