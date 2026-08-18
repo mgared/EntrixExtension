@@ -197,10 +197,24 @@ export const HELPER = {
       reasons: [
         {
           id: "dropKeys",
-          label: "Drop keys for pickup",
+          label: "Drop off for pickup",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to drop keys for {recipient} to pick-up later. (stored {storage})",
+            "Resident[ {name}] from unit ({unit}) {contact} to drop {item} for {recipient} to pick-up later. (stored {storage})",
           fields: [
+            {
+              key: "item",
+              label: "Item",
+              kind: "select",
+              // Values carry their own article so the sentence reads right
+              // whichever one is picked.
+              default: "keys",
+              options: [
+                { value: "keys", label: "Keys" },
+                { value: "an envelope", label: "Envelope" },
+                { value: "a package", label: "Package" },
+                { value: "a bag", label: "Bag" },
+              ],
+            },
             { key: "recipient", label: "Drop for (name)", kind: "text" },
             STORAGE_FIELD,
           ],
@@ -209,23 +223,32 @@ export const HELPER = {
           id: "pickupKeys",
           label: "Pick up keys",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to pick up keys that were left for them.",
+            "Resident[ {name}] from unit ({unit}) {contact} to pick up keys that were left for them after identification was confirmed.",
         },
         {
           id: "report",
           label: "Report something",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to report that {description}.",
+            "Resident[ {name}] from unit ({unit}) {contact} to report that {description}.[ The report concerns unit ({aboutUnit}).]",
           fields: [
             { key: "description", label: "Report details", kind: "text" },
+            {
+              key: "aboutUnit",
+              label: "About unit #",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
           ],
         },
         {
           id: "missingPackage",
           label: "Missing package",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to inquire about a missing package that was delivered on {deliveredDate}.",
+            "Resident[ {name}] from unit ({unit}) {contact} to inquire about a missing package from {courier} that was delivered on {deliveredDate}.",
           fields: [
+            COURIER_FIELD,
+            COURIER_OTHER_FIELD,
             { key: "deliveredDate", label: "Delivered on", kind: "date" },
           ],
         },
@@ -239,13 +262,13 @@ export const HELPER = {
           id: "grabbedDolly",
           label: "Grabbed dolly",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly.",
+            "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; the concierge assisted after confirmation.",
         },
         {
           id: "elevatorAccess",
           label: "Request elevator access",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to request elevator access.",
+            "Resident[ {name}] from unit ({unit}) {contact} to request elevator access; access was granted after confirmation.",
         },
         {
           id: "pickedUpPackages",

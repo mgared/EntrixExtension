@@ -33,15 +33,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Resident — `re`
 
-### `;re1` — Drop keys for pickup
+### `;re1` — Drop off for pickup
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored ####)
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored by desk cabinet)
 
 ### `;re2` — Pick up keys
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to pick up keys that were left for them.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to pick up keys that were left for them.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to pick up keys that were left for them after identification was confirmed.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to pick up keys that were left for them after identification was confirmed.
 
 ### `;re3` — Report something
 
@@ -50,8 +50,8 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;re4` — Missing package
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to inquire about a missing package that was delivered on ####.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to inquire about a missing package that was delivered on 2026-04-25.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to inquire about a missing package from #### that was delivered on ####.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to inquire about a missing package from Amazon that was delivered on 2026-04-25.
 
 ### `;re5` — Unit lockout
 
@@ -60,13 +60,13 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;re6` — Grabbed dolly
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly; the concierge assisted after confirmation.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly; the concierge assisted after confirmation.
 
 ### `;re7` — Request elevator access
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request elevator access.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request elevator access.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request elevator access; access was granted after confirmation.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request elevator access; access was granted after confirmation.
 
 ### `;re8` — Picked up packages
 
