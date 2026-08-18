@@ -73,6 +73,12 @@ const SERVICE_SENT_UP_OUTCOME = {
       label: "Sent up — visitor list",
     },
     {
+      // Authorisation already happened when the resident asked, so nothing
+      // is confirmed afresh at the desk.
+      value: "sent up as per the resident's earlier request",
+      label: "Sent up — earlier request",
+    },
+    {
       value: "denied entry, failed to confirm with resident",
       label: "Denied — couldn't reach",
     },
