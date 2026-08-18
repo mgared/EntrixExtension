@@ -40,6 +40,17 @@ const NAME_FIELD = {
   placeholder: "(optional)",
 };
 
+// Service visitors often arrive on behalf of a company, and it may be a
+// different person from that company each visit — the log needs to be able
+// to name both, or either alone.
+const COMPANY_FIELD = {
+  key: "company",
+  label: "Company",
+  kind: "text",
+  optional: true,
+  placeholder: "(optional)",
+};
+
 const UNIT_FIELD = {
   key: "unit",
   label: "Unit #",
@@ -47,7 +58,7 @@ const UNIT_FIELD = {
   placeholder: "1204",
 };
 
-// Shared service-role outcome radios (Dog Walker / Cleaner / Baby Sitter).
+// Shared service-role outcome radios (Dog Walker / Cleaner).
 const SERVICE_SENT_UP_OUTCOME = {
   key: "outcome",
   label: "Outcome",
@@ -398,6 +409,12 @@ export const HELPER = {
           fields: [SERVICE_KEYS_OUTCOME],
         },
         {
+          id: "returnedKeys",
+          label: "Returned unit keys",
+          template:
+            "Guest[ {name}] returned the unit keys for unit ({unit}[ {residentName}]) to the front desk and their ID was handed back.",
+        },
+        {
           id: "sentUpPerRequest",
           label: "Sent up — per earlier request",
           // The arrival half of the resident's ;re9 request, where the
@@ -469,27 +486,36 @@ export const HELPER = {
       id: "dogWalker",
       code: "dw",
       label: "Dog Walker",
-      fields: [NAME_FIELD, UNIT_FIELD],
+      fields: [NAME_FIELD, COMPANY_FIELD, UNIT_FIELD],
       reasons: [
         {
           id: "sentUp",
           label: "Sent up",
           template:
-            "Dog walker[ {name}] arrived for unit ({unit}); {outcome}.",
+            "Dog walker[ {name}][ from {company}] arrived for unit ({unit}); {outcome}.",
           fields: [SERVICE_SENT_UP_OUTCOME],
         },
         {
           id: "pickedUpKeys",
           label: "Picked up unit keys",
           template:
-            "Dog walker[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
+            "Dog walker[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
         },
         {
           id: "returnedKeys",
           label: "Returned unit keys",
           template:
-            "Dog walker[ {name}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
+            "Dog walker[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
+        },
+        {
+          // Keys the resident owns and left at the desk are never coming
+          // back to us, so no ID is held against them — only the collector's
+          // identity is checked. Building keys are the opposite case.
+          id: "residentLeftKeys",
+          label: "Picked up keys left by resident",
+          template:
+            "Dog walker[ {name}][ from {company}] picked up the keys left for them by the resident of unit ({unit}); identification confirmed, no ID held.",
         },
       ],
     },
@@ -497,48 +523,35 @@ export const HELPER = {
       id: "cleaner",
       code: "cl",
       label: "Cleaner",
-      fields: [NAME_FIELD, UNIT_FIELD],
+      fields: [NAME_FIELD, COMPANY_FIELD, UNIT_FIELD],
       reasons: [
         {
           id: "sentUp",
           label: "Sent up",
-          template: "Cleaner[ {name}] arrived for unit ({unit}); {outcome}.",
+          template: "Cleaner[ {name}][ from {company}] arrived for unit ({unit}); {outcome}.",
           fields: [SERVICE_SENT_UP_OUTCOME],
         },
         {
           id: "pickedUpKeys",
           label: "Picked up unit keys",
           template:
-            "Cleaner[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
+            "Cleaner[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
         },
         {
           id: "returnedKeys",
           label: "Returned unit keys",
           template:
-            "Cleaner[ {name}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
-        },
-      ],
-    },
-    {
-      id: "babySitter",
-      code: "bs",
-      label: "Baby Sitter",
-      fields: [NAME_FIELD, UNIT_FIELD],
-      reasons: [
-        {
-          id: "sentUp",
-          label: "Sent up",
-          template:
-            "Baby sitter[ {name}] arrived for unit ({unit}); {outcome}.",
-          fields: [SERVICE_SENT_UP_OUTCOME],
+            "Cleaner[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
         },
         {
-          id: "givenKeys",
-          label: "Given unit keys",
+          // Keys the resident owns and left at the desk are never coming
+          // back to us, so no ID is held against them — only the collector's
+          // identity is checked. Building keys are the opposite case.
+          id: "residentLeftKeys",
+          label: "Picked up keys left by resident",
           template:
-            "Baby sitter[ {name}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
-          fields: [SERVICE_KEYS_OUTCOME],
+            "Cleaner[ {name}][ from {company}] picked up the keys left for them by the resident of unit ({unit}); identification confirmed, no ID held.",
         },
       ],
     },
@@ -1080,6 +1093,13 @@ export const QUICK_LOGS = [
     // quick log — a bare stamp to start a line under.
     label: "Time",
     text: "",
+  },
+  {
+    // Inline: appends to the entry the caret is already sitting on, which
+    // is how a key coming back gets recorded against the entry that lent it.
+    label: "Key returned",
+    inline: true,
+    text: "Key returned",
   },
   {
     label: "Begin shift",

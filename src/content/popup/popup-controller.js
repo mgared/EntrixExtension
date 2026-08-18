@@ -17,7 +17,9 @@ export function createPopupController({ onInsert, onDismiss }) {
     close();
     onInsert({
       ...ctx,
-      sentence: withLeadingLineBreak(sentence),
+      // An inline note continues the current line; everything else
+      // starts its own.
+      sentence: sentence.inline ? sentence : withLeadingLineBreak(sentence),
       // Section copies become bullets, so they take the sentence without
       // the leading line break the caret insertion needs.
       filing: sentence,

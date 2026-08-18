@@ -249,6 +249,18 @@ export function buildShiftLog({
   return { html: h.join("<br>"), text: t.join("\n") };
 }
 
+// An inline chip appends to the entry the caret already sits on instead of
+// starting a new line — how a key coming back is recorded against the entry
+// that lent it out, rather than as a disconnected line further down.
+export function buildInlineNote(line) {
+  const trimmed = String(line ?? "").trim();
+  const time = formatTime();
+  return {
+    html: ` ${esc(trimmed)} @ <b>${esc(time)}</b>.`,
+    text: ` ${trimmed} @ ${time}.`,
+  };
+}
+
 // Tint a built sentence so a reader scanning the log can spot it. Only the
 // HTML form can carry a colour — a plain textarea has nowhere to put one,
 // so the text form is returned untouched rather than faked with a marker.
