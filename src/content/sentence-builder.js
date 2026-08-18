@@ -128,6 +128,15 @@ function applyDefaults({ role, reason }, values) {
       }
     }
   }
+  // A field gated by `showWhen` contributes nothing while its condition is
+  // unmet, even if a stale value is still sitting in the map. Without this a
+  // template offering one optional segment per branch — a unit or a common
+  // area, say — could render both at once.
+  for (const fields of groups) {
+    for (const f of fields || []) {
+      if (f.showWhen && !isFieldVisible(f, out)) delete out[f.key];
+    }
+  }
   // `replaces: "otherKey"` hands this field's value to another key once it
   // is both visible and filled, so templates reference only the one key.
   // Visible-but-empty deliberately blanks the target, turning the sentinel

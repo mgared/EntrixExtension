@@ -20,7 +20,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `ad` — App delivery (4 reasons; role fields: app, appOther, unit)
 - `dw` — Dog Walker (4 reasons; role fields: name, company, unit)
 - `cl` — Cleaner (4 reasons; role fields: name, company, unit)
-- `ve` — Vendor (2 reasons; role fields: name, unit)
+- `ve` — Vendor (3 reasons; role fields: name, company, forWhat, unit, area)
 - `it` — Item / property (4 reasons; role fields: name, unit)
 - `mo` — Move in/out keys (2 reasons; role fields: name, unit)
 - `mt` — Maintenance (2 reasons; role fields: name)
@@ -186,6 +186,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Vendor returned the vendor keys to the front desk and their ID was handed back.
 - **Filled:** 10:00 AM: Vendor John returned the vendor keys for unit (234) to the front desk and their ID was handed back.
+
+### `;ve3` — Arrived / sent up
+
+- **Empty:** 10:00 AM: Vendor arrived; ####.
+- **Filled:** 10:00 AM: Vendor John arrived for unit (234); access granted after resident confirmation via call.
 
 ## Item / property — `it`
 

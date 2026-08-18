@@ -131,6 +131,58 @@ const VENDOR_KEYS_OUTCOME = {
   ],
 };
 
+// A vendor may be working on a unit or on a shared part of the building —
+// the pool, the entrance doors, the elevators — so the target is picked
+// first and only the matching field is shown.
+const VENDOR_FOR_FIELD = {
+  key: "forWhat",
+  label: "For",
+  kind: "select",
+  default: "unit",
+  options: [
+    { value: "unit", label: "A unit" },
+    { value: "area", label: "Building / amenity" },
+  ],
+};
+
+const VENDOR_UNIT_FIELD = {
+  ...UNIT_FIELD,
+  showWhen: { key: "forWhat", value: "unit" },
+};
+
+const VENDOR_AREA_FIELD = {
+  key: "area",
+  label: "Area",
+  kind: "text",
+  // The template supplies "the", so a bare noun phrase is what's wanted.
+  placeholder: "pool area",
+  showWhen: { key: "forWhat", value: "area" },
+};
+
+// Letting a vendor in is authorised the same way handing them keys is, but
+// nothing is exchanged, so the wording is about access rather than an ID.
+const VENDOR_ACCESS_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "radio",
+  options: [
+    {
+      value: "access granted after resident confirmation via call",
+      label: "Granted — resident confirmed",
+    },
+    {
+      value:
+        "access granted after confirming with the leasing/maintenance team",
+      label: "Granted — leasing/maintenance",
+    },
+    {
+      value:
+        "access denied, failed to confirm with the resident or the leasing/maintenance team",
+      label: "Denied — couldn't confirm",
+    },
+  ],
+};
+
 // Courier picker for the Package role. "Other" is a sentinel: picking it
 // reveals COURIER_OTHER_FIELD, whose `replaces` hands its typed value back
 // to {courier} so every template references only {courier}.
@@ -565,25 +617,56 @@ export const HELPER = {
       id: "vendor",
       code: "ve",
       label: "Vendor",
-      // A vendor may be working on a unit or on a common area, so the unit
-      // is optional and drops out of the sentence when left empty.
       fields: [
         NAME_FIELD,
-        { ...UNIT_FIELD, optional: true, placeholder: "(optional)" },
+        COMPANY_FIELD,
+        VENDOR_FOR_FIELD,
+        VENDOR_UNIT_FIELD,
+        VENDOR_AREA_FIELD,
       ],
       reasons: [
         {
+          // Vendor keys are ours and have to come back, so an ID is always
+          // held against them.
           id: "pickedUpKeys",
           label: "Picked up vendor keys",
           template:
-            "Vendor[ {name}] requested vendor keys[ for unit ({unit})]; {outcome}.",
-          fields: [VENDOR_KEYS_OUTCOME],
+            "Vendor[ {name}][ from {company}] requested vendor keys[ for unit ({unit})][ for the {area}][ regarding {purpose}]; {outcome}.",
+          fields: [
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            VENDOR_KEYS_OUTCOME,
+          ],
         },
         {
           id: "returnedKeys",
           label: "Returned vendor keys",
           template:
-            "Vendor[ {name}] returned the vendor keys[ for unit ({unit})] to the front desk and their ID was handed back.",
+            "Vendor[ {name}][ from {company}] returned the vendor keys[ for unit ({unit})][ for the {area}] to the front desk and their ID was handed back.",
+        },
+        {
+          // Plenty of vendors need no keys at all — a technician working on
+          // the boiler or the entrance doors is let in and that is the whole
+          // entry.
+          id: "arrived",
+          label: "Arrived / sent up",
+          template:
+            "Vendor[ {name}][ from {company}] arrived[ for unit ({unit})][ for the {area}][ regarding {purpose}]; {outcome}.",
+          fields: [
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            VENDOR_ACCESS_OUTCOME,
+          ],
         },
       ],
     },
