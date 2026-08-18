@@ -17,7 +17,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - `re` — Resident (9 reasons; role fields: name, unit, contact)
 - `gu` — Guest (5 reasons; role fields: name, unit, residentName, contact)
-- `ad` — App delivery (2 reasons; role fields: name, unit)
+- `ad` — App delivery (4 reasons; role fields: app, appOther, unit)
 - `dw` — Dog Walker (3 reasons; role fields: name, unit)
 - `cl` — Cleaner (3 reasons; role fields: name, unit)
 - `bs` — Baby Sitter (2 reasons; role fields: name, unit)
@@ -109,13 +109,23 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;ad1` — Delivered — awaiting pickup
 
-- **Empty:** 10:00 AM: App delivery for unit (####) was delivered and is awaiting pick-up at the front desk; ####.
-- **Filled:** 10:00 AM: App delivery from John for unit (234) was delivered and is awaiting pick-up at the front desk; the resident was reached and notified.
+- **Empty:** 10:00 AM: App delivery from #### for unit (####) was delivered and is awaiting pick-up at the front desk; ####.
+- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) was delivered and is awaiting pick-up at the front desk; the resident was reached and notified.
 
 ### `;ad2` — Not picked up >30 min — stored
 
-- **Empty:** 10:00 AM: App delivery for unit (####) has not been picked-up for more than 30 minutes; resident notified and the delivery was stored in the fridge.
-- **Filled:** 10:00 AM: App delivery from John for unit (234) has not been picked-up for more than 30 minutes; resident notified and the delivery was stored in the fridge.
+- **Empty:** 10:00 AM: App delivery from #### for unit (####) has not been picked-up for more than 30 minutes; ####. The delivery was stored at the front desk.
+- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) has not been picked-up for more than 30 minutes; the resident was reached and notified. The delivery was stored at the front desk.
+
+### `;ad3` — Collected by resident
+
+- **Empty:** 10:00 AM: App delivery from #### for unit (####) was collected from the front desk.
+- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) was collected from the front desk.
+
+### `;ad4` — Sent up / left at door
+
+- **Empty:** 10:00 AM: App delivery from #### for unit (####) was ####.
+- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) was sent up to the unit after resident confirmation.
 
 ## Dog Walker — `dw`
 

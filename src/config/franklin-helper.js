@@ -195,6 +195,48 @@ const DROP_ITEM_FIELD = {
   ],
 };
 
+// Which service delivered. Same sentinel pattern as the courier picker:
+// "Other" reveals a free-text box that supplies {app} instead.
+const APP_FIELD = {
+  key: "app",
+  label: "App / service",
+  kind: "select",
+  options: [
+    "DoorDash",
+    "Uber Eats",
+    "Grubhub",
+    "Instacart",
+    "Amazon Fresh",
+    "Walmart",
+    "Target",
+    "CVS",
+    "Other",
+  ],
+};
+
+const APP_OTHER_FIELD = {
+  key: "appOther",
+  label: "Service name",
+  kind: "text",
+  placeholder: "Service name",
+  replaces: "app",
+  showWhen: { key: "app", value: "Other" },
+};
+
+// Where a delivery is held. Values read correctly after both "awaiting
+// pick-up …" and "was stored …".
+const DELIVERY_STORAGE = {
+  key: "storage",
+  label: "Held",
+  kind: "select",
+  default: "at the front desk",
+  options: [
+    { value: "at the front desk", label: "Front desk" },
+    { value: "in the fridge", label: "Fridge" },
+    { value: "in the package room", label: "Package room" },
+  ],
+};
+
 const OPTIONAL_UNIT_FIELD = {
   ...UNIT_FIELD,
   optional: true,
@@ -369,20 +411,57 @@ export const HELPER = {
       id: "appDelivery",
       code: "ad",
       label: "App delivery",
-      fields: [NAME_FIELD, UNIT_FIELD],
+      fields: [APP_FIELD, APP_OTHER_FIELD, UNIT_FIELD],
       reasons: [
         {
           id: "delivered",
           label: "Delivered — awaiting pickup",
           template:
-            "App delivery[ from {name}] for unit ({unit}) was delivered and is awaiting pick-up at the front desk; {outcome}.",
-          fields: [CONTACT_OUTCOME],
+            "App delivery from {app} for unit ({unit}) was delivered and is awaiting pick-up {storage}; {outcome}.",
+          fields: [DELIVERY_STORAGE, CONTACT_OUTCOME],
         },
         {
           id: "lobby30",
           label: "Not picked up >30 min — stored",
+          // Neither the outcome nor the storage place can be assumed here:
+          // a delivery usually sits thirty minutes precisely because the
+          // resident could not be reached, and only food belongs in a fridge.
           template:
-            "App delivery[ from {name}] for unit ({unit}) has not been picked-up for more than 30 minutes; resident notified and the delivery was stored in the fridge.",
+            "App delivery from {app} for unit ({unit}) has not been picked-up for more than 30 minutes; {outcome}. The delivery was stored {storage}.",
+          fields: [DELIVERY_STORAGE, CONTACT_OUTCOME],
+        },
+        {
+          id: "collected",
+          label: "Collected by resident",
+          template:
+            "App delivery from {app} for unit ({unit}) was collected from the front desk.",
+        },
+        {
+          id: "notHeld",
+          label: "Sent up / left at door",
+          template:
+            "App delivery from {app} for unit ({unit}) was {disposition}.",
+          fields: [
+            {
+              key: "disposition",
+              label: "Disposition",
+              kind: "radio",
+              options: [
+                {
+                  value: "sent up to the unit after resident confirmation",
+                  label: "Sent up — confirmed",
+                },
+                {
+                  value: "left at the unit door by the driver",
+                  label: "Left at door",
+                },
+                {
+                  value: "handed to the resident in the lobby",
+                  label: "Handed in lobby",
+                },
+              ],
+            },
+          ],
         },
       ],
     },
