@@ -16,7 +16,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ## Roles at a glance
 
 - `re` — Resident (9 reasons; role fields: name, unit, contact)
-- `gu` — Guest (4 reasons; role fields: name, unit, residentName, contact)
+- `gu` — Guest (5 reasons; role fields: name, unit, residentName, contact)
 - `ad` — App delivery (2 reasons; role fields: name, unit)
 - `dw` — Dog Walker (3 reasons; role fields: name, unit)
 - `cl` — Cleaner (3 reasons; role fields: name, unit)
@@ -87,18 +87,23 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;gu2` — Pick up keys
 
-- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to pick up keys that were left for them.
-- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to pick up keys that were left for them.
+- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to pick up keys that were left for them after identification was confirmed.
+- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to pick up keys that were left for them after identification was confirmed.
 
-### `;gu3` — Drop keys
+### `;gu3` — Drop off for pickup
 
-- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to drop keys for ####.
-- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to drop keys for Helen.
+- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to drop keys for ####. (stored ####)
+- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to drop keys for Helen. (stored by desk cabinet)
 
 ### `;gu4` — Given unit keys
 
-- **Empty:** 10:00 AM: Guest arrived for unit (####) and requested unit keys; ####.
-- **Filled:** 10:00 AM: Guest John arrived for unit (234 Marry) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+- **Empty:** 10:00 AM: Guest came to the front desk for unit (####) and requested unit keys; ####.
+- **Filled:** 10:00 AM: Guest John came to the front desk for unit (234 Marry) and requested unit keys; confirmed with the resident via call, keys exchanged for an ID.
+
+### `;gu5` — Sent up — per earlier request
+
+- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk and was sent up as per the resident's earlier request.
+- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk and was sent up as per the resident's earlier request.
 
 ## App delivery — `ad`
 

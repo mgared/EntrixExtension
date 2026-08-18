@@ -180,6 +180,21 @@ const CONTACT_OUTCOME = {
   ],
 };
 
+// What someone leaves at the desk for another person. Values carry their
+// own article so the sentence reads right whichever one is picked.
+const DROP_ITEM_FIELD = {
+  key: "item",
+  label: "Item",
+  kind: "select",
+  default: "keys",
+  options: [
+    { value: "keys", label: "Keys" },
+    { value: "an envelope", label: "Envelope" },
+    { value: "a package", label: "Package" },
+    { value: "a bag", label: "Bag" },
+  ],
+};
+
 const OPTIONAL_UNIT_FIELD = {
   ...UNIT_FIELD,
   optional: true,
@@ -201,20 +216,7 @@ export const HELPER = {
           template:
             "Resident[ {name}] from unit ({unit}) {contact} to drop {item} for {recipient} to pick-up later. (stored {storage})",
           fields: [
-            {
-              key: "item",
-              label: "Item",
-              kind: "select",
-              // Values carry their own article so the sentence reads right
-              // whichever one is picked.
-              default: "keys",
-              options: [
-                { value: "keys", label: "Keys" },
-                { value: "an envelope", label: "Envelope" },
-                { value: "a package", label: "Package" },
-                { value: "a bag", label: "Bag" },
-              ],
-            },
+            DROP_ITEM_FIELD,
             { key: "recipient", label: "Drop for (name)", kind: "text" },
             STORAGE_FIELD,
           ],
@@ -333,23 +335,33 @@ export const HELPER = {
           id: "pickupKeys",
           label: "Pick up keys",
           template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to pick up keys that were left for them.",
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to pick up keys that were left for them after identification was confirmed.",
         },
         {
           id: "dropKeys",
-          label: "Drop keys",
+          label: "Drop off for pickup",
           template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to drop keys for {recipient}.",
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to drop {item} for {recipient}. (stored {storage})",
           fields: [
+            DROP_ITEM_FIELD,
             { key: "recipient", label: "Drop for (name)", kind: "text" },
+            STORAGE_FIELD,
           ],
         },
         {
           id: "givenKeys",
           label: "Given unit keys",
           template:
-            "Guest[ {name}] arrived for unit ({unit}[ {residentName}]) and requested unit keys; {outcome}.",
+            "Guest[ {name}] {contact} for unit ({unit}[ {residentName}]) and requested unit keys; {outcome}.",
           fields: [SERVICE_KEYS_OUTCOME],
+        },
+        {
+          id: "sentUpPerRequest",
+          label: "Sent up — per earlier request",
+          // The arrival half of the resident's ;re9 request, where the
+          // authorisation already happened and needs no fresh confirmation.
+          template:
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} and was sent up as per the resident's earlier request.",
         },
       ],
     },
