@@ -21,7 +21,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `dw` — Dog Walker (4 reasons; role fields: name, company, unit)
 - `cl` — Cleaner (4 reasons; role fields: name, company, unit)
 - `ve` — Vendor (3 reasons; role fields: name, company, forWhat, unit, area)
-- `it` — Item / property (4 reasons; role fields: name, unit)
+- `it` — Item / property (2 reasons; role fields: name, unit)
 - `mo` — Move in/out keys (2 reasons; role fields: name, unit)
 - `mt` — Maintenance (2 reasons; role fields: name)
 - `lo` — Leasing Office (3 reasons; role fields: name)
@@ -37,10 +37,10 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored ####)
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored by desk cabinet)
 
-### `;re2` — Pick up keys
+### `;re2` — Pick up something left for them
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to pick up keys that were left for them after identification was confirmed.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to pick up keys that were left for them after identification was confirmed.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to pick up keys left for them after identification was confirmed.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to pick up keys left for them after identification was confirmed.
 
 ### `;re3` — Report something
 
@@ -84,10 +84,10 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to visit resident, elevator access ####.
 - **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to visit resident, elevator access granted after resident confirmation via call.
 
-### `;gu2` — Pick up keys
+### `;gu2` — Pick up something left for them
 
-- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to pick up keys that were left for them after identification was confirmed.
-- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to pick up keys that were left for them after identification was confirmed.
+- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to pick up keys left for them after identification was confirmed.
+- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to pick up keys left for them after identification was confirmed.
 
 ### `;gu3` — Drop off for pickup
 
@@ -194,25 +194,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Item / property — `it`
 
-### `;it1` — Dropped off for someone
+### `;it1` — Left for storage
 
-- **Empty:** 10:00 AM: Resident of unit (####) dropped off #### at the front desk for #### to collect. Stored ####.
-- **Filled:** 10:00 AM: Resident John of unit (234) dropped off a rent check at the front desk for Helen to collect. Stored by desk cabinet.
+- **Empty:** 10:00 AM: Resident of unit (####) left keys at the front desk to collect later. Stored ####.
+- **Filled:** 10:00 AM: Resident John of unit (234) left keys at the front desk to collect later. Stored by desk cabinet.
 
-### `;it2` — Collected from the desk
+### `;it2` — Found property
 
-- **Empty:** 10:00 AM: #### collected #### from the front desk; identification confirmed.
-- **Filled:** 10:00 AM: John collected a rent check from the front desk for unit (234); identification confirmed.
-
-### `;it3` — Left for storage
-
-- **Empty:** 10:00 AM: Resident of unit (####) left #### at the front desk to collect later. Stored ####.
-- **Filled:** 10:00 AM: Resident John of unit (234) left a rent check at the front desk to collect later. Stored by desk cabinet.
-
-### `;it4` — Found property
-
-- **Empty:** 10:00 AM: #### was found at #### and turned in to the front desk. ####
-- **Filled:** 10:00 AM: a rent check was found at #### and turned in to the front desk. Marked unknown and left at the leasing office.
+- **Empty:** 10:00 AM: Property turned in to the front desk: ####, found at ####. ####
+- **Filled:** 10:00 AM: Property turned in to the front desk: a rent check, found at ####. Marked unknown and left at the leasing office.
 
 ## Move in/out keys — `mo`
 

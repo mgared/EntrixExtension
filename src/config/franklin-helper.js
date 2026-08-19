@@ -261,7 +261,19 @@ const DROP_ITEM_FIELD = {
     { value: "an envelope", label: "Envelope" },
     { value: "a package", label: "Package" },
     { value: "a bag", label: "Bag" },
+    { value: "a parking pass", label: "Parking pass" },
+    { value: "Other", label: "Other…" },
   ],
+};
+
+const DROP_ITEM_OTHER_FIELD = {
+  key: "itemOther",
+  label: "Item",
+  kind: "text",
+  // Carries its own article, like the options above.
+  placeholder: "a garment bag",
+  replaces: "item",
+  showWhen: { key: "item", value: "Other" },
 };
 
 // Which service delivered. Same sentinel pattern as the courier picker:
@@ -328,15 +340,17 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to drop {item} for {recipient} to pick-up later. (stored {storage})",
           fields: [
             DROP_ITEM_FIELD,
+            DROP_ITEM_OTHER_FIELD,
             { key: "recipient", label: "Drop for (name)", kind: "text" },
             STORAGE_FIELD,
           ],
         },
         {
           id: "pickupKeys",
-          label: "Pick up keys",
+          label: "Pick up something left for them",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to pick up keys that were left for them after identification was confirmed.",
+            "Resident[ {name}] from unit ({unit}) {contact} to pick up {item} left for them after identification was confirmed.",
+          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD],
         },
         {
           id: "report",
@@ -444,9 +458,10 @@ export const HELPER = {
         },
         {
           id: "pickupKeys",
-          label: "Pick up keys",
+          label: "Pick up something left for them",
           template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to pick up keys that were left for them after identification was confirmed.",
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to pick up {item} left for them after identification was confirmed.",
+          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD],
         },
         {
           id: "dropKeys",
@@ -455,6 +470,7 @@ export const HELPER = {
             "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to drop {item} for {recipient}. (stored {storage})",
           fields: [
             DROP_ITEM_FIELD,
+            DROP_ITEM_OTHER_FIELD,
             { key: "recipient", label: "Drop for (name)", kind: "text" },
             STORAGE_FIELD,
           ],
@@ -674,45 +690,28 @@ export const HELPER = {
       id: "item",
       code: "it",
       label: "Item / property",
-      // Anything the desk takes custody of that isn't a unit key: parking
-      // passes, forgotten belongings, found property.
+      // Only the two cases the Resident and Guest reasons can't express:
+      // something left for its owner rather than for another person, and
+      // property found by someone with no connection to it.
       fields: [NAME_FIELD, OPTIONAL_UNIT_FIELD],
       reasons: [
-        {
-          id: "droppedForPickup",
-          label: "Dropped off for someone",
-          template:
-            "Resident[ {name}] of unit ({unit}) dropped off {item} at the front desk for {recipient} to collect. Stored {storage}.",
-          fields: [
-            { key: "item", label: "Item", kind: "text" },
-            { key: "recipient", label: "For (name)", kind: "text" },
-            STORAGE_FIELD,
-          ],
-        },
-        {
-          id: "collected",
-          label: "Collected from the desk",
-          template:
-            "{name} collected {item} from the front desk[ for unit ({unit})]; identification confirmed.",
-          fields: [{ key: "item", label: "Item", kind: "text" }],
-        },
         {
           id: "leftForStorage",
           label: "Left for storage",
           template:
             "Resident[ {name}] of unit ({unit}) left {item} at the front desk to collect later. Stored {storage}.",
-          fields: [
-            { key: "item", label: "Item", kind: "text" },
-            STORAGE_FIELD,
-          ],
+          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD, STORAGE_FIELD],
         },
         {
           id: "found",
           label: "Found property",
+          // Led with "Property turned in" rather than the item, because the
+          // item values carry lower-case articles and would otherwise open
+          // the sentence as "a key fob was found …".
           template:
-            "{item} was found at {location} and turned in to the front desk. {disposition}",
+            "Property turned in to the front desk: {item}, found at {location}. {disposition}",
           fields: [
-            { key: "item", label: "Item", kind: "text" },
+            { key: "item", label: "Item", kind: "text", placeholder: "a key fob" },
             { key: "location", label: "Found at", kind: "text" },
             {
               key: "disposition",
@@ -727,10 +726,7 @@ export const HELPER = {
                   value: "Secured at the front desk pending claim.",
                   label: "Held at desk",
                 },
-                {
-                  value: "Returned to the owner.",
-                  label: "Returned to owner",
-                },
+                { value: "Returned to the owner.", label: "Returned to owner" },
               ],
             },
           ],
