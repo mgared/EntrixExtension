@@ -356,7 +356,7 @@ export const HELPER = {
           id: "report",
           label: "Report something",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to report that {description}.[ The report concerns unit ({aboutUnit}).]",
+            "Resident[ {name}] from unit ({unit}) {contact} to report that {description}.[ The report concerns unit ({aboutUnit}).][ {action}]",
           fields: [
             { key: "description", label: "Report details", kind: "text" },
             {
@@ -365,6 +365,36 @@ export const HELPER = {
               kind: "text",
               optional: true,
               placeholder: "(optional)",
+            },
+            {
+              // A concierge cannot raise a maintenance request. The most
+              // that can be done is hand over the contact details and let
+              // the resident make the call themselves.
+              key: "action",
+              label: "Action taken",
+              kind: "select",
+              optional: true,
+              placeholder: "(none)",
+              options: [
+                {
+                  value:
+                    "Emergency Maintenance contact information was provided for the resident to call directly, and the resident was advised same-evening response could not be guaranteed.",
+                  label: "Emergency contact given",
+                },
+                {
+                  value:
+                    "Emergency Maintenance contact information was provided for the resident to call directly.",
+                  label: "Emergency contact given (short)",
+                },
+                {
+                  value: "The maintenance team will be notified for follow-up.",
+                  label: "Flagged for maintenance",
+                },
+                {
+                  value: "The leasing office will be notified for follow-up.",
+                  label: "Flagged for leasing",
+                },
+              ],
             },
           ],
         },
@@ -737,47 +767,76 @@ export const HELPER = {
       id: "maintenance",
       code: "mt",
       label: "Maintenance",
+      // What the maintenance team does at the desk. A resident reporting a
+      // problem is logged on the Resident report reason instead — there is
+      // no separate maintenance-request event, because a concierge cannot
+      // raise one.
       fields: [NAME_FIELD],
       reasons: [
         {
-          id: "residentReported",
-          label: "Resident reported an issue",
+          id: "onSite",
+          label: "On site",
           template:
-            "Resident of unit ({unit}) reported {issue}; {action}.",
+            "Maintenance[ {name}] arrived on site[ for unit ({unit})] regarding {issue}.",
           fields: [
-            UNIT_FIELD,
-            { key: "issue", label: "Issue", kind: "text" },
-            {
-              key: "action",
-              label: "Action taken",
-              kind: "radio",
-              options: [
-                {
-                  value:
-                    "Emergency Maintenance contact information was provided, the resident was advised same-evening response could not be guaranteed, and the maintenance team will be notified for follow-up",
-                  label: "Emergency Maintenance referral",
-                },
-                {
-                  value:
-                    "a maintenance request was submitted on the resident's behalf",
-                  label: "Request submitted",
-                },
-                {
-                  value: "the maintenance team was notified directly",
-                  label: "Team notified",
-                },
-              ],
-            },
+            OPTIONAL_UNIT_FIELD,
+            { key: "issue", label: "Regarding", kind: "text" },
           ],
         },
         {
-          id: "onSite",
-          label: "Maintenance on site",
+          id: "droppedOff",
+          label: "Dropped something off",
           template:
-            "Maintenance[ {name}] arrived on site regarding {issue}[ for unit ({unit})].",
+            "Maintenance[ {name}] dropped off {item} at the front desk[ for unit ({unit})].",
           fields: [
-            { key: "issue", label: "Regarding", kind: "text" },
+            { key: "item", label: "Item", kind: "text", placeholder: "a work order" },
             OPTIONAL_UNIT_FIELD,
+          ],
+        },
+        {
+          id: "askedContact",
+          label: "Asked desk to contact a resident",
+          template:
+            "Maintenance[ {name}] requested that the resident of unit ({unit}) be contacted regarding {message}.",
+          fields: [
+            UNIT_FIELD,
+            { key: "message", label: "Regarding", kind: "text" },
+          ],
+        },
+        {
+          id: "askedAccess",
+          label: "Asked desk to assist an arrival",
+          // Maintenance arranging for a contractor the desk will meet later,
+          // so the desk knows in advance who is expected and what to give.
+          template:
+            "Maintenance[ {name}] requested that {who} be {assistance}[ for unit ({unit})][ regarding {purpose}].",
+          fields: [
+            { key: "who", label: "Who is expected", kind: "text", placeholder: "Otis Elevator" },
+            {
+              key: "assistance",
+              label: "Assistance",
+              kind: "select",
+              default: "assisted and given vendor keys on arrival",
+              options: [
+                {
+                  value: "assisted and given vendor keys on arrival",
+                  label: "Assist + vendor keys",
+                },
+                { value: "assisted on arrival", label: "Assist only" },
+                {
+                  value: "given vendor keys on arrival",
+                  label: "Vendor keys only",
+                },
+              ],
+            },
+            OPTIONAL_UNIT_FIELD,
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
           ],
         },
       ],

@@ -22,7 +22,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `cl` — Cleaner (4 reasons; role fields: name, company, unit)
 - `ve` — Vendor (3 reasons; role fields: name, company, forWhat, unit, area)
 - `it` — Item / property (2 reasons; role fields: name, unit)
-- `mt` — Maintenance (2 reasons; role fields: name)
+- `mt` — Maintenance (4 reasons; role fields: name)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (2 reasons; role fields: name)
 - `pk` — Package (4 reasons; role fields: courier, courierOther)
@@ -44,7 +44,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### `;re3` — Report something
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to report that ####.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to report that their kitchen sink is leaking.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to report that their kitchen sink is leaking. Emergency Maintenance contact information was provided for the resident to call directly, and the resident was advised same-evening response could not be guaranteed.
 
 ### `;re4` — Missing package
 
@@ -205,15 +205,25 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Maintenance — `mt`
 
-### `;mt1` — Resident reported an issue
-
-- **Empty:** 10:00 AM: Resident of unit (####) reported ####; ####.
-- **Filled:** 10:00 AM: Resident of unit (234) reported ####; Emergency Maintenance contact information was provided, the resident was advised same-evening response could not be guaranteed, and the maintenance team will be notified for follow-up.
-
-### `;mt2` — Maintenance on site
+### `;mt1` — On site
 
 - **Empty:** 10:00 AM: Maintenance arrived on site regarding ####.
-- **Filled:** 10:00 AM: Maintenance John arrived on site regarding #### for unit (234).
+- **Filled:** 10:00 AM: Maintenance John arrived on site for unit (234) regarding ####.
+
+### `;mt2` — Dropped something off
+
+- **Empty:** 10:00 AM: Maintenance dropped off #### at the front desk.
+- **Filled:** 10:00 AM: Maintenance John dropped off a rent check at the front desk for unit (234).
+
+### `;mt3` — Asked desk to contact a resident
+
+- **Empty:** 10:00 AM: Maintenance requested that the resident of unit (####) be contacted regarding ####.
+- **Filled:** 10:00 AM: Maintenance John requested that the resident of unit (234) be contacted regarding ####.
+
+### `;mt4` — Asked desk to assist an arrival
+
+- **Empty:** 10:00 AM: Maintenance requested that #### be assisted and given vendor keys on arrival.
+- **Filled:** 10:00 AM: Maintenance John requested that #### be assisted and given vendor keys on arrival for unit (234).
 
 ## Leasing Office — `lo`
 
