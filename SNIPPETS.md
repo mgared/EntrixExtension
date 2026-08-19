@@ -22,7 +22,6 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `cl` — Cleaner (4 reasons; role fields: name, company, unit)
 - `ve` — Vendor (3 reasons; role fields: name, company, forWhat, unit, area)
 - `it` — Item / property (2 reasons; role fields: name, unit)
-- `mo` — Move in/out keys (2 reasons; role fields: name, unit)
 - `mt` — Maintenance (2 reasons; role fields: name)
 - `lo` — Leasing Office (3 reasons; role fields: name)
 - `pr` — Prospect (2 reasons; role fields: name)
@@ -203,18 +202,6 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Property turned in to the front desk: ####, found at ####. ####
 - **Filled:** 10:00 AM: Property turned in to the front desk: a rent check, found at ####. Marked unknown and left at the leasing office.
-
-## Move in/out keys — `mo`
-
-### `;mo1` — Keys returned
-
-- **Empty:** 10:00 AM: #### keys for unit (####) were returned to the front desk and ####.
-- **Filled:** 10:00 AM: Move-out keys for unit (234) were returned to the front desk by John and delivered to the leasing office.
-
-### `;mo2` — Keys released
-
-- **Empty:** 10:00 AM: #### keys for unit (####) were released; identification confirmed.
-- **Filled:** 10:00 AM: Move-out keys for unit (234) were released to John; identification confirmed.
 
 ## Maintenance — `mt`
 

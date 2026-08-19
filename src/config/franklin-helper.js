@@ -734,60 +734,6 @@ export const HELPER = {
       ],
     },
     {
-      id: "moveKeys",
-      code: "mo",
-      label: "Move in/out keys",
-      // Tracked apart from unit keys because the shift log reports them in
-      // their own section.
-      fields: [NAME_FIELD, UNIT_FIELD],
-      reasons: [
-        {
-          id: "returned",
-          label: "Keys returned",
-          template:
-            "{moveType} keys for unit ({unit}) were returned to the front desk[ by {name}] and {disposition}.",
-          fields: [
-            {
-              key: "moveType",
-              label: "Type",
-              kind: "radio",
-              options: ["Move-out", "Move-in"],
-            },
-            {
-              key: "disposition",
-              label: "Disposition",
-              kind: "select",
-              options: [
-                {
-                  value: "delivered to the leasing office",
-                  label: "To leasing office",
-                },
-                {
-                  value: "secured at the front desk",
-                  label: "Held at desk",
-                },
-                { value: "left in the key lock box", label: "Key lock box" },
-              ],
-            },
-          ],
-        },
-        {
-          id: "released",
-          label: "Keys released",
-          template:
-            "{moveType} keys for unit ({unit}) were released[ to {name}]; identification confirmed.",
-          fields: [
-            {
-              key: "moveType",
-              label: "Type",
-              kind: "radio",
-              options: ["Move-out", "Move-in"],
-            },
-          ],
-        },
-      ],
-    },
-    {
       id: "maintenance",
       code: "mt",
       label: "Maintenance",
