@@ -1015,19 +1015,55 @@ export const HELPER = {
       fields: [COURIER_FIELD, COURIER_OTHER_FIELD],
       reasons: [
         {
-          id: "droppedBulk",
-          label: "Dropped a bulk of packages",
-          template: "{courier} dropped off a bulk of packages at the front desk.",
+          // A courier arriving and a courier delivering were two reasons for
+          // one event. Merged, with room for the count that makes the entry
+          // worth reading — thirty boxes is a different shift from three.
+          id: "delivered",
+          label: "Delivered packages",
+          template:
+            "{courier} delivered[ {count}] packages to the front desk.",
+          fields: [
+            {
+              key: "count",
+              label: "How many",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+          ],
         },
         {
-          id: "onSite",
-          label: "On site",
-          template: "{courier} arrived on site.",
+          // The most ordinary courier event of all, and it had no reason:
+          // one package, one unit.
+          id: "forUnit",
+          label: "Package for a unit",
+          template:
+            "{courier} delivered a package for unit ({unit}) to the front desk[; {outcome}].",
+          fields: [
+            UNIT_FIELD,
+            {
+              key: "outcome",
+              label: "Resident notified",
+              kind: "select",
+              optional: true,
+              placeholder: "(not notified)",
+              options: CONTACT_OUTCOME.options,
+            },
+          ],
         },
         {
           id: "pickedUpReturns",
           label: "Picked up returns",
-          template: "{courier} picked up returns from the front desk.",
+          template: "{courier} picked up[ {count}] returns from the front desk.",
+          fields: [
+            {
+              key: "count",
+              label: "How many",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+          ],
         },
         {
           id: "report",

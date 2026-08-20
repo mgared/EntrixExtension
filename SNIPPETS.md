@@ -266,15 +266,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Package — `pk`
 
-### `;pk1` — Dropped a bulk of packages
+### `;pk1` — Delivered packages
 
-- **Empty:** 10:00 AM: #### dropped off a bulk of packages at the front desk.
-- **Filled:** 10:00 AM: Amazon dropped off a bulk of packages at the front desk.
+- **Empty:** 10:00 AM: #### delivered packages to the front desk.
+- **Filled:** 10:00 AM: Amazon delivered packages to the front desk.
 
-### `;pk2` — On site
+### `;pk2` — Package for a unit
 
-- **Empty:** 10:00 AM: #### arrived on site.
-- **Filled:** 10:00 AM: Amazon arrived on site.
+- **Empty:** 10:00 AM: #### delivered a package for unit (####) to the front desk.
+- **Filled:** 10:00 AM: Amazon delivered a package for unit (234) to the front desk; the resident was reached and notified.
 
 ### `;pk3` — Picked up returns
 
