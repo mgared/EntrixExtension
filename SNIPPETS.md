@@ -27,7 +27,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `pr` — Prospect (2 reasons; role fields: name, contactInfo)
 - `pk` — Package (4 reasons; role fields: courier, courierOther)
 - `co` — Concierge (7 reasons; role fields: name)
-- `pp` — Pilgrim Parking (3 reasons; role fields: name)
+- `pp` — Pilgrim Parking (4 reasons; role fields: name)
 
 ## Resident — `re`
 
@@ -332,11 +332,16 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;pp2` — Resident parking inquiry
 
-- **Empty:** 10:00 AM: Resident of unit (####) inquired about #### for a #### (#### plate ####); ####.
-- **Filled:** 10:00 AM: Resident of unit (234) inquired about overnight parking for a #### (#### plate ####); the resident was advised the concierge would follow up once parking guidance is confirmed.
+- **Empty:** 10:00 AM: Resident of unit (####) inquired about ####; ####.
+- **Filled:** 10:00 AM: Resident of unit (234) inquired about overnight parking; the resident was advised the concierge would follow up once parking guidance is confirmed.
 
 ### `;pp3` — Drop something off
 
-- **Empty:** 10:00 AM: Pilgrim Parking staff dropped off #### at the front desk.
-- **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234).
+- **Empty:** 10:00 AM: Pilgrim Parking staff dropped off #### at the front desk. (stored ####)
+- **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234). (stored by desk cabinet)
+
+### `;pp4` — Towing / violation
+
+- **Empty:** 10:00 AM: A #### with #### plate #### was ####.
+- **Filled:** 10:00 AM: A #### with #### plate #### was tagged for a parking violation.
 

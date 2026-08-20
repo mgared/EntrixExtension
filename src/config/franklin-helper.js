@@ -1225,7 +1225,7 @@ export const HELPER = {
           // Voiced from the resident rather than the vendor: the role groups
           // parking matters, and this is the parking question residents ask.
           template:
-            "Resident of unit ({unit}) inquired about {topic} for a {vehicle} ({plateState} plate {plate}); {action}.",
+            "Resident of unit ({unit}) inquired about {topic}[ for a {vehicle}][ ({plateState} plate {plate})]; {action}.",
           fields: [
             UNIT_FIELD,
             {
@@ -1239,9 +1239,27 @@ export const HELPER = {
                 "a parking violation",
               ],
             },
-            { key: "vehicle", label: "Vehicle", kind: "text", placeholder: "Honda Accord" },
-            { key: "plateState", label: "Plate state", kind: "text", placeholder: "NJ" },
-            { key: "plate", label: "Plate #", kind: "text", placeholder: "W14WWJ" },
+            {
+              key: "vehicle",
+              label: "Vehicle",
+              kind: "text",
+              optional: true,
+              placeholder: "Honda Accord",
+            },
+            {
+              key: "plateState",
+              label: "Plate state",
+              kind: "text",
+              optional: true,
+              placeholder: "NJ",
+            },
+            {
+              key: "plate",
+              label: "Plate #",
+              kind: "text",
+              optional: true,
+              placeholder: "W14WWJ",
+            },
             {
               key: "action",
               label: "Action",
@@ -1265,12 +1283,51 @@ export const HELPER = {
           id: "dropOff",
           label: "Drop something off",
           template:
-            "Pilgrim Parking staff[ {name}] dropped off {item} at the front desk[ for unit ({unit})].",
+            "Pilgrim Parking staff[ {name}] dropped off {item} at the front desk[ for unit ({unit})]. (stored {storage})",
           fields: [
             { key: "item", label: "Item", kind: "text" },
+            OPTIONAL_UNIT_FIELD,
+            STORAGE_FIELD,
+          ],
+        },
+        {
+          // A tow is the parking entry most likely to be disputed weeks
+          // later, so the vehicle, the plate and who authorised it are
+          // fields rather than something to remember to type.
+          id: "enforcement",
+          label: "Towing / violation",
+          template:
+            "A {vehicle} with {plateState} plate {plate}[, parked at {location},] was {ppAction}.[ Authorized by {authorizedBy}.]",
+          fields: [
+            { key: "vehicle", label: "Vehicle", kind: "text", placeholder: "Honda Accord" },
+            { key: "plateState", label: "Plate state", kind: "text", placeholder: "NJ" },
+            { key: "plate", label: "Plate #", kind: "text", placeholder: "W14WWJ" },
             {
-              key: "unit",
-              label: "Unit #",
+              key: "ppAction",
+              label: "Action",
+              kind: "select",
+              options: [
+                {
+                  value: "tagged for a parking violation",
+                  label: "Tagged",
+                },
+                { value: "towed from the property", label: "Towed" },
+                {
+                  value: "reported as parked without authorization",
+                  label: "Reported unauthorized",
+                },
+              ],
+            },
+            {
+              key: "location",
+              label: "Parked at",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            {
+              key: "authorizedBy",
+              label: "Authorized by",
               kind: "text",
               optional: true,
               placeholder: "(optional)",
