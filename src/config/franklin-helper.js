@@ -857,11 +857,15 @@ export const HELPER = {
         {
           id: "dropOff",
           label: "Dropped something off",
+          // Leasing leaves plenty at the desk that belongs to no unit —
+          // signage, forms, supplies — so the unit is optional, and where it
+          // was put is recorded like every other item the desk takes in.
           template:
-            "Leasing office staff[ {name}] dropped off {item} for unit ({unit}).",
+            "Leasing office staff[ {name}] dropped off {item} at the front desk[ for unit ({unit})]. (stored {storage})",
           fields: [
             { key: "item", label: "Item", kind: "text" },
-            { key: "unit", label: "Unit #", kind: "text" },
+            OPTIONAL_UNIT_FIELD,
+            STORAGE_FIELD,
           ],
         },
         {
@@ -870,6 +874,53 @@ export const HELPER = {
           template:
             "Leasing office staff[ {name}] picked up {item} from the front desk.",
           fields: [{ key: "item", label: "Item", kind: "text" }],
+        },
+        {
+          id: "askedContact",
+          label: "Asked desk to contact a resident",
+          template:
+            "Leasing office staff[ {name}] requested that the resident of unit ({unit}) be contacted regarding {message}.",
+          fields: [
+            UNIT_FIELD,
+            { key: "message", label: "Regarding", kind: "text" },
+          ],
+        },
+        {
+          id: "askedAssist",
+          label: "Asked desk to assist an arrival",
+          // Leasing coordinates through the desk constantly — a prospect due
+          // for a tour, a new resident collecting keys — and the desk needs
+          // that written down before the person turns up.
+          template:
+            "Leasing office staff[ {name}] requested that {who} be {assistance}[ for unit ({unit})][ regarding {purpose}].",
+          fields: [
+            { key: "who", label: "Who is expected", kind: "text" },
+            {
+              key: "assistance",
+              label: "Assistance",
+              kind: "select",
+              default: "assisted on arrival",
+              options: [
+                { value: "assisted on arrival", label: "Assist" },
+                {
+                  value: "assisted and given the keys left for them on arrival",
+                  label: "Assist + keys left",
+                },
+                {
+                  value: "directed to the leasing office on arrival",
+                  label: "Send to leasing",
+                },
+              ],
+            },
+            OPTIONAL_UNIT_FIELD,
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+          ],
         },
       ],
     },

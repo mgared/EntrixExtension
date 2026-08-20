@@ -23,7 +23,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `ve` — Vendor (3 reasons; role fields: name, company, forWhat, unit, area)
 - `it` — Item / property (2 reasons; role fields: name, unit)
 - `mt` — Maintenance (4 reasons; role fields: name)
-- `lo` — Leasing Office (3 reasons; role fields: name)
+- `lo` — Leasing Office (5 reasons; role fields: name)
 - `pr` — Prospect (2 reasons; role fields: name)
 - `pk` — Package (4 reasons; role fields: courier, courierOther)
 - `co` — Concierge (7 reasons; role fields: name)
@@ -234,13 +234,23 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### `;lo2` — Dropped something off
 
-- **Empty:** 10:00 AM: Leasing office staff dropped off #### for unit (####).
-- **Filled:** 10:00 AM: Leasing office staff John dropped off a rent check for unit (234).
+- **Empty:** 10:00 AM: Leasing office staff dropped off #### at the front desk. (stored ####)
+- **Filled:** 10:00 AM: Leasing office staff John dropped off a rent check at the front desk for unit (234). (stored by desk cabinet)
 
 ### `;lo3` — Picked something up
 
 - **Empty:** 10:00 AM: Leasing office staff picked up #### from the front desk.
 - **Filled:** 10:00 AM: Leasing office staff John picked up a rent check from the front desk.
+
+### `;lo4` — Asked desk to contact a resident
+
+- **Empty:** 10:00 AM: Leasing office staff requested that the resident of unit (####) be contacted regarding ####.
+- **Filled:** 10:00 AM: Leasing office staff John requested that the resident of unit (234) be contacted regarding ####.
+
+### `;lo5` — Asked desk to assist an arrival
+
+- **Empty:** 10:00 AM: Leasing office staff requested that #### be assisted on arrival.
+- **Filled:** 10:00 AM: Leasing office staff John requested that #### be assisted on arrival for unit (234).
 
 ## Prospect — `pr`
 
