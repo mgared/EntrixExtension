@@ -1090,12 +1090,28 @@ export const HELPER = {
         {
           id: "backFromBreak",
           label: "Back from break",
-          template: "Concierge[ {name}] returned from break.",
-        },
-        {
-          id: "siteTouring",
-          label: "On site touring",
-          template: "Concierge[ {name}] left the front desk for a site tour.",
+          template: "Concierge[ {name}] returned from break[; {check}].",
+          fields: [
+            {
+              key: "check",
+              label: "Camera check",
+              kind: "select",
+              optional: true,
+              placeholder: "(none)",
+              options: [
+                {
+                  value:
+                    "the security cameras were reviewed and no suspicious activity was observed",
+                  label: "Cameras — nothing suspicious",
+                },
+                {
+                  value:
+                    "the security cameras were reviewed and activity was observed, noted below",
+                  label: "Cameras — activity observed",
+                },
+              ],
+            },
+          ],
         },
         {
           id: "contactedResident",
@@ -1138,6 +1154,28 @@ export const HELPER = {
                   value: "No further action was required.",
                   label: "No further action",
                 },
+              ],
+            },
+          ],
+        },
+        {
+          id: "holdingDesk",
+          label: "Holding the desk",
+          template: "Concierge[ {name}] remained at the front desk[; {note}].",
+          fields: [
+            {
+              key: "note",
+              label: "Note",
+              kind: "select",
+              optional: true,
+              placeholder: "(none)",
+              options: [
+                { value: "no activity in the lobby", label: "No activity" },
+                {
+                  value: "the lobby and entrances were monitored",
+                  label: "Monitoring",
+                },
+                { value: "resident traffic was steady", label: "Steady traffic" },
               ],
             },
           ],

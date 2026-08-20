@@ -296,27 +296,27 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### `;co2` — Back from break
 
 - **Empty:** 10:00 AM: Concierge returned from break.
-- **Filled:** 10:00 AM: Concierge John returned from break.
+- **Filled:** 10:00 AM: Concierge John returned from break; the security cameras were reviewed and no suspicious activity was observed.
 
-### `;co3` — On site touring
-
-- **Empty:** 10:00 AM: Concierge left the front desk for a site tour.
-- **Filled:** 10:00 AM: Concierge John left the front desk for a site tour.
-
-### `;co4` — Contacted resident
+### `;co3` — Contacted resident
 
 - **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) regarding ####; ####.
 - **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) regarding ####; the resident was reached and notified.
 
-### `;co5` — Sorted/processed packages
+### `;co4` — Sorted/processed packages
 
 - **Empty:** 10:00 AM: Concierge sorted and processed packages in the package room while maintaining visibility at the front desk.
 - **Filled:** 10:00 AM: Concierge John sorted and processed packages in the package room while maintaining visibility at the front desk.
 
-### `;co6` — Cleaned up / made safe
+### `;co5` — Cleaned up / made safe
 
 - **Empty:** 10:00 AM: Concierge addressed #### at ####. ####
 - **Filled:** 10:00 AM: Concierge John addressed #### at ####. Caution Wet Floor signage was placed.
+
+### `;co6` — Holding the desk
+
+- **Empty:** 10:00 AM: Concierge remained at the front desk.
+- **Filled:** 10:00 AM: Concierge John remained at the front desk; no activity in the lobby.
 
 ### `;co7` — Reviewed cameras
 
