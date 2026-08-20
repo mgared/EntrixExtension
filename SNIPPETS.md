@@ -24,7 +24,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - `it` — Item / property (2 reasons; role fields: name, unit)
 - `mt` — Maintenance (4 reasons; role fields: name)
 - `lo` — Leasing Office (5 reasons; role fields: name)
-- `pr` — Prospect (2 reasons; role fields: name)
+- `pr` — Prospect (2 reasons; role fields: name, contactInfo)
 - `pk` — Package (4 reasons; role fields: courier, courierOther)
 - `co` — Concierge (7 reasons; role fields: name)
 - `pp` — Pilgrim Parking (3 reasons; role fields: name)
@@ -254,15 +254,15 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Prospect — `pr`
 
-### `;pr1` — Walk-in tour
+### `;pr1` — Tour
 
-- **Empty:** 10:00 AM: Prospect walked in for a tour; the leasing team was informed.
-- **Filled:** 10:00 AM: Prospect John walked in for a tour; the leasing team was informed.
+- **Empty:** 10:00 AM: Prospect walked in for a tour; ####.
+- **Filled:** 10:00 AM: Prospect John walked in for a tour; a member of the leasing team came down to assist.
 
-### `;pr2` — Scheduled tour with leasing
+### `;pr2` — Availability inquiry
 
-- **Empty:** 10:00 AM: Prospect arrived for their scheduled tour with the leasing team; leasing was informed.
-- **Filled:** 10:00 AM: Prospect John arrived for their scheduled tour with the leasing team; leasing was informed.
+- **Empty:** 10:00 AM: Prospect came to the front desk to ask about availability; ####.
+- **Filled:** 10:00 AM: Prospect John came to the front desk to ask about availability; a member of the leasing team came down to assist.
 
 ## Package — `pk`
 

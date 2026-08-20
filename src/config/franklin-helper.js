@@ -183,6 +183,38 @@ const VENDOR_ACCESS_OUTCOME = {
   ],
 };
 
+// What actually became of a prospect. Every reason used to end "the
+// leasing team was informed", which is false whenever leasing is closed or
+// nobody picks up — precisely the case the next shift needs to know about.
+const PROSPECT_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "select",
+  options: [
+    {
+      value: "a member of the leasing team came down to assist",
+      label: "Leasing came down",
+    },
+    {
+      value: "the leasing team was informed for follow-up",
+      label: "Leasing informed",
+    },
+    {
+      value: "the prospect was directed to the leasing office",
+      label: "Sent to leasing office",
+    },
+    {
+      value:
+        "the leasing team could not be reached and the prospect's details were taken for follow-up",
+      label: "No reach — details taken",
+    },
+    {
+      value: "the leasing team could not be reached and the prospect left",
+      label: "No reach — prospect left",
+    },
+  ],
+};
+
 // Courier picker for the Package role. "Other" is a sentinel: picking it
 // reveals COURIER_OTHER_FIELD, whose `replaces` hands its typed value back
 // to {courier} so every template references only {courier}.
@@ -928,19 +960,51 @@ export const HELPER = {
       id: "prospect",
       code: "pr",
       label: "Prospect",
-      fields: [NAME_FIELD],
+      // The point of the role is handing someone to leasing, so it has to be
+      // able to carry a way of reaching them when that handover doesn't
+      // complete.
+      fields: [
+        NAME_FIELD,
+        {
+          key: "contactInfo",
+          label: "Contact details",
+          kind: "text",
+          optional: true,
+          placeholder: "(optional)",
+        },
+      ],
       reasons: [
         {
-          id: "walkInTour",
-          label: "Walk-in tour",
+          // Walk-in and scheduled differed by one clause, so they are one
+          // reason with a toggle rather than two near-identical entries.
+          id: "tour",
+          label: "Tour",
           template:
-            "Prospect[ {name}] walked in for a tour; the leasing team was informed.",
+            "Prospect[ {name}] {arrival}[, contact {contactInfo}]; {outcome}.",
+          fields: [
+            {
+              key: "arrival",
+              label: "Arrival",
+              kind: "radio",
+              default: "walked in for a tour",
+              options: [
+                { value: "walked in for a tour", label: "Walk-in" },
+                {
+                  value:
+                    "arrived for their scheduled tour with the leasing team",
+                  label: "Scheduled",
+                },
+              ],
+            },
+            PROSPECT_OUTCOME,
+          ],
         },
         {
-          id: "scheduledLeasing",
-          label: "Scheduled tour with leasing",
+          id: "availability",
+          label: "Availability inquiry",
           template:
-            "Prospect[ {name}] arrived for their scheduled tour with the leasing team; leasing was informed.",
+            "Prospect[ {name}] {contact} to ask about availability[, contact {contactInfo}]; {outcome}.",
+          fields: [CONTACT_FIELD, PROSPECT_OUTCOME],
         },
       ],
     },
