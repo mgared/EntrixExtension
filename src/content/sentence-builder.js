@@ -128,6 +128,15 @@ function applyDefaults({ role, reason }, values) {
       }
     }
   }
+  // A field gated by `showWhen` contributes nothing while its condition is
+  // unmet, even if a stale value is still sitting in the map. Without this a
+  // template offering one optional segment per branch — a unit or a common
+  // area, say — could render both at once.
+  for (const fields of groups) {
+    for (const f of fields || []) {
+      if (f.showWhen && !isFieldVisible(f, out)) delete out[f.key];
+    }
+  }
   // `replaces: "otherKey"` hands this field's value to another key once it
   // is both visible and filled, so templates reference only the one key.
   // Visible-but-empty deliberately blanks the target, turning the sentinel
@@ -249,6 +258,18 @@ export function buildShiftLog({
   return { html: h.join("<br>"), text: t.join("\n") };
 }
 
+// An inline chip appends to the entry the caret already sits on instead of
+// starting a new line — how a key coming back is recorded against the entry
+// that lent it out, rather than as a disconnected line further down.
+export function buildInlineNote(line) {
+  const trimmed = String(line ?? "").trim();
+  const time = formatTime();
+  return {
+    html: ` ${esc(trimmed)} @ <b>${esc(time)}</b>.`,
+    text: ` ${trimmed} @ ${time}.`,
+  };
+}
+
 // Tint a built sentence so a reader scanning the log can spot it. Only the
 // HTML form can carry a colour — a plain textarea has nowhere to put one,
 // so the text form is returned untouched rather than faked with a marker.
@@ -347,8 +368,8 @@ export function buildSiteTour({ areas = [], state = {} }) {
   const tail = /[.!?]$/.test(textParts[textParts.length - 1]) ? "" : ".";
 
   return {
-    html: `<b>${esc(time)}</b>: ${head} — ${htmlParts.join("; ")}${tail}`,
-    text: `${time}: ${head} — ${textParts.join("; ")}${tail}`,
+    html: `<b>${esc(time)}</b>: ${head}. ${htmlParts.join("; ")}${tail}`,
+    text: `${time}: ${head}. ${textParts.join("; ")}${tail}`,
   };
 }
 

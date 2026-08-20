@@ -21,6 +21,7 @@ import {
 import {
   buildSentence,
   buildQuickLog,
+  buildInlineNote,
   buildSiteTour,
   buildShiftLog,
   applyHighlight,
@@ -190,10 +191,20 @@ export function createPopupView() {
         chip.type = "button";
         chip.className = "chip";
         chip.textContent = c.form ? `${c.label}…` : c.label;
-        chip.title = c.form ? "Opens a checklist" : c.text;
+        chip.title = c.form
+          ? "Opens a checklist"
+          : c.inline
+            ? "Appends to the line the caret is on"
+            : c.text;
         chip.addEventListener("click", (e) => {
           e.preventDefault();
           if (c.form) return openChipForm(c);
+          if (c.inline) {
+            return submitHandler?.({
+              ...decorate(buildInlineNote(c.text)),
+              inline: true,
+            });
+          }
           submitHandler?.(decorate(buildQuickLog(c.text)));
         });
         chipsRow.appendChild(chip);
