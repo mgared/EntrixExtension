@@ -23,6 +23,7 @@ export function createPopupController({ onInsert, onDismiss }) {
       // Section copies become bullets, so they take the sentence without
       // the leading line break the caret insertion needs.
       filing: sentence,
+      keyEvent: sentence.keyEvent || null,
     });
   });
 

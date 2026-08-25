@@ -14,6 +14,11 @@ import { resolveShorthand } from "./shorthand/decoder.js";
 import { createPopupController } from "./popup/popup-controller.js";
 import { getCaretViewportRect } from "./positioning/caret-position.js";
 import { replaceRange, appendUnderHeading } from "./inserter/text-inserter.js";
+import {
+  initShiftState,
+  addKeyOut,
+  clearKeyOut,
+} from "./shift-state.js";
 import { buildSentence, withLeadingLineBreak } from "./sentence-builder.js";
 import { TRIGGER_SEQUENCE } from "../config/triggers.js";
 
@@ -21,8 +26,9 @@ let detector;
 let controller;
 
 function boot() {
+  initShiftState();
   controller = createPopupController({
-    onInsert: ({ element, triggerStart, sentence, filing }) => {
+    onInsert: ({ element, triggerStart, sentence, filing, keyEvent }) => {
       replaceRange(
         element,
         triggerStart,
@@ -35,6 +41,10 @@ function boot() {
       for (const heading of filing?.sections || []) {
         appendUnderHeading(element, heading, filing);
       }
+      // Keys handed over or handed back change what's outstanding, which
+      // the Keys remaining out chip reads back later in the shift.
+      if (keyEvent?.dir === "out") addKeyOut(keyEvent);
+      else if (keyEvent?.dir === "in") clearKeyOut(keyEvent);
       detector?.suppress(element);
     },
     onDismiss: ({ element }) => {

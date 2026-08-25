@@ -1,0 +1,139 @@
+// What has actually been done since the shift began: which recurring tasks
+// have been ticked off, and whose keys are still out.
+//
+// Held in chrome.storage.local so it survives reloads and is shared across
+// tabs, but the popup reads it through an in-memory mirror — rendering a
+// chip cannot wait on an async round trip. Writes update the mirror first
+// and persist after; a storage listener keeps other tabs' mirrors in step.
+
+const KEY = "shiftState";
+
+const EMPTY = { shift: null, tasks: {}, keysOut: [] };
+
+// How many times a tracked task has to be done in one shift.
+const REQUIRED_CLICKS = 2;
+
+// The first window runs from the start of the shift; every later one has to
+// be finished before the shift's closing hour, so nothing lands in the
+// handover.
+const FIRST_WINDOW_MS = 2 * 60 * 60 * 1000;
+const END_BUFFER_MS = 60 * 60 * 1000;
+
+let state = { ...EMPTY };
+
+export function initShiftState() {
+  try {
+    chrome.storage.local.get(KEY, (got) => {
+      state = { ...EMPTY, ...(got?.[KEY] || {}) };
+    });
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== "local" || !changes[KEY]) return;
+      state = { ...EMPTY, ...(changes[KEY].newValue || {}) };
+    });
+  } catch {
+    // Storage unavailable — the mirror still works for this page's lifetime.
+  }
+}
+
+export function getShiftState() {
+  return state;
+}
+
+function persist() {
+  try {
+    chrome.storage.local.set({ [KEY]: state });
+  } catch {
+    /* keep the mirror even if it can't be written */
+  }
+}
+
+// The clock a shift's deadlines are measured against. Uses the shift's own
+// end hour rather than a duration, and rolls to tomorrow for the overnight
+// shift, whose end hour is earlier than its start.
+export function shiftEndTimestamp(shift, startedAt) {
+  const end = new Date(startedAt);
+  end.setHours(shift.end, 0, 0, 0);
+  if (end.getTime() <= startedAt) end.setDate(end.getDate() + 1);
+  return end.getTime();
+}
+
+// Beginning a shift wipes everything: a new concierge inherits no ticked
+// tasks and no key list from the last one.
+export function startShift({ shift, name }) {
+  const startedAt = Date.now();
+  state = {
+    shift: {
+      value: shift?.value || "",
+      name: name || "",
+      startedAt,
+      endsAt: shift ? shiftEndTimestamp(shift, startedAt) : null,
+    },
+    tasks: {},
+    keysOut: [],
+  };
+  persist();
+}
+
+export function recordTask(taskId) {
+  if (!taskId) return;
+  const clicks = state.tasks[taskId]?.clicks || [];
+  state = {
+    ...state,
+    tasks: { ...state.tasks, [taskId]: { clicks: [...clicks, Date.now()] } },
+  };
+  persist();
+}
+
+// null when no shift is running — the caller draws no bar rather than
+// guessing at a deadline it has no basis for.
+export function taskProgress(taskId, now = Date.now()) {
+  const shift = state.shift;
+  if (!shift || !shift.endsAt) return null;
+
+  const clicks = state.tasks[taskId]?.clicks || [];
+  if (clicks.length >= REQUIRED_CLICKS) {
+    return { done: true, ratio: 1, overdue: false, remaining: 0 };
+  }
+
+  const first = clicks.length === 0;
+  const windowStart = first ? shift.startedAt : clicks[clicks.length - 1];
+  const windowEnd = first
+    ? shift.startedAt + FIRST_WINDOW_MS
+    : shift.endsAt - END_BUFFER_MS;
+
+  const span = Math.max(1, windowEnd - windowStart);
+  const ratio = Math.min(1, Math.max(0, (now - windowStart) / span));
+  return {
+    done: false,
+    ratio,
+    overdue: now >= windowEnd,
+    remaining: REQUIRED_CLICKS - clicks.length,
+    windowEnd,
+  };
+}
+
+export function addKeyOut({ unit, holder, kind }) {
+  const at = Date.now();
+  const entry = { unit: unit || "", holder: holder || "", kind: kind || "unit keys", at };
+  // A second issue to the same unit and holder replaces the first rather
+  // than listing it twice.
+  const rest = state.keysOut.filter(
+    (k) => !(k.unit === entry.unit && k.holder === entry.holder)
+  );
+  state = { ...state, keysOut: [...rest, entry] };
+  persist();
+}
+
+export function clearKeyOut({ unit, holder }) {
+  const before = state.keysOut.length;
+  // Match on unit first: the person returning may be logged under a
+  // different name from the one who collected.
+  let keysOut = state.keysOut.filter((k) => k.unit !== unit);
+  if (keysOut.length === before && holder) {
+    keysOut = state.keysOut.filter((k) => k.holder !== holder);
+  }
+  if (keysOut.length === before) return false;
+  state = { ...state, keysOut };
+  persist();
+  return true;
+}

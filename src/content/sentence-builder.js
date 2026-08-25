@@ -258,6 +258,34 @@ export function buildShiftLog({
   return { html: h.join("<br>"), text: t.join("\n") };
 }
 
+// The keys still signed out, for the shift log's own section. An empty list
+// is stated outright rather than left blank — "nothing outstanding" is a
+// fact the next shift needs, and a blank line doesn't say it.
+export function buildKeysOut(entries = []) {
+  if (!entries.length) {
+    const line = "No outstanding property keys documented.";
+    return { html: esc(line), text: line };
+  }
+
+  const t = ["Keys remaining out:"];
+  const h = ["<b>Keys remaining out:</b>"];
+  for (const k of entries) {
+    const unit = String(k.unit || "").trim();
+    const holder = String(k.holder || "").trim();
+    const kind = String(k.kind || "unit keys").trim();
+    const since = k.at ? ` — out since ${formatTime(new Date(k.at))}` : "";
+
+    const who = holder || BLANK;
+    const whoH = holder ? esc(holder) : blankHtml("holder");
+    const where = unit ? `unit (${unit})` : "the building";
+    const whereH = unit ? `unit (<b>${esc(unit)}</b>)` : "the building";
+
+    t.push(`* ${where} — ${kind} held by ${who}${since}`);
+    h.push(`* ${whereH} — ${esc(kind)} held by ${whoH}${esc(since)}`);
+  }
+  return { html: h.join("<br>"), text: t.join("\n") };
+}
+
 // An inline chip appends to the entry the caret already sits on instead of
 // starting a new line — how a key coming back is recorded against the entry
 // that lent it out, rather than as a disconnected line further down.

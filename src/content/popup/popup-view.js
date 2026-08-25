@@ -24,9 +24,16 @@ import {
   buildInlineNote,
   buildSiteTour,
   buildShiftLog,
+  buildKeysOut,
   applyHighlight,
   isFieldVisible,
 } from "../sentence-builder.js";
+import {
+  getShiftState,
+  taskProgress,
+  recordTask,
+  startShift,
+} from "../shift-state.js";
 
 const HOST_TAG = "phrase-snippets-popup";
 
@@ -80,7 +87,10 @@ export function createPopupView() {
       const tag = e.target?.tagName;
       if (tag === "INPUT" && e.target.type === "text") return;
       e.preventDefault();
-      if (chipForm || reasonId) submitHandler?.(buildCurrentSentence());
+      if (chipForm || reasonId) {
+        commitChipForm();
+        submitHandler?.(buildCurrentSentence());
+      }
     } else if (e.key === "Escape") {
       e.preventDefault();
       dismissHandler?.();
@@ -178,41 +188,101 @@ export function createPopupView() {
     renderPreview();
 
     const chips = getQuickLogs();
-    if (chips.length) {
-      const chipsLabel = document.createElement("div");
-      chipsLabel.className = "preview-label";
-      chipsLabel.textContent = "Quick logs";
-      root.appendChild(chipsLabel);
-
-      const chipsRow = document.createElement("div");
-      chipsRow.className = "chips";
-      for (const c of chips) {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "chip";
-        chip.textContent = c.form ? `${c.label}…` : c.label;
-        chip.title = c.form
-          ? "Opens a checklist"
-          : c.inline
-            ? "Appends to the line the caret is on"
-            : c.text;
-        chip.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (c.form) return openChipForm(c);
-          if (c.inline) {
-            return submitHandler?.({
-              ...decorate(buildInlineNote(c.text)),
-              inline: true,
-            });
-          }
-          submitHandler?.(decorate(buildQuickLog(c.text)));
-        });
-        chipsRow.appendChild(chip);
-      }
-      root.appendChild(chipsRow);
-    }
+    renderChipGroup("Quick logs", chips.filter((c) => c.group !== "tasks"));
+    renderChipGroup("Tasks", chips.filter((c) => c.group === "tasks"));
 
     renderActions(!!reasonId);
+  }
+
+  // Inserting a chip form is what makes it count: a tracked task ticks off,
+  // and Begin shift starts the clock everything else is measured against.
+  function commitChipForm() {
+    if (!chipForm) return;
+    const { chip, state } = chipForm;
+    if (chip.task) recordTask(chip.task);
+    if (chip.form?.kind === "beginShift") {
+      const shift = (chip.form.shifts || []).find(
+        (x) => x.value === state.shift
+      );
+      startShift({ shift, name: state.name });
+    }
+  }
+
+  function renderChipGroup(title, chips) {
+    if (!chips.length) return;
+
+    const label = document.createElement("div");
+    label.className = "preview-label";
+    label.textContent = title;
+    root.appendChild(label);
+
+    const row = document.createElement("div");
+    row.className = "chips";
+    for (const c of chips) row.appendChild(renderChip(c));
+    root.appendChild(row);
+  }
+
+  function renderChip(c) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = c.form ? `${c.label}…` : c.label;
+    chip.title = c.form
+      ? "Opens a checklist"
+      : c.inline
+        ? "Appends to the line the caret is on"
+        : c.kind === "keysOut"
+          ? "Lists the keys still signed out"
+          : c.text;
+
+    applyTaskProgress(chip, c);
+
+    chip.addEventListener("click", (e) => {
+      e.preventDefault();
+      // A form chip counts once its form is inserted, not when it opens —
+      // see the Insert handler. Plain chips insert on this click.
+      if (c.form) return openChipForm(c);
+      if (c.task) recordTask(c.task);
+      if (c.kind === "keysOut") {
+        return submitHandler?.(
+          decorate(buildKeysOut(getShiftState().keysOut || []))
+        );
+      }
+      if (c.inline) {
+        return submitHandler?.({
+          ...decorate(buildInlineNote(c.text)),
+          inline: true,
+        });
+      }
+      submitHandler?.(decorate(buildQuickLog(c.text)));
+    });
+    return chip;
+  }
+
+  // A tracked task fills with red as its deadline approaches and turns
+  // solid once it passes. No shift running means no deadline to draw.
+  function applyTaskProgress(chip, c) {
+    if (!c.task) return;
+    const p = taskProgress(c.task);
+    if (!p) return;
+
+    if (p.done) {
+      chip.classList.add("chip-done");
+      chip.textContent = `${chip.textContent} ✓`;
+      chip.title = "Done for this shift";
+      return;
+    }
+
+    const pct = Math.round(p.ratio * 100);
+    chip.classList.add("chip-task");
+    if (p.overdue) {
+      chip.classList.add("chip-overdue");
+      chip.title = `Overdue — ${p.remaining} still needed this shift`;
+    } else {
+      chip.style.background =
+        `linear-gradient(to right, var(--task-fill) ${pct}%, var(--chip-bg) ${pct}%)`;
+      chip.title = `${p.remaining} still needed this shift`;
+    }
   }
 
   // A chip carrying a `form` takes the popup over: the role/reason picker
@@ -500,6 +570,7 @@ export function createPopupView() {
     insert.disabled = !canInsert;
     insert.addEventListener("click", () => {
       if (!canInsert) return;
+      commitChipForm();
       submitHandler?.(buildCurrentSentence());
     });
 
@@ -710,7 +781,27 @@ export function createPopupView() {
     }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    return decorate(buildSentence({ role, reason, values: { ...values } }));
+    return {
+      ...decorate(buildSentence({ role, reason, values: { ...values } })),
+      keyEvent: keyEventFor(reason),
+    };
+  }
+
+  // Custody only moves when keys actually change hands, so an issue counts
+  // only if the chosen outcome is one that hands them over — a refusal
+  // leaves nothing outstanding.
+  function keyEventFor(reason) {
+    const t = reason?.tracksKeys;
+    if (!t) return null;
+    const holder = [values.name, values.company].filter(Boolean).join(" from ");
+    if (t.dir === "in") {
+      return { dir: "in", unit: values.unit || "", holder };
+    }
+    const picked = (reason.fields || [])
+      .flatMap((f) => (f.key === "outcome" ? f.options || [] : []))
+      .find((o) => typeof o === "object" && o.value === values.outcome);
+    if (!picked?.issuesKeys) return null;
+    return { dir: "out", unit: values.unit || "", holder, kind: t.kind };
   }
 
   // Anchor the popup was opened at, kept so we can re-place it whenever the
