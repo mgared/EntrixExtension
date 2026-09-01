@@ -74,6 +74,14 @@ export function startShift({ shift, name }) {
   persist();
 }
 
+// Closing the shift stops the deadlines without wiping the record — the
+// keys still out are exactly what the handover needs to report.
+export function endShift() {
+  if (!state.shift) return;
+  state = { ...state, shift: { ...state.shift, endedAt: Date.now() } };
+  persist();
+}
+
 export function recordTask(taskId) {
   if (!taskId) return;
   const clicks = state.tasks[taskId]?.clicks || [];
@@ -88,7 +96,7 @@ export function recordTask(taskId) {
 // guessing at a deadline it has no basis for.
 export function taskProgress(taskId, now = Date.now()) {
   const shift = state.shift;
-  if (!shift || !shift.endsAt) return null;
+  if (!shift || !shift.endsAt || shift.endedAt) return null;
 
   const clicks = state.tasks[taskId]?.clicks || [];
   if (clicks.length >= REQUIRED_CLICKS) {
@@ -112,9 +120,19 @@ export function taskProgress(taskId, now = Date.now()) {
   };
 }
 
+let keySeq = 0;
+
 export function addKeyOut({ unit, holder, kind }) {
   const at = Date.now();
-  const entry = { unit: unit || "", holder: holder || "", kind: kind || "unit keys", at };
+  const entry = {
+    // Vendors working on shared parts of the building have no unit, so an
+    // id is the only thing that reliably identifies one set of keys.
+    id: `k${at}-${keySeq++}`,
+    unit: unit || "",
+    holder: holder || "",
+    kind: kind || "unit keys",
+    at,
+  };
   // A second issue to the same unit and holder replaces the first rather
   // than listing it twice.
   const rest = state.keysOut.filter(
@@ -124,14 +142,19 @@ export function addKeyOut({ unit, holder, kind }) {
   persist();
 }
 
-export function clearKeyOut({ unit, holder }) {
+// Matched by id where the caller has one, otherwise by unit, otherwise by
+// holder. An empty unit is never a match: treating it as one meant
+// returning a common-area vendor's keys cleared every other vendor too.
+export function clearKeyOut({ id, unit, holder } = {}) {
   const before = state.keysOut.length;
-  // Match on unit first: the person returning may be logged under a
-  // different name from the one who collected.
-  let keysOut = state.keysOut.filter((k) => k.unit !== unit);
-  if (keysOut.length === before && holder) {
+  let keysOut;
+  if (id) keysOut = state.keysOut.filter((k) => k.id !== id);
+  else if (String(unit || "").trim())
+    keysOut = state.keysOut.filter((k) => k.unit !== unit);
+  else if (String(holder || "").trim())
     keysOut = state.keysOut.filter((k) => k.holder !== holder);
-  }
+  else return false;
+
   if (keysOut.length === before) return false;
   state = { ...state, keysOut };
   persist();

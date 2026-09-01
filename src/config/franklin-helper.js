@@ -1461,8 +1461,15 @@ export const QUICK_LOGS = [
     },
   },
   {
+    // A form rather than a plain chip: it both reports what is out and is
+    // the one place a key can be marked back in, whichever way it was
+    // logged out.
     label: "Keys remaining out",
-    kind: "keysOut",
+    form: { kind: "keysOut", title: "Keys remaining out" },
+  },
+  {
+    label: "End shift",
+    form: { kind: "endShift", title: "End shift" },
   },
   {
     label: "Site tour",

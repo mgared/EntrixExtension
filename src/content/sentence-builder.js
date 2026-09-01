@@ -258,6 +258,21 @@ export function buildShiftLog({
   return { html: h.join("<br>"), text: t.join("\n") };
 }
 
+// The closing handover, written when the shift is actually closed rather
+// than tab-filled from the skeleton laid down eight hours earlier.
+export function buildShiftEnd({ name = "", relief = "", keys = false }) {
+  const time = formatTime();
+  const nameT = name || BLANK;
+  const nameH = name ? redHtml(name) : blankHtml("name");
+  const reliefT = relief || BLANK;
+  const reliefH = relief ? redHtml(relief) : blankHtml("relief");
+  const tail = keys ? " Handed over concierge keys." : "";
+  return {
+    html: `<b>${esc(time)}</b>: ${nameH} off site. ${reliefH} on site.${esc(tail)}`,
+    text: `${time}: ${nameT} off site. ${reliefT} on site.${tail}`,
+  };
+}
+
 // The keys still signed out, for the shift log's own section. An empty list
 // is stated outright rather than left blank — "nothing outstanding" is a
 // fact the next shift needs, and a blank line doesn't say it.

@@ -25,6 +25,7 @@ import {
   buildSiteTour,
   buildShiftLog,
   buildKeysOut,
+  buildShiftEnd,
   applyHighlight,
   isFieldVisible,
 } from "../sentence-builder.js";
@@ -33,6 +34,8 @@ import {
   taskProgress,
   recordTask,
   startShift,
+  endShift,
+  clearKeyOut,
 } from "../shift-state.js";
 
 const HOST_TAG = "phrase-snippets-popup";
@@ -200,6 +203,12 @@ export function createPopupView() {
     if (!chipForm) return;
     const { chip, state } = chipForm;
     if (chip.task) recordTask(chip.task);
+    if (chip.form?.kind === "keysOut") {
+      for (const [id, on] of Object.entries(state.returned || {})) {
+        if (on) clearKeyOut({ id });
+      }
+    }
+    if (chip.form?.kind === "endShift") endShift();
     if (chip.form?.kind === "beginShift") {
       const shift = (chip.form.shifts || []).find(
         (x) => x.value === state.shift
@@ -289,7 +298,12 @@ export function createPopupView() {
   // is replaced by that form's own controls until Back or Insert.
   function openChipForm(chip) {
     let state;
-    if (chip.form.kind === "beginShift") {
+    if (chip.form.kind === "keysOut") {
+      // Snapshot what is out now; ticking one marks it returned on insert.
+      state = { entries: getShiftState().keysOut || [], returned: {} };
+    } else if (chip.form.kind === "endShift") {
+      state = { relief: "", keys: true };
+    } else if (chip.form.kind === "beginShift") {
       state = {
         name: "",
         prevName: "",
@@ -347,7 +361,11 @@ export function createPopupView() {
     head.appendChild(back);
     root.appendChild(head);
 
-    if (chip.form.kind === "beginShift") {
+    if (chip.form.kind === "keysOut") {
+      root.appendChild(renderKeysOutForm(state));
+    } else if (chip.form.kind === "endShift") {
+      root.appendChild(renderEndShiftForm(state));
+    } else if (chip.form.kind === "beginShift") {
       root.appendChild(renderShiftForm(chip.form, state));
     } else {
       const list = document.createElement("div");
@@ -360,6 +378,84 @@ export function createPopupView() {
 
     renderPreview();
     renderActions(true);
+  }
+
+  function renderKeysOutForm(state) {
+    const list = document.createElement("div");
+    list.className = "tour";
+    if (!state.entries.length) {
+      const empty = document.createElement("div");
+      empty.className = "hint";
+      empty.textContent = "Nothing signed out.";
+      list.appendChild(empty);
+      return list;
+    }
+    for (const k of state.entries) {
+      const row = document.createElement("div");
+      row.className = "tour-row";
+
+      const label = document.createElement("label");
+      label.className = "check";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.dataset.key = k.id;
+      box.checked = !!state.returned[k.id];
+      box.addEventListener("change", () => {
+        state.returned[k.id] = box.checked;
+        updatePreview();
+      });
+      label.appendChild(box);
+      label.appendChild(document.createTextNode("Returned"));
+      row.appendChild(label);
+
+      const who = document.createElement("div");
+      who.className = "tour-issue";
+      who.textContent = `${k.unit ? `unit (${k.unit})` : "the building"} — ${k.kind} held by ${k.holder || "—"}`;
+      row.appendChild(who);
+      list.appendChild(row);
+    }
+    return list;
+  }
+
+  function renderEndShiftForm(state) {
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = "Relieving concierge";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.dataset.key = "relief";
+    input.placeholder = "Coming on";
+    input.value = state.relief;
+    input.addEventListener("input", () => {
+      state.relief = input.value;
+      updatePreview();
+    });
+    wrap.appendChild(label);
+    wrap.appendChild(input);
+    row.appendChild(wrap);
+
+    const keysWrap = document.createElement("div");
+    keysWrap.className = "field";
+    const keysLabel = document.createElement("label");
+    keysLabel.className = "check";
+    const keysBox = document.createElement("input");
+    keysBox.type = "checkbox";
+    keysBox.dataset.key = "keys";
+    keysBox.checked = !!state.keys;
+    keysBox.addEventListener("change", () => {
+      state.keys = keysBox.checked;
+      updatePreview();
+    });
+    keysLabel.appendChild(keysBox);
+    keysLabel.appendChild(document.createTextNode("Concierge keys handed over"));
+    keysWrap.appendChild(keysLabel);
+    row.appendChild(keysWrap);
+    return row;
   }
 
   function renderShiftForm(form, state) {
@@ -762,6 +858,21 @@ export function createPopupView() {
   function buildCurrentSentence() {
     if (chipForm) {
       const form = chipForm.chip.form;
+      if (form.kind === "keysOut") {
+        const still = (chipForm.state.entries || []).filter(
+          (k) => !chipForm.state.returned[k.id]
+        );
+        return decorate(buildKeysOut(still));
+      }
+      if (form.kind === "endShift") {
+        return decorate(
+          buildShiftEnd({
+            name: getShiftState().shift?.name || "",
+            relief: chipForm.state.relief,
+            keys: chipForm.state.keys,
+          })
+        );
+      }
       if (form.kind === "beginShift") {
         const shift =
           (form.shifts || []).find((s) => s.value === chipForm.state.shift) ||
