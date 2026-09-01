@@ -21,8 +21,12 @@ export function createPopupController({ onInsert, onDismiss }) {
       // starts its own.
       sentence: sentence.inline ? sentence : withLeadingLineBreak(sentence),
       // Section copies become bullets, so they take the sentence without
-      // the leading line break the caret insertion needs.
-      filing: sentence,
+      // the leading line break the caret insertion needs — and carry the
+      // note about what the notified team should do.
+      filing: {
+        ...(sentence.filing || sentence),
+        sections: sentence.sections || [],
+      },
       keyEvent: sentence.keyEvent || null,
     });
   });

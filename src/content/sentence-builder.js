@@ -313,6 +313,15 @@ export function buildInlineNote(line) {
   };
 }
 
+// The filed copy carries a line the timeline entry doesn't: what the team
+// being notified is expected to do about it. That is the whole difference
+// between a record of an event and a handover note.
+export function withNote({ html, text }, note) {
+  const n = String(note ?? "").trim();
+  if (!n) return { html, text };
+  return { html: `${html} ${esc(n)}`, text: `${text} ${n}` };
+}
+
 // Tint a built sentence so a reader scanning the log can spot it. Only the
 // HTML form can carry a colour — a plain textarea has nowhere to put one,
 // so the text form is returned untouched rather than faked with a marker.

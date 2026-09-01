@@ -27,6 +27,7 @@ import {
   buildKeysOut,
   buildShiftEnd,
   applyHighlight,
+  withNote,
   isFieldVisible,
 } from "../sentence-builder.js";
 import {
@@ -69,6 +70,10 @@ export function createPopupView() {
   // inserted, in every popup mode.
   let flags = {};
 
+  // What the notified team should expect or do. Appended to the copies
+  // filed under the section headings, never to the timeline entry.
+  let flagNote = "";
+
   // Keep the same input element across renders so the user's keystrokes
   // don't lose focus mid-typing. Re-rendered field defs swap into
   // pre-existing inputs by `data-key`, and stale inputs are removed.
@@ -106,6 +111,7 @@ export function createPopupView() {
     values = {};
     chipForm = null;
     flags = {};
+    flagNote = "";
     inputCache.clear();
     seedDefaults();
   }
@@ -124,11 +130,15 @@ export function createPopupView() {
       .map((h) => h.section);
   }
 
-  // Everything the popup submits carries the same flag-derived extras.
+  // Everything the popup submits carries the same flag-derived extras. The
+  // timeline entry and the filed copy diverge here: only the copy gets the
+  // note about what happens next.
   function decorate(sentence) {
+    const color = activeHighlight();
     return {
-      ...applyHighlight(sentence, activeHighlight()),
+      ...applyHighlight(sentence, color),
       sections: activeSections(),
+      filing: applyHighlight(withNote(sentence, flagNote), color),
     };
   }
 
@@ -619,7 +629,10 @@ export function createPopupView() {
       box.checked = !!flags[h.key];
       box.addEventListener("change", () => {
         flags[h.key] = box.checked;
-        updatePreview();
+        // The note field appears with the first tick and goes with the last,
+        // so this needs a re-render rather than just a preview refresh.
+        render();
+        shadow.querySelector(`input[data-flag="${h.key}"]`)?.focus();
       });
       const swatch = document.createElement("span");
       swatch.className = "swatch";
@@ -630,6 +643,32 @@ export function createPopupView() {
       row.appendChild(item);
     }
     root.appendChild(row);
+
+    if (!activeSections().length) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "field field-wide";
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = "What should they expect or do?";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.dataset.key = "flagNote";
+    input.placeholder =
+      "e.g. Maintenance follow-up should be confirmed with the resident.";
+    input.value = flagNote;
+    input.addEventListener("input", () => {
+      flagNote = input.value;
+      updatePreview();
+    });
+    const hint = document.createElement("div");
+    hint.className = "hint";
+    hint.textContent =
+      "Added to the section notes below, not to the line at your cursor.";
+    wrap.appendChild(label);
+    wrap.appendChild(input);
+    wrap.appendChild(hint);
+    root.appendChild(wrap);
   }
 
   function renderPreview() {
