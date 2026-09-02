@@ -191,6 +191,8 @@ export const POPUP_STYLES = `
     gap: 6px;
   }
   .chip {
+    --chip-bg: #f5f7fa;
+    --task-fill: rgba(255, 77, 79, 0.28);
     font: inherit;
     font-size: 12px;
     padding: 4px 10px;
@@ -199,6 +201,21 @@ export const POPUP_STYLES = `
     background: #f5f7fa;
     color: #1a1a1a;
     cursor: pointer;
+  }
+  /* A tracked task carries its own deadline: the fill grows as time runs
+     down, and the whole chip goes red once it's late. */
+  .chip-task {
+    border-color: rgba(255, 77, 79, 0.4);
+  }
+  .chip-overdue {
+    background: rgba(255, 77, 79, 0.75);
+    border-color: rgba(255, 77, 79, 0.9);
+    font-weight: 600;
+  }
+  .chip-done {
+    background: #eef6ee;
+    border-color: rgba(60, 140, 70, 0.4);
+    color: #2f6b38;
   }
   .chip:hover {
     background: #e8eef7;

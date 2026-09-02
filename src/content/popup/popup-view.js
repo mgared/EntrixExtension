@@ -24,9 +24,20 @@ import {
   buildInlineNote,
   buildSiteTour,
   buildShiftLog,
+  buildKeysOut,
+  buildShiftEnd,
   applyHighlight,
+  withNote,
   isFieldVisible,
 } from "../sentence-builder.js";
+import {
+  getShiftState,
+  taskProgress,
+  recordTask,
+  startShift,
+  endShift,
+  clearKeyOut,
+} from "../shift-state.js";
 
 const HOST_TAG = "phrase-snippets-popup";
 
@@ -59,6 +70,10 @@ export function createPopupView() {
   // inserted, in every popup mode.
   let flags = {};
 
+  // What the notified team should expect or do. Appended to the copies
+  // filed under the section headings, never to the timeline entry.
+  let flagNote = "";
+
   // Keep the same input element across renders so the user's keystrokes
   // don't lose focus mid-typing. Re-rendered field defs swap into
   // pre-existing inputs by `data-key`, and stale inputs are removed.
@@ -80,7 +95,10 @@ export function createPopupView() {
       const tag = e.target?.tagName;
       if (tag === "INPUT" && e.target.type === "text") return;
       e.preventDefault();
-      if (chipForm || reasonId) submitHandler?.(buildCurrentSentence());
+      if (chipForm || reasonId) {
+        commitChipForm();
+        submitHandler?.(buildCurrentSentence());
+      }
     } else if (e.key === "Escape") {
       e.preventDefault();
       dismissHandler?.();
@@ -93,6 +111,7 @@ export function createPopupView() {
     values = {};
     chipForm = null;
     flags = {};
+    flagNote = "";
     inputCache.clear();
     seedDefaults();
   }
@@ -111,11 +130,15 @@ export function createPopupView() {
       .map((h) => h.section);
   }
 
-  // Everything the popup submits carries the same flag-derived extras.
+  // Everything the popup submits carries the same flag-derived extras. The
+  // timeline entry and the filed copy diverge here: only the copy gets the
+  // note about what happens next.
   function decorate(sentence) {
+    const color = activeHighlight();
     return {
-      ...applyHighlight(sentence, activeHighlight()),
+      ...applyHighlight(sentence, color),
       sections: activeSections(),
+      filing: applyHighlight(withNote(sentence, flagNote), color),
     };
   }
 
@@ -178,48 +201,119 @@ export function createPopupView() {
     renderPreview();
 
     const chips = getQuickLogs();
-    if (chips.length) {
-      const chipsLabel = document.createElement("div");
-      chipsLabel.className = "preview-label";
-      chipsLabel.textContent = "Quick logs";
-      root.appendChild(chipsLabel);
-
-      const chipsRow = document.createElement("div");
-      chipsRow.className = "chips";
-      for (const c of chips) {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "chip";
-        chip.textContent = c.form ? `${c.label}…` : c.label;
-        chip.title = c.form
-          ? "Opens a checklist"
-          : c.inline
-            ? "Appends to the line the caret is on"
-            : c.text;
-        chip.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (c.form) return openChipForm(c);
-          if (c.inline) {
-            return submitHandler?.({
-              ...decorate(buildInlineNote(c.text)),
-              inline: true,
-            });
-          }
-          submitHandler?.(decorate(buildQuickLog(c.text)));
-        });
-        chipsRow.appendChild(chip);
-      }
-      root.appendChild(chipsRow);
-    }
+    renderChipGroup("Quick logs", chips.filter((c) => c.group !== "tasks"));
+    renderChipGroup("Tasks", chips.filter((c) => c.group === "tasks"));
 
     renderActions(!!reasonId);
+  }
+
+  // Inserting a chip form is what makes it count: a tracked task ticks off,
+  // and Begin shift starts the clock everything else is measured against.
+  function commitChipForm() {
+    if (!chipForm) return;
+    const { chip, state } = chipForm;
+    if (chip.task) recordTask(chip.task);
+    if (chip.form?.kind === "keysOut") {
+      for (const [id, on] of Object.entries(state.returned || {})) {
+        if (on) clearKeyOut({ id });
+      }
+    }
+    if (chip.form?.kind === "endShift") endShift();
+    if (chip.form?.kind === "beginShift") {
+      const shift = (chip.form.shifts || []).find(
+        (x) => x.value === state.shift
+      );
+      startShift({ shift, name: state.name });
+    }
+  }
+
+  function renderChipGroup(title, chips) {
+    if (!chips.length) return;
+
+    const label = document.createElement("div");
+    label.className = "preview-label";
+    label.textContent = title;
+    root.appendChild(label);
+
+    const row = document.createElement("div");
+    row.className = "chips";
+    for (const c of chips) row.appendChild(renderChip(c));
+    root.appendChild(row);
+  }
+
+  function renderChip(c) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = c.form ? `${c.label}…` : c.label;
+    chip.title = c.form
+      ? "Opens a checklist"
+      : c.inline
+        ? "Appends to the line the caret is on"
+        : c.kind === "keysOut"
+          ? "Lists the keys still signed out"
+          : c.text;
+
+    applyTaskProgress(chip, c);
+
+    chip.addEventListener("click", (e) => {
+      e.preventDefault();
+      // A form chip counts once its form is inserted, not when it opens —
+      // see the Insert handler. Plain chips insert on this click.
+      if (c.form) return openChipForm(c);
+      if (c.task) recordTask(c.task);
+      if (c.kind === "keysOut") {
+        return submitHandler?.(
+          decorate(buildKeysOut(getShiftState().keysOut || []))
+        );
+      }
+      if (c.inline) {
+        return submitHandler?.({
+          ...decorate(buildInlineNote(c.text)),
+          inline: true,
+        });
+      }
+      submitHandler?.(decorate(buildQuickLog(c.text)));
+    });
+    return chip;
+  }
+
+  // A tracked task fills with red as its deadline approaches and turns
+  // solid once it passes. No shift running means no deadline to draw.
+  function applyTaskProgress(chip, c) {
+    if (!c.task) return;
+    const p = taskProgress(c.task);
+    if (!p) return;
+
+    if (p.done) {
+      chip.classList.add("chip-done");
+      chip.textContent = `${chip.textContent} ✓`;
+      chip.title = "Done for this shift";
+      return;
+    }
+
+    const pct = Math.round(p.ratio * 100);
+    chip.classList.add("chip-task");
+    if (p.overdue) {
+      chip.classList.add("chip-overdue");
+      chip.title = `Overdue — ${p.remaining} still needed this shift`;
+    } else {
+      chip.style.background =
+        `linear-gradient(to right, var(--task-fill) ${pct}%, var(--chip-bg) ${pct}%)`;
+      chip.title = `${p.remaining} still needed this shift`;
+    }
   }
 
   // A chip carrying a `form` takes the popup over: the role/reason picker
   // is replaced by that form's own controls until Back or Insert.
   function openChipForm(chip) {
     let state;
-    if (chip.form.kind === "beginShift") {
+    if (chip.form.kind === "keysOut") {
+      // Snapshot what is out now; ticking one marks it returned on insert.
+      state = { entries: getShiftState().keysOut || [], returned: {} };
+    } else if (chip.form.kind === "endShift") {
+      state = { relief: "", keys: true };
+    } else if (chip.form.kind === "beginShift") {
       state = {
         name: "",
         prevName: "",
@@ -277,7 +371,11 @@ export function createPopupView() {
     head.appendChild(back);
     root.appendChild(head);
 
-    if (chip.form.kind === "beginShift") {
+    if (chip.form.kind === "keysOut") {
+      root.appendChild(renderKeysOutForm(state));
+    } else if (chip.form.kind === "endShift") {
+      root.appendChild(renderEndShiftForm(state));
+    } else if (chip.form.kind === "beginShift") {
       root.appendChild(renderShiftForm(chip.form, state));
     } else {
       const list = document.createElement("div");
@@ -290,6 +388,84 @@ export function createPopupView() {
 
     renderPreview();
     renderActions(true);
+  }
+
+  function renderKeysOutForm(state) {
+    const list = document.createElement("div");
+    list.className = "tour";
+    if (!state.entries.length) {
+      const empty = document.createElement("div");
+      empty.className = "hint";
+      empty.textContent = "Nothing signed out.";
+      list.appendChild(empty);
+      return list;
+    }
+    for (const k of state.entries) {
+      const row = document.createElement("div");
+      row.className = "tour-row";
+
+      const label = document.createElement("label");
+      label.className = "check";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.dataset.key = k.id;
+      box.checked = !!state.returned[k.id];
+      box.addEventListener("change", () => {
+        state.returned[k.id] = box.checked;
+        updatePreview();
+      });
+      label.appendChild(box);
+      label.appendChild(document.createTextNode("Returned"));
+      row.appendChild(label);
+
+      const who = document.createElement("div");
+      who.className = "tour-issue";
+      who.textContent = `${k.unit ? `unit (${k.unit})` : "the building"} — ${k.kind} held by ${k.holder || "—"}`;
+      row.appendChild(who);
+      list.appendChild(row);
+    }
+    return list;
+  }
+
+  function renderEndShiftForm(state) {
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = "Relieving concierge";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.dataset.key = "relief";
+    input.placeholder = "Coming on";
+    input.value = state.relief;
+    input.addEventListener("input", () => {
+      state.relief = input.value;
+      updatePreview();
+    });
+    wrap.appendChild(label);
+    wrap.appendChild(input);
+    row.appendChild(wrap);
+
+    const keysWrap = document.createElement("div");
+    keysWrap.className = "field";
+    const keysLabel = document.createElement("label");
+    keysLabel.className = "check";
+    const keysBox = document.createElement("input");
+    keysBox.type = "checkbox";
+    keysBox.dataset.key = "keys";
+    keysBox.checked = !!state.keys;
+    keysBox.addEventListener("change", () => {
+      state.keys = keysBox.checked;
+      updatePreview();
+    });
+    keysLabel.appendChild(keysBox);
+    keysLabel.appendChild(document.createTextNode("Concierge keys handed over"));
+    keysWrap.appendChild(keysLabel);
+    row.appendChild(keysWrap);
+    return row;
   }
 
   function renderShiftForm(form, state) {
@@ -453,7 +629,10 @@ export function createPopupView() {
       box.checked = !!flags[h.key];
       box.addEventListener("change", () => {
         flags[h.key] = box.checked;
-        updatePreview();
+        // The note field appears with the first tick and goes with the last,
+        // so this needs a re-render rather than just a preview refresh.
+        render();
+        shadow.querySelector(`input[data-flag="${h.key}"]`)?.focus();
       });
       const swatch = document.createElement("span");
       swatch.className = "swatch";
@@ -464,6 +643,32 @@ export function createPopupView() {
       row.appendChild(item);
     }
     root.appendChild(row);
+
+    if (!activeSections().length) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "field field-wide";
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = "What should they expect or do?";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.dataset.key = "flagNote";
+    input.placeholder =
+      "e.g. Maintenance follow-up should be confirmed with the resident.";
+    input.value = flagNote;
+    input.addEventListener("input", () => {
+      flagNote = input.value;
+      updatePreview();
+    });
+    const hint = document.createElement("div");
+    hint.className = "hint";
+    hint.textContent =
+      "Added to the section notes below, not to the line at your cursor.";
+    wrap.appendChild(label);
+    wrap.appendChild(input);
+    wrap.appendChild(hint);
+    root.appendChild(wrap);
   }
 
   function renderPreview() {
@@ -500,6 +705,7 @@ export function createPopupView() {
     insert.disabled = !canInsert;
     insert.addEventListener("click", () => {
       if (!canInsert) return;
+      commitChipForm();
       submitHandler?.(buildCurrentSentence());
     });
 
@@ -691,6 +897,21 @@ export function createPopupView() {
   function buildCurrentSentence() {
     if (chipForm) {
       const form = chipForm.chip.form;
+      if (form.kind === "keysOut") {
+        const still = (chipForm.state.entries || []).filter(
+          (k) => !chipForm.state.returned[k.id]
+        );
+        return decorate(buildKeysOut(still));
+      }
+      if (form.kind === "endShift") {
+        return decorate(
+          buildShiftEnd({
+            name: getShiftState().shift?.name || "",
+            relief: chipForm.state.relief,
+            keys: chipForm.state.keys,
+          })
+        );
+      }
       if (form.kind === "beginShift") {
         const shift =
           (form.shifts || []).find((s) => s.value === chipForm.state.shift) ||
@@ -710,7 +931,27 @@ export function createPopupView() {
     }
     const role = getRole(roleId);
     const reason = getReason(roleId, reasonId);
-    return decorate(buildSentence({ role, reason, values: { ...values } }));
+    return {
+      ...decorate(buildSentence({ role, reason, values: { ...values } })),
+      keyEvent: keyEventFor(reason),
+    };
+  }
+
+  // Custody only moves when keys actually change hands, so an issue counts
+  // only if the chosen outcome is one that hands them over — a refusal
+  // leaves nothing outstanding.
+  function keyEventFor(reason) {
+    const t = reason?.tracksKeys;
+    if (!t) return null;
+    const holder = [values.name, values.company].filter(Boolean).join(" from ");
+    if (t.dir === "in") {
+      return { dir: "in", unit: values.unit || "", holder };
+    }
+    const picked = (reason.fields || [])
+      .flatMap((f) => (f.key === "outcome" ? f.options || [] : []))
+      .find((o) => typeof o === "object" && o.value === values.outcome);
+    if (!picked?.issuesKeys) return null;
+    return { dir: "out", unit: values.unit || "", holder, kind: t.kind };
   }
 
   // Anchor the popup was opened at, kept so we can re-place it whenever the

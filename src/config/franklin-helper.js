@@ -93,11 +93,13 @@ const SERVICE_KEYS_OUTCOME = {
     {
       value: "confirmed with the resident via call, keys exchanged for an ID",
       label: "Granted — call confirmation",
+      issuesKeys: true,
     },
     {
       value:
         "confirmed on the resident visitor list, keys exchanged for an ID",
       label: "Granted — visitor list",
+      issuesKeys: true,
     },
     {
       value: "denied, failed to confirm with resident",
@@ -117,11 +119,13 @@ const VENDOR_KEYS_OUTCOME = {
     {
       value: "confirmed with the resident via call, keys exchanged for an ID",
       label: "Granted — resident confirmed",
+      issuesKeys: true,
     },
     {
       value:
         "confirmed with the leasing/maintenance team, keys exchanged for an ID",
       label: "Granted — leasing/maintenance",
+      issuesKeys: true,
     },
     {
       value:
@@ -539,6 +543,7 @@ export const HELPER = {
         },
         {
           id: "givenKeys",
+          tracksKeys: { dir: "out", kind: "unit keys" },
           label: "Given unit keys",
           template:
             "Guest[ {name}] {contact} for unit ({unit}[ {residentName}]) and requested unit keys; {outcome}.",
@@ -546,6 +551,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
+          tracksKeys: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Guest[ {name}] returned the unit keys for unit ({unit}[ {residentName}]) to the front desk and their ID was handed back.",
@@ -633,6 +639,7 @@ export const HELPER = {
         },
         {
           id: "pickedUpKeys",
+          tracksKeys: { dir: "out", kind: "unit keys" },
           label: "Picked up unit keys",
           template:
             "Dog walker[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
@@ -640,6 +647,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
+          tracksKeys: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Dog walker[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
@@ -669,6 +677,7 @@ export const HELPER = {
         },
         {
           id: "pickedUpKeys",
+          tracksKeys: { dir: "out", kind: "unit keys" },
           label: "Picked up unit keys",
           template:
             "Cleaner[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
@@ -676,6 +685,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
+          tracksKeys: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Cleaner[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
@@ -707,6 +717,7 @@ export const HELPER = {
           // Vendor keys are ours and have to come back, so an ID is always
           // held against them.
           id: "pickedUpKeys",
+          tracksKeys: { dir: "out", kind: "vendor keys" },
           label: "Picked up vendor keys",
           template:
             "Vendor[ {name}][ from {company}] requested vendor keys[ for unit ({unit})][ for the {area}][ regarding {purpose}]; {outcome}.",
@@ -723,6 +734,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
+          tracksKeys: { dir: "in" },
           label: "Returned vendor keys",
           template:
             "Vendor[ {name}][ from {company}] returned the vendor keys[ for unit ({unit})][ for the {area}] to the front desk and their ID was handed back.",
@@ -1449,7 +1461,20 @@ export const QUICK_LOGS = [
     },
   },
   {
+    // A form rather than a plain chip: it both reports what is out and is
+    // the one place a key can be marked back in, whichever way it was
+    // logged out.
+    label: "Keys remaining out",
+    form: { kind: "keysOut", title: "Keys remaining out" },
+  },
+  {
+    label: "End shift",
+    form: { kind: "endShift", title: "End shift" },
+  },
+  {
     label: "Site tour",
+    group: "tasks",
+    task: "siteTour",
     text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
     form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
   },
@@ -1459,6 +1484,8 @@ export const QUICK_LOGS = [
   },
   {
     label: "Desk organized",
+    group: "tasks",
+    task: "deskOrganized",
     text: "Front desk organized.",
   },
   {
@@ -1475,7 +1502,7 @@ export const QUICK_LOGS = [
 // Order matters: only one background can render on a sentence, so when
 // several are ticked the first one listed here supplies the colour.
 // One shared tint: the flags differ in where they file, not in colour.
-const HIGHLIGHT_YELLOW = "#ffef9e";
+const HIGHLIGHT_YELLOW = "#ffff00";
 
 // `section` also files a copy of the sentence as a bullet under that
 // heading further down the log, so a flagged note lands both where the

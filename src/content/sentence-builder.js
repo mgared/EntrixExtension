@@ -258,6 +258,49 @@ export function buildShiftLog({
   return { html: h.join("<br>"), text: t.join("\n") };
 }
 
+// The closing handover, written when the shift is actually closed rather
+// than tab-filled from the skeleton laid down eight hours earlier.
+export function buildShiftEnd({ name = "", relief = "", keys = false }) {
+  const time = formatTime();
+  const nameT = name || BLANK;
+  const nameH = name ? redHtml(name) : blankHtml("name");
+  const reliefT = relief || BLANK;
+  const reliefH = relief ? redHtml(relief) : blankHtml("relief");
+  const tail = keys ? " Handed over concierge keys." : "";
+  return {
+    html: `<b>${esc(time)}</b>: ${nameH} off site. ${reliefH} on site.${esc(tail)}`,
+    text: `${time}: ${nameT} off site. ${reliefT} on site.${tail}`,
+  };
+}
+
+// The keys still signed out, for the shift log's own section. An empty list
+// is stated outright rather than left blank — "nothing outstanding" is a
+// fact the next shift needs, and a blank line doesn't say it.
+export function buildKeysOut(entries = []) {
+  if (!entries.length) {
+    const line = "No outstanding property keys documented.";
+    return { html: esc(line), text: line };
+  }
+
+  const t = ["Keys remaining out:"];
+  const h = ["<b>Keys remaining out:</b>"];
+  for (const k of entries) {
+    const unit = String(k.unit || "").trim();
+    const holder = String(k.holder || "").trim();
+    const kind = String(k.kind || "unit keys").trim();
+    const since = k.at ? ` — out since ${formatTime(new Date(k.at))}` : "";
+
+    const who = holder || BLANK;
+    const whoH = holder ? esc(holder) : blankHtml("holder");
+    const where = unit ? `unit (${unit})` : "the building";
+    const whereH = unit ? `unit (<b>${esc(unit)}</b>)` : "the building";
+
+    t.push(`* ${where} — ${kind} held by ${who}${since}`);
+    h.push(`* ${whereH} — ${esc(kind)} held by ${whoH}${esc(since)}`);
+  }
+  return { html: h.join("<br>"), text: t.join("\n") };
+}
+
 // An inline chip appends to the entry the caret already sits on instead of
 // starting a new line — how a key coming back is recorded against the entry
 // that lent it out, rather than as a disconnected line further down.
@@ -268,6 +311,15 @@ export function buildInlineNote(line) {
     html: ` ${esc(trimmed)} @ <b>${esc(time)}</b>.`,
     text: ` ${trimmed} @ ${time}.`,
   };
+}
+
+// The filed copy carries a line the timeline entry doesn't: what the team
+// being notified is expected to do about it. That is the whole difference
+// between a record of an event and a handover note.
+export function withNote({ html, text }, note) {
+  const n = String(note ?? "").trim();
+  if (!n) return { html, text };
+  return { html: `${html} ${esc(n)}`, text: `${text} ${n}` };
 }
 
 // Tint a built sentence so a reader scanning the log can spot it. Only the
