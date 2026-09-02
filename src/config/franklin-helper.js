@@ -1502,7 +1502,7 @@ export const QUICK_LOGS = [
 // Order matters: only one background can render on a sentence, so when
 // several are ticked the first one listed here supplies the colour.
 // One shared tint: the flags differ in where they file, not in colour.
-const HIGHLIGHT_YELLOW = "#ffef9e";
+const HIGHLIGHT_YELLOW = "#ffff00";
 
 // `section` also files a copy of the sentence as a bullet under that
 // heading further down the log, so a flagged note lands both where the
