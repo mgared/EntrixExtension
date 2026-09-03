@@ -1467,10 +1467,20 @@ export const QUICK_LOGS = [
     text: "No activity in the lobby. Music volume reduced and lighting dimmed. Resident vestibule and inner vestibule checked, locked and secured. Remaining at the front desk.",
   },
   {
+    // One job, and it belongs at the top of the shift — the handover is
+    // only useful if it's read before the shift gets busy.
+    label: "Read previous shift logs",
+    group: "tasks",
+    task: "readPrevious",
+    required: 1,
+    windowMinutes: 60,
+    text: "Reviewed the previous shift's pass-on notes.",
+  },
+  {
     label: "Desk organized",
     group: "tasks",
     task: "deskOrganized",
-    text: "Front desk organized.",
+    text: "Front desk organized, and the dog treats and mints by the desk refilled.",
   },
   {
     label: "Lobby checked",

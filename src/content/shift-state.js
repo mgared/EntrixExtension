@@ -10,13 +10,14 @@ const KEY = "shiftState";
 
 const EMPTY = { shift: null, tasks: {}, keysOut: [] };
 
-// How many times a tracked task has to be done in one shift.
-const REQUIRED_CLICKS = 2;
+// Defaults for a tracked task, overridable per chip: reading the previous
+// shift's notes is one job in the first hour, while walking the site is
+// twice across the shift.
+const DEFAULT_REQUIRED = 2;
+const DEFAULT_FIRST_WINDOW_MS = 2 * 60 * 60 * 1000;
 
-// The first window runs from the start of the shift; every later one has to
-// be finished before the shift's closing hour, so nothing lands in the
-// handover.
-const FIRST_WINDOW_MS = 2 * 60 * 60 * 1000;
+// Every window after the first has to close before the shift's own closing
+// hour, so nothing is left to land in the handover.
 const END_BUFFER_MS = 60 * 60 * 1000;
 
 let state = { ...EMPTY };
@@ -94,19 +95,22 @@ export function recordTask(taskId) {
 
 // null when no shift is running — the caller draws no bar rather than
 // guessing at a deadline it has no basis for.
-export function taskProgress(taskId, now = Date.now()) {
+export function taskProgress(taskId, opts = {}, now = Date.now()) {
+  const required = opts.required || DEFAULT_REQUIRED;
+  const firstWindowMs = opts.firstWindowMs || DEFAULT_FIRST_WINDOW_MS;
+
   const shift = state.shift;
   if (!shift || !shift.endsAt || shift.endedAt) return null;
 
   const clicks = state.tasks[taskId]?.clicks || [];
-  if (clicks.length >= REQUIRED_CLICKS) {
+  if (clicks.length >= required) {
     return { done: true, ratio: 1, overdue: false, remaining: 0 };
   }
 
   const first = clicks.length === 0;
   const windowStart = first ? shift.startedAt : clicks[clicks.length - 1];
   const windowEnd = first
-    ? shift.startedAt + FIRST_WINDOW_MS
+    ? shift.startedAt + firstWindowMs
     : shift.endsAt - END_BUFFER_MS;
 
   const span = Math.max(1, windowEnd - windowStart);
@@ -115,7 +119,7 @@ export function taskProgress(taskId, now = Date.now()) {
     done: false,
     ratio,
     overdue: now >= windowEnd,
-    remaining: REQUIRED_CLICKS - clicks.length,
+    remaining: required - clicks.length,
     windowEnd,
   };
 }

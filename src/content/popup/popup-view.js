@@ -282,7 +282,10 @@ export function createPopupView() {
   // solid once it passes. No shift running means no deadline to draw.
   function applyTaskProgress(chip, c) {
     if (!c.task) return;
-    const p = taskProgress(c.task);
+    const p = taskProgress(c.task, {
+      required: c.required,
+      firstWindowMs: c.windowMinutes ? c.windowMinutes * 60000 : undefined,
+    });
     if (!p) return;
 
     if (p.done) {
