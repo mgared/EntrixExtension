@@ -1,5 +1,5 @@
 // What has actually been done since the shift began: which recurring tasks
-// have been ticked off, and whose keys are still out.
+// have been ticked off, and what the desk has lent out and not got back.
 //
 // Held in chrome.storage.local so it survives reloads and is shared across
 // tabs, but the popup reads it through an in-memory mirror — rendering a
@@ -8,7 +8,7 @@
 
 const KEY = "shiftState";
 
-const EMPTY = { shift: null, tasks: {}, keysOut: [] };
+const EMPTY = { shift: null, tasks: {}, itemsOut: [] };
 
 // Defaults for a tracked task, overridable per chip: reading the previous
 // shift's notes is one job in the first hour, while walking the site is
@@ -25,15 +25,24 @@ let state = { ...EMPTY };
 export function initShiftState() {
   try {
     chrome.storage.local.get(KEY, (got) => {
-      state = { ...EMPTY, ...(got?.[KEY] || {}) };
+      state = migrate({ ...EMPTY, ...(got?.[KEY] || {}) });
     });
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area !== "local" || !changes[KEY]) return;
-      state = { ...EMPTY, ...(changes[KEY].newValue || {}) };
+      state = migrate({ ...EMPTY, ...(changes[KEY].newValue || {}) });
     });
   } catch {
     // Storage unavailable — the mirror still works for this page's lifetime.
   }
+}
+
+// The list was keys-only before dollies joined it; a shift already in
+// progress when the extension updates shouldn't lose what it had out.
+function migrate(next) {
+  if (next.keysOut?.length && !next.itemsOut?.length) {
+    return { ...next, itemsOut: next.keysOut, keysOut: undefined };
+  }
+  return next;
 }
 
 export function getShiftState() {
@@ -70,13 +79,13 @@ export function startShift({ shift, name }) {
       endsAt: shift ? shiftEndTimestamp(shift, startedAt) : null,
     },
     tasks: {},
-    keysOut: [],
+    itemsOut: [],
   };
   persist();
 }
 
-// Closing the shift stops the deadlines without wiping the record — the
-// keys still out are exactly what the handover needs to report.
+// Closing the shift stops the deadlines without wiping the record — what is
+// still out is exactly what the handover needs to report.
 export function endShift() {
   if (!state.shift) return;
   state = { ...state, shift: { ...state.shift, endedAt: Date.now() } };
@@ -124,43 +133,46 @@ export function taskProgress(taskId, opts = {}, now = Date.now()) {
   };
 }
 
-let keySeq = 0;
+let outSeq = 0;
 
-export function addKeyOut({ unit, holder, kind }) {
+export function addItemOut({ unit, holder, kind }) {
   const at = Date.now();
   const entry = {
     // Vendors working on shared parts of the building have no unit, so an
-    // id is the only thing that reliably identifies one set of keys.
-    id: `k${at}-${keySeq++}`,
+    // id is the only thing that reliably identifies one lent-out item.
+    id: `o${at}-${outSeq++}`,
     unit: unit || "",
     holder: holder || "",
     kind: kind || "unit keys",
     at,
   };
-  // A second issue to the same unit and holder replaces the first rather
-  // than listing it twice.
-  const rest = state.keysOut.filter(
-    (k) => !(k.unit === entry.unit && k.holder === entry.holder)
+  // The same thing lent to the same unit and holder replaces the earlier
+  // entry rather than listing it twice.
+  const rest = state.itemsOut.filter(
+    (k) =>
+      !(k.unit === entry.unit && k.holder === entry.holder && k.kind === entry.kind)
   );
-  state = { ...state, keysOut: [...rest, entry] };
+  state = { ...state, itemsOut: [...rest, entry] };
   persist();
 }
 
-// Matched by id where the caller has one, otherwise by unit, otherwise by
-// holder. An empty unit is never a match: treating it as one meant
-// returning a common-area vendor's keys cleared every other vendor too.
-export function clearKeyOut({ id, unit, holder } = {}) {
-  const before = state.keysOut.length;
-  let keysOut;
-  if (id) keysOut = state.keysOut.filter((k) => k.id !== id);
+// Matched by id where the caller has one, otherwise by unit (narrowed by
+// kind when given), otherwise by holder. An empty unit is never a match:
+// treating it as one meant returning one common-area vendor's keys cleared
+// every other vendor too.
+export function clearItemOut({ id, unit, holder, kind } = {}) {
+  const before = state.itemsOut.length;
+  const kindOk = (k) => !kind || k.kind === kind;
+  let itemsOut;
+  if (id) itemsOut = state.itemsOut.filter((k) => k.id !== id);
   else if (String(unit || "").trim())
-    keysOut = state.keysOut.filter((k) => k.unit !== unit);
+    itemsOut = state.itemsOut.filter((k) => !(k.unit === unit && kindOk(k)));
   else if (String(holder || "").trim())
-    keysOut = state.keysOut.filter((k) => k.holder !== holder);
+    itemsOut = state.itemsOut.filter((k) => !(k.holder === holder && kindOk(k)));
   else return false;
 
-  if (keysOut.length === before) return false;
-  state = { ...state, keysOut };
+  if (itemsOut.length === before) return false;
+  state = { ...state, itemsOut };
   persist();
   return true;
 }

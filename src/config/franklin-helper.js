@@ -490,6 +490,7 @@ export const HELPER = {
         {
           id: "grabbedDolly",
           label: "Grabbed dolly",
+          tracksOut: { dir: "out", kind: "a dolly" },
           template:
             "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; the concierge assisted after confirmation.",
         },
@@ -511,6 +512,13 @@ export const HELPER = {
           template:
             "Resident[ {name}] from unit ({unit}) {contact} to request that guest {guestName} be sent up.",
           fields: [{ key: "guestName", label: "Guest name", kind: "text" }],
+        },
+        {
+          id: "returnedDolly",
+          label: "Returned dolly",
+          tracksOut: { dir: "in", kind: "a dolly" },
+          template:
+            "Resident[ {name}] from unit ({unit}) returned the dolly to the front desk.",
         },
         {
           id: "askedLeasing",
@@ -594,7 +602,7 @@ export const HELPER = {
         },
         {
           id: "givenKeys",
-          tracksKeys: { dir: "out", kind: "unit keys" },
+          tracksOut: { dir: "out", kind: "unit keys" },
           label: "Given unit keys",
           template:
             "Guest[ {name}] {contact} for unit ({unit}[ {residentName}]) and requested unit keys; {outcome}.",
@@ -602,7 +610,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Guest[ {name}] returned the unit keys for unit ({unit}[ {residentName}]) to the front desk and their ID was handed back.",
@@ -688,7 +696,7 @@ export const HELPER = {
         },
         {
           id: "pickedUpKeys",
-          tracksKeys: { dir: "out", kind: "unit keys" },
+          tracksOut: { dir: "out", kind: "unit keys" },
           label: "Picked up unit keys",
           template:
             "Dog walker[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
@@ -696,7 +704,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Dog walker[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
@@ -732,7 +740,7 @@ export const HELPER = {
         },
         {
           id: "pickedUpKeys",
-          tracksKeys: { dir: "out", kind: "unit keys" },
+          tracksOut: { dir: "out", kind: "unit keys" },
           label: "Picked up unit keys",
           template:
             "Cleaner[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
@@ -740,7 +748,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Cleaner[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
@@ -778,7 +786,7 @@ export const HELPER = {
           // Vendor keys are ours and have to come back, so an ID is always
           // held against them.
           id: "pickedUpKeys",
-          tracksKeys: { dir: "out", kind: "vendor keys" },
+          tracksOut: { dir: "out", kind: "vendor keys" },
           label: "Picked up vendor keys",
           template:
             "Vendor[ {name}][ from {company}] requested vendor keys[ for unit ({unit})][ for the {area}][ regarding {purpose}]; {outcome}.",
@@ -795,7 +803,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned vendor keys",
           template:
             "Vendor[ {name}][ from {company}] returned the vendor keys[ for unit ({unit})][ for the {area}] to the front desk and their ID was handed back.",
@@ -1532,10 +1540,10 @@ export const QUICK_LOGS = [
   },
   {
     // A form rather than a plain chip: it both reports what is out and is
-    // the one place a key can be marked back in, whichever way it was
+    // the one place something can be marked back in, whichever way it was
     // logged out.
-    label: "Keys remaining out",
-    form: { kind: "keysOut", title: "Keys remaining out" },
+    label: "Still out",
+    form: { kind: "itemsOut", title: "Still out" },
   },
   {
     label: "End shift",
