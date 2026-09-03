@@ -15,12 +15,12 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Roles at a glance
 
-- Resident (9 reasons; role fields: name, unit, contact)
+- Resident (10 reasons; role fields: name, unit, contact)
 - Guest (6 reasons; role fields: name, unit, residentName, contact)
 - App delivery (4 reasons; role fields: app, appOther, unit)
-- Dog Walker (4 reasons; role fields: name, company, unit)
-- Cleaner (4 reasons; role fields: name, company, unit)
-- Vendor (3 reasons; role fields: name, company, forWhat, unit, area)
+- Dog Walker (5 reasons; role fields: name, company, unit)
+- Cleaner (5 reasons; role fields: name, company, unit)
+- Vendor (4 reasons; role fields: name, company, forWhat, unit, area)
 - Item / property (2 reasons; role fields: name, unit)
 - Maintenance (4 reasons; role fields: name)
 - Leasing Office (5 reasons; role fields: name)
@@ -75,6 +75,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request that guest #### be sent up.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request that guest Marcus be sent up.
+
+### Asked to speak with leasing
+
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to speak with the leasing office; ####.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to speak with the leasing office; a member of the leasing team came down to assist.
 
 ## Guest
 
@@ -152,6 +157,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Dog walker picked up the keys left for them by the resident of unit (####); identification confirmed, no ID held.
 - **Filled:** 10:00 AM: Dog walker John picked up the keys left for them by the resident of unit (234); identification confirmed, no ID held.
 
+### Let in with master key
+
+- **Empty:** 10:00 AM: Dog walker arrived for unit (####); no spare key was available, so the concierge used the master key to open the unit after ####.
+- **Filled:** 10:00 AM: Dog walker John arrived for unit (234); no spare key was available, so the concierge used the master key to open the unit after resident confirmation via call.
+
 ## Cleaner
 
 ### Sent up
@@ -174,6 +184,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Cleaner picked up the keys left for them by the resident of unit (####); identification confirmed, no ID held.
 - **Filled:** 10:00 AM: Cleaner John picked up the keys left for them by the resident of unit (234); identification confirmed, no ID held.
 
+### Let in with master key
+
+- **Empty:** 10:00 AM: Cleaner arrived for unit (####); no spare key was available, so the concierge used the master key to open the unit after ####.
+- **Filled:** 10:00 AM: Cleaner John arrived for unit (234); no spare key was available, so the concierge used the master key to open the unit after resident confirmation via call.
+
 ## Vendor
 
 ### Picked up vendor keys
@@ -190,6 +205,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Vendor arrived; ####.
 - **Filled:** 10:00 AM: Vendor John arrived for unit (234); access granted after resident confirmation via call.
+
+### Asked to speak with leasing
+
+- **Empty:** 10:00 AM: Vendor asked to speak with the leasing office; ####.
+- **Filled:** 10:00 AM: Vendor John asked to speak with the leasing office; a member of the leasing team came down to assist.
 
 ## Item / property
 

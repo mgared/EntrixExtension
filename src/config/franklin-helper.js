@@ -216,6 +216,46 @@ const PROSPECT_OUTCOME = {
   ],
 };
 
+// Someone at the desk asking for leasing, when leasing may or may not be
+// reachable. Kept apart from the prospect wording, which names a prospect.
+const LEASING_REQUEST_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "select",
+  options: [
+    {
+      value: "a member of the leasing team came down to assist",
+      label: "Leasing came down",
+    },
+    {
+      value: "the leasing team was informed for follow-up",
+      label: "Leasing informed",
+    },
+    { value: "they were directed to the leasing office", label: "Sent to office" },
+    {
+      value:
+        "the leasing team could not be reached and their details were taken for follow-up",
+      label: "No reach — details taken",
+    },
+  ],
+};
+
+// Opening a unit with the master key is a different act from lending a key
+// out: nothing leaves the desk, so nothing is held against it and there is
+// nothing to return.
+const MASTER_KEY_CONFIRM = {
+  key: "confirmation",
+  label: "Confirmed by",
+  kind: "radio",
+  options: [
+    { value: "resident confirmation via call", label: "Call confirmation" },
+    {
+      value: "checking the resident visitor list",
+      label: "Visitor list",
+    },
+  ],
+};
+
 // Courier picker for the Package role. "Other" is a sentinel: picking it
 // reveals COURIER_OTHER_FIELD, whose `replaces` hands its typed value back
 // to {courier} so every template references only {courier}.
@@ -472,6 +512,22 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to request that guest {guestName} be sent up.",
           fields: [{ key: "guestName", label: "Guest name", kind: "text" }],
         },
+        {
+          id: "askedLeasing",
+          label: "Asked to speak with leasing",
+          template:
+            "Resident[ {name}] from unit ({unit}) {contact} to speak with the leasing office[ regarding {purpose}]; {outcome}.",
+          fields: [
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            LEASING_REQUEST_OUTCOME,
+          ],
+        },
       ],
     },
     {
@@ -654,6 +710,13 @@ export const HELPER = {
           template:
             "Dog walker[ {name}][ from {company}] picked up the keys left for them by the resident of unit ({unit}); identification confirmed, no ID held.",
         },
+        {
+          id: "masterKeyEntry",
+          label: "Let in with master key",
+          template:
+            "Dog walker[ {name}][ from {company}] arrived for unit ({unit}); no spare key was available, so the concierge used the master key to open the unit after {confirmation}.",
+          fields: [MASTER_KEY_CONFIRM],
+        },
       ],
     },
     {
@@ -690,6 +753,13 @@ export const HELPER = {
           label: "Picked up keys left by resident",
           template:
             "Cleaner[ {name}][ from {company}] picked up the keys left for them by the resident of unit ({unit}); identification confirmed, no ID held.",
+        },
+        {
+          id: "masterKeyEntry",
+          label: "Let in with master key",
+          template:
+            "Cleaner[ {name}][ from {company}] arrived for unit ({unit}); no spare key was available, so the concierge used the master key to open the unit after {confirmation}.",
+          fields: [MASTER_KEY_CONFIRM],
         },
       ],
     },
@@ -747,6 +817,22 @@ export const HELPER = {
               placeholder: "(optional)",
             },
             VENDOR_ACCESS_OUTCOME,
+          ],
+        },
+        {
+          id: "askedLeasing",
+          label: "Asked to speak with leasing",
+          template:
+            "Vendor[ {name}][ from {company}] asked to speak with the leasing office[ regarding {purpose}]; {outcome}.",
+          fields: [
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            LEASING_REQUEST_OUTCOME,
           ],
         },
       ],
