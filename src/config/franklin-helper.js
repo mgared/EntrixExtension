@@ -1,10 +1,9 @@
 // Roles, role-level fields, and reason templates.
 //
-// Each role has a 2-letter `code` for the shorthand trigger (e.g. `;re1` →
-// the first reason on the role with code "re") and an optional `fields`
-// array of role-level form fields the popup renders before the reason
-// dropdown. Each reason owns its full sentence `template` (placeholders
-// like `{key}`) plus an optional `fields` array of reason-level fields.
+// Each role has an optional `fields` array of role-level form fields the
+// popup renders before the reason dropdown. Each reason owns its full
+// sentence `template` (placeholders like `{key}`) plus an optional
+// `fields` array of reason-level fields.
 //
 // Template syntax used by sentence-builder.js:
 //   {key}            substitute fieldValues[key], or render a #### blank
@@ -18,8 +17,6 @@
 //   { key, label, kind: "text" | "select" | "radio" | "date",
 //     optional?, placeholder?, default?,
 //     options?: Array<string | { value, label }> }
-//
-// Cap: 9 reasons per role (single-digit shorthand).
 
 const CONTACT_FIELD = {
   key: "contact",
@@ -365,7 +362,6 @@ export const HELPER = {
   roles: [
     {
       id: "resident",
-      code: "re",
       label: "Resident",
       fields: [NAME_FIELD, UNIT_FIELD, CONTACT_FIELD],
       reasons: [
@@ -480,7 +476,6 @@ export const HELPER = {
     },
     {
       id: "guest",
-      code: "gu",
       label: "Guest",
       fields: [
         NAME_FIELD,
@@ -568,7 +563,6 @@ export const HELPER = {
     },
     {
       id: "appDelivery",
-      code: "ad",
       label: "App delivery",
       fields: [APP_FIELD, APP_OTHER_FIELD, UNIT_FIELD],
       reasons: [
@@ -626,7 +620,6 @@ export const HELPER = {
     },
     {
       id: "dogWalker",
-      code: "dw",
       label: "Dog Walker",
       fields: [NAME_FIELD, COMPANY_FIELD, UNIT_FIELD],
       reasons: [
@@ -665,7 +658,6 @@ export const HELPER = {
     },
     {
       id: "cleaner",
-      code: "cl",
       label: "Cleaner",
       fields: [NAME_FIELD, COMPANY_FIELD, UNIT_FIELD],
       reasons: [
@@ -703,7 +695,6 @@ export const HELPER = {
     },
     {
       id: "vendor",
-      code: "ve",
       label: "Vendor",
       fields: [
         NAME_FIELD,
@@ -762,7 +753,6 @@ export const HELPER = {
     },
     {
       id: "item",
-      code: "it",
       label: "Item / property",
       // Only the two cases the Resident and Guest reasons can't express:
       // something left for its owner rather than for another person, and
@@ -809,7 +799,6 @@ export const HELPER = {
     },
     {
       id: "maintenance",
-      code: "mt",
       label: "Maintenance",
       // What the maintenance team does at the desk. A resident reporting a
       // problem is logged on the Resident report reason instead — there is
@@ -887,7 +876,6 @@ export const HELPER = {
     },
     {
       id: "leasingOffice",
-      code: "lo",
       label: "Leasing Office",
       fields: [NAME_FIELD],
       reasons: [
@@ -970,7 +958,6 @@ export const HELPER = {
     },
     {
       id: "prospect",
-      code: "pr",
       label: "Prospect",
       // The point of the role is handing someone to leasing, so it has to be
       // able to carry a way of reaching them when that handover doesn't
@@ -1022,7 +1009,6 @@ export const HELPER = {
     },
     {
       id: "package",
-      code: "pk",
       label: "Package",
       fields: [COURIER_FIELD, COURIER_OTHER_FIELD],
       reasons: [
@@ -1090,7 +1076,6 @@ export const HELPER = {
     },
     {
       id: "concierge",
-      code: "co",
       label: "Concierge",
       fields: [NAME_FIELD],
       reasons: [
@@ -1218,7 +1203,6 @@ export const HELPER = {
     },
     {
       id: "pilgrimParking",
-      code: "pp",
       label: "Pilgrim Parking",
       fields: [NAME_FIELD],
       reasons: [

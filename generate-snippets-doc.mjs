@@ -1,6 +1,6 @@
-// Generate SNIPPETS.md — every `;<rolecode><n>` shorthand with both the
-// empty-blank output (what the shorthand path inserts) and a sample
-// filled output (what the popup form produces when fields are typed in).
+// Generate SNIPPETS.md — every role/reason with both its empty-blank
+// output and a sample filled output, so the templates can be reviewed
+// without opening the popup.
 //
 // Run with: node extension/generate-snippets-doc.mjs
 // Writes:   extension/SNIPPETS.md
@@ -64,7 +64,7 @@ const push = (s = "") => lines.push(s);
 
 push("# Phrase Snippets — Scenario Reference");
 push("");
-push("Every `;<rolecode><n>` shorthand, plus a filled example showing the");
+push("Every reason, plus a filled example showing the");
 push("`;;` popup output when the form fields are typed in. Regenerate:");
 push("");
 push("```");
@@ -100,7 +100,7 @@ push("");
 for (const role of roles) {
   const fieldKeys = (role.fields || []).map((f) => f.key).join(", ") || "—";
   push(
-    `- \`${role.code}\` — ${role.label} (${
+    `- ${role.label} (${
       (role.reasons || []).length
     } reasons; role fields: ${fieldKeys})`
   );
@@ -108,7 +108,7 @@ for (const role of roles) {
 push("");
 
 for (const role of roles) {
-  push(`## ${role.label} — \`${role.code}\``);
+  push(`## ${role.label}`);
   push("");
 
   const reasons = role.reasons || [];
@@ -120,7 +120,6 @@ for (const role of roles) {
 
   for (let i = 0; i < reasons.length; i++) {
     const reason = reasons[i];
-    const code = `;${role.code}${i + 1}`;
     // Pin time so the doc doesn't churn each regen — buildSentence would
     // otherwise auto-fill {time} with the current clock time.
     const empty = buildSentence({
@@ -134,7 +133,7 @@ for (const role of roles) {
       values: { time: SAMPLE.time, ...fillForReason(role, reason) },
     }).text;
 
-    push(`### \`${code}\` — ${reason.label}`);
+    push(`### ${reason.label}`);
     push("");
     push(`- **Empty:** ${empty}`);
     push(`- **Filled:** ${filled}`);

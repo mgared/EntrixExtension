@@ -4,9 +4,8 @@
 //
 // Empty required fields render as a red-bold dotted-underline span (HTML)
 // or a literal `####` (plain text), so the inserter's tab-cycling and
-// in-place edit behavior keeps working when the popup is bypassed (the
-// `;re1`-style shorthand path passes no form values, only role-level
-// defaults).
+// in-place edit behavior gives the user somewhere to type when a field
+// was left blank.
 //
 // HTML emphasis applied to filled values:
 //   - `{time}` (the auto-prepended log time) is bolded.
@@ -115,9 +114,9 @@ export function isFieldVisible(field, values) {
   return String(values?.[cond.key] ?? "") === String(cond.value);
 }
 
-// Pull defaults from role + reason field definitions onto the value map
-// so the shorthand path (which passes no form input) still picks up the
-// contact dropdown's default and any other defaulted selects.
+// Pull defaults from role + reason field definitions onto the value map,
+// so a caller that passes no form input still picks up the contact
+// dropdown's default and any other defaulted selects.
 function applyDefaults({ role, reason }, values) {
   const out = { ...values };
   const groups = [role?.fields, reason?.fields];
@@ -436,7 +435,7 @@ export function buildSentence({ role, reason, values = {} }) {
 
   // Every log starts with a current-time prefix ("HH:MMAM: …"). The
   // builder owns this so individual templates don't have to repeat it,
-  // and both the popup and shorthand paths get a consistent prefix.
+  // and every entry gets a consistent prefix.
   const template = `{time}: ${baseTemplate}`;
 
   const filled = applyDefaults({ role, reason }, values);
@@ -449,8 +448,8 @@ export function buildSentence({ role, reason, values = {} }) {
 }
 
 // Each insertion starts on its own line, so logs stack vertically instead
-// of running into prior content. Both popup and shorthand paths wrap their
-// outgoing sentence with this before handing it to the inserter.
+// of running into prior content. The controller wraps every outgoing
+// sentence with this before handing it to the inserter.
 export function withLeadingLineBreak(sentence) {
   return {
     ...sentence,
