@@ -6,7 +6,10 @@
 // chip cannot wait on an async round trip. Writes update the mirror first
 // and persist after; a storage listener keeps other tabs' mirrors in step.
 
-const KEY = "shiftState";
+// Exported so the background worker can read the same record without
+// standing up the content script's mirror.
+export const STATE_KEY = "shiftState";
+const KEY = STATE_KEY;
 
 const EMPTY = { shift: null, tasks: {}, itemsOut: [] };
 
@@ -102,12 +105,16 @@ export function recordTask(taskId) {
   persist();
 }
 
-// null when no shift is running — the caller draws no bar rather than
-// guessing at a deadline it has no basis for.
-export function taskProgress(taskId, opts = {}, now = Date.now()) {
+// The deadline maths, with the record passed in. The background worker has
+// no mirror to read — it wakes, loads storage, and asks directly.
+//
+// null when no shift is running: the caller draws no bar and raises no
+// alarm rather than inventing a deadline it has no basis for.
+export function taskProgressFrom(record, taskId, opts = {}, now = Date.now()) {
   const required = opts.required || DEFAULT_REQUIRED;
   const firstWindowMs = opts.firstWindowMs || DEFAULT_FIRST_WINDOW_MS;
 
+  const state = record || EMPTY;
   const shift = state.shift;
   if (!shift || !shift.endsAt || shift.endedAt) return null;
 
@@ -130,7 +137,14 @@ export function taskProgress(taskId, opts = {}, now = Date.now()) {
     overdue: now >= windowEnd,
     remaining: required - clicks.length,
     windowEnd,
+    // Which deadline this is — the worker uses it to notify once per
+    // window rather than once per check.
+    window: clicks.length,
   };
+}
+
+export function taskProgress(taskId, opts, now) {
+  return taskProgressFrom(state, taskId, opts, now);
 }
 
 let outSeq = 0;
