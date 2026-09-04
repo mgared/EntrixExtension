@@ -3,24 +3,52 @@
   "name": "Phrase Snippets",
   "version": "0.1.0",
   "description": "Insert phrase snippets via horizontal dropdowns at the caret.",
-  "permissions": ["activeTab"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "src/background/service-worker.js",
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["src/content/loader.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/content/loader.js"
+      ],
       "run_at": "document_idle",
       "all_frames": true
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["src/*"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "src/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
-  ]
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Phrase Snippets \u2014 shift tasks",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }
 }

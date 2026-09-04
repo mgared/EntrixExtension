@@ -4,9 +4,8 @@
 //
 // Empty required fields render as a red-bold dotted-underline span (HTML)
 // or a literal `####` (plain text), so the inserter's tab-cycling and
-// in-place edit behavior keeps working when the popup is bypassed (the
-// `;re1`-style shorthand path passes no form values, only role-level
-// defaults).
+// in-place edit behavior gives the user somewhere to type when a field
+// was left blank.
 //
 // HTML emphasis applied to filled values:
 //   - `{time}` (the auto-prepended log time) is bolded.
@@ -115,9 +114,9 @@ export function isFieldVisible(field, values) {
   return String(values?.[cond.key] ?? "") === String(cond.value);
 }
 
-// Pull defaults from role + reason field definitions onto the value map
-// so the shorthand path (which passes no form input) still picks up the
-// contact dropdown's default and any other defaulted selects.
+// Pull defaults from role + reason field definitions onto the value map,
+// so a caller that passes no form input still picks up the contact
+// dropdown's default and any other defaulted selects.
 function applyDefaults({ role, reason }, values) {
   const out = { ...values };
   const groups = [role?.fields, reason?.fields];
@@ -273,30 +272,31 @@ export function buildShiftEnd({ name = "", relief = "", keys = false }) {
   };
 }
 
-// The keys still signed out, for the shift log's own section. An empty list
-// is stated outright rather than left blank — "nothing outstanding" is a
-// fact the next shift needs, and a blank line doesn't say it.
-export function buildKeysOut(entries = []) {
+// Everything the desk has lent out and not had back — keys, dollies —
+// for the shift log's own section. An empty list is stated outright rather
+// than left blank: "nothing outstanding" is a fact the next shift needs,
+// and a blank line doesn't say it.
+export function buildItemsOut(entries = []) {
   if (!entries.length) {
-    const line = "No outstanding property keys documented.";
+    const line = "No outstanding property keys or equipment documented.";
     return { html: esc(line), text: line };
   }
 
-  const t = ["Keys remaining out:"];
-  const h = ["<b>Keys remaining out:</b>"];
+  const t = ["Still out:"];
+  const h = ["<b>Still out:</b>"];
   for (const k of entries) {
     const unit = String(k.unit || "").trim();
     const holder = String(k.holder || "").trim();
     const kind = String(k.kind || "unit keys").trim();
-    const since = k.at ? ` — out since ${formatTime(new Date(k.at))}` : "";
+    const since = k.at ? `, out since ${formatTime(new Date(k.at))}` : "";
+    const by = holder ? ` held by ${holder}` : "";
+    const byH = holder ? ` held by ${esc(holder)}` : "";
 
-    const who = holder || BLANK;
-    const whoH = holder ? esc(holder) : blankHtml("holder");
     const where = unit ? `unit (${unit})` : "the building";
     const whereH = unit ? `unit (<b>${esc(unit)}</b>)` : "the building";
 
-    t.push(`* ${where} — ${kind} held by ${who}${since}`);
-    h.push(`* ${whereH} — ${esc(kind)} held by ${whoH}${esc(since)}`);
+    t.push(`* ${where} — ${kind}${by}${since}`);
+    h.push(`* ${whereH} — ${esc(kind)}${byH}${esc(since)}`);
   }
   return { html: h.join("<br>"), text: t.join("\n") };
 }
@@ -436,7 +436,7 @@ export function buildSentence({ role, reason, values = {} }) {
 
   // Every log starts with a current-time prefix ("HH:MMAM: …"). The
   // builder owns this so individual templates don't have to repeat it,
-  // and both the popup and shorthand paths get a consistent prefix.
+  // and every entry gets a consistent prefix.
   const template = `{time}: ${baseTemplate}`;
 
   const filled = applyDefaults({ role, reason }, values);
@@ -449,8 +449,8 @@ export function buildSentence({ role, reason, values = {} }) {
 }
 
 // Each insertion starts on its own line, so logs stack vertically instead
-// of running into prior content. Both popup and shorthand paths wrap their
-// outgoing sentence with this before handing it to the inserter.
+// of running into prior content. The controller wraps every outgoing
+// sentence with this before handing it to the inserter.
 export function withLeadingLineBreak(sentence) {
   return {
     ...sentence,

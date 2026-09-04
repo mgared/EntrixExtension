@@ -24,7 +24,7 @@ import {
   buildInlineNote,
   buildSiteTour,
   buildShiftLog,
-  buildKeysOut,
+  buildItemsOut,
   buildShiftEnd,
   applyHighlight,
   withNote,
@@ -36,7 +36,7 @@ import {
   recordTask,
   startShift,
   endShift,
-  clearKeyOut,
+  clearItemOut,
 } from "../shift-state.js";
 
 const HOST_TAG = "phrase-snippets-popup";
@@ -213,9 +213,9 @@ export function createPopupView() {
     if (!chipForm) return;
     const { chip, state } = chipForm;
     if (chip.task) recordTask(chip.task);
-    if (chip.form?.kind === "keysOut") {
+    if (chip.form?.kind === "itemsOut") {
       for (const [id, on] of Object.entries(state.returned || {})) {
-        if (on) clearKeyOut({ id });
+        if (on) clearItemOut({ id });
       }
     }
     if (chip.form?.kind === "endShift") endShift();
@@ -250,8 +250,8 @@ export function createPopupView() {
       ? "Opens a checklist"
       : c.inline
         ? "Appends to the line the caret is on"
-        : c.kind === "keysOut"
-          ? "Lists the keys still signed out"
+        : c.kind === "itemsOut"
+          ? "Lists what the desk still has out"
           : c.text;
 
     applyTaskProgress(chip, c);
@@ -262,9 +262,9 @@ export function createPopupView() {
       // see the Insert handler. Plain chips insert on this click.
       if (c.form) return openChipForm(c);
       if (c.task) recordTask(c.task);
-      if (c.kind === "keysOut") {
+      if (c.kind === "itemsOut") {
         return submitHandler?.(
-          decorate(buildKeysOut(getShiftState().keysOut || []))
+          decorate(buildItemsOut(getShiftState().itemsOut || []))
         );
       }
       if (c.inline) {
@@ -282,7 +282,10 @@ export function createPopupView() {
   // solid once it passes. No shift running means no deadline to draw.
   function applyTaskProgress(chip, c) {
     if (!c.task) return;
-    const p = taskProgress(c.task);
+    const p = taskProgress(c.task, {
+      required: c.required,
+      firstWindowMs: c.windowMinutes ? c.windowMinutes * 60000 : undefined,
+    });
     if (!p) return;
 
     if (p.done) {
@@ -308,9 +311,9 @@ export function createPopupView() {
   // is replaced by that form's own controls until Back or Insert.
   function openChipForm(chip) {
     let state;
-    if (chip.form.kind === "keysOut") {
+    if (chip.form.kind === "itemsOut") {
       // Snapshot what is out now; ticking one marks it returned on insert.
-      state = { entries: getShiftState().keysOut || [], returned: {} };
+      state = { entries: getShiftState().itemsOut || [], returned: {} };
     } else if (chip.form.kind === "endShift") {
       state = { relief: "", keys: true };
     } else if (chip.form.kind === "beginShift") {
@@ -371,8 +374,8 @@ export function createPopupView() {
     head.appendChild(back);
     root.appendChild(head);
 
-    if (chip.form.kind === "keysOut") {
-      root.appendChild(renderKeysOutForm(state));
+    if (chip.form.kind === "itemsOut") {
+      root.appendChild(renderItemsOutForm(state));
     } else if (chip.form.kind === "endShift") {
       root.appendChild(renderEndShiftForm(state));
     } else if (chip.form.kind === "beginShift") {
@@ -390,7 +393,7 @@ export function createPopupView() {
     renderActions(true);
   }
 
-  function renderKeysOutForm(state) {
+  function renderItemsOutForm(state) {
     const list = document.createElement("div");
     list.className = "tour";
     if (!state.entries.length) {
@@ -420,7 +423,7 @@ export function createPopupView() {
 
       const who = document.createElement("div");
       who.className = "tour-issue";
-      who.textContent = `${k.unit ? `unit (${k.unit})` : "the building"} — ${k.kind} held by ${k.holder || "—"}`;
+      who.textContent = `${k.unit ? `unit (${k.unit})` : "the building"} — ${k.kind}${k.holder ? ` held by ${k.holder}` : ""}`;
       row.appendChild(who);
       list.appendChild(row);
     }
@@ -897,11 +900,11 @@ export function createPopupView() {
   function buildCurrentSentence() {
     if (chipForm) {
       const form = chipForm.chip.form;
-      if (form.kind === "keysOut") {
+      if (form.kind === "itemsOut") {
         const still = (chipForm.state.entries || []).filter(
           (k) => !chipForm.state.returned[k.id]
         );
-        return decorate(buildKeysOut(still));
+        return decorate(buildItemsOut(still));
       }
       if (form.kind === "endShift") {
         return decorate(
@@ -933,24 +936,30 @@ export function createPopupView() {
     const reason = getReason(roleId, reasonId);
     return {
       ...decorate(buildSentence({ role, reason, values: { ...values } })),
-      keyEvent: keyEventFor(reason),
+      outEvent: outEventFor(reason),
     };
   }
 
-  // Custody only moves when keys actually change hands, so an issue counts
-  // only if the chosen outcome is one that hands them over — a refusal
-  // leaves nothing outstanding.
-  function keyEventFor(reason) {
-    const t = reason?.tracksKeys;
+  // Custody only moves when something actually changes hands. Where a reason
+  // offers an outcome, only the ones that hand it over count — a refusal
+  // leaves nothing outstanding. Where it offers none, doing it is the
+  // handover: grabbing a dolly has no way to fail.
+  function outEventFor(reason) {
+    const t = reason?.tracksOut;
     if (!t) return null;
     const holder = [values.name, values.company].filter(Boolean).join(" from ");
     if (t.dir === "in") {
-      return { dir: "in", unit: values.unit || "", holder };
+      return { dir: "in", unit: values.unit || "", holder, kind: t.kind };
     }
-    const picked = (reason.fields || [])
-      .flatMap((f) => (f.key === "outcome" ? f.options || [] : []))
-      .find((o) => typeof o === "object" && o.value === values.outcome);
-    if (!picked?.issuesKeys) return null;
+    const options = (reason.fields || []).flatMap((f) =>
+      f.key === "outcome" ? f.options || [] : []
+    );
+    if (options.length) {
+      const picked = options.find(
+        (o) => typeof o === "object" && o.value === values.outcome
+      );
+      if (!picked?.issuesKeys) return null;
+    }
     return { dir: "out", unit: values.unit || "", holder, kind: t.kind };
   }
 

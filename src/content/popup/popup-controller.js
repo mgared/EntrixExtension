@@ -27,7 +27,7 @@ export function createPopupController({ onInsert, onDismiss }) {
         ...(sentence.filing || sentence),
         sections: sentence.sections || [],
       },
-      keyEvent: sentence.keyEvent || null,
+      outEvent: sentence.outEvent || null,
     });
   });
 

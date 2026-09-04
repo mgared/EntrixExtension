@@ -1,10 +1,9 @@
 // Roles, role-level fields, and reason templates.
 //
-// Each role has a 2-letter `code` for the shorthand trigger (e.g. `;re1` →
-// the first reason on the role with code "re") and an optional `fields`
-// array of role-level form fields the popup renders before the reason
-// dropdown. Each reason owns its full sentence `template` (placeholders
-// like `{key}`) plus an optional `fields` array of reason-level fields.
+// Each role has an optional `fields` array of role-level form fields the
+// popup renders before the reason dropdown. Each reason owns its full
+// sentence `template` (placeholders like `{key}`) plus an optional
+// `fields` array of reason-level fields.
 //
 // Template syntax used by sentence-builder.js:
 //   {key}            substitute fieldValues[key], or render a #### blank
@@ -18,8 +17,6 @@
 //   { key, label, kind: "text" | "select" | "radio" | "date",
 //     optional?, placeholder?, default?,
 //     options?: Array<string | { value, label }> }
-//
-// Cap: 9 reasons per role (single-digit shorthand).
 
 const CONTACT_FIELD = {
   key: "contact",
@@ -219,6 +216,46 @@ const PROSPECT_OUTCOME = {
   ],
 };
 
+// Someone at the desk asking for leasing, when leasing may or may not be
+// reachable. Kept apart from the prospect wording, which names a prospect.
+const LEASING_REQUEST_OUTCOME = {
+  key: "outcome",
+  label: "Outcome",
+  kind: "select",
+  options: [
+    {
+      value: "a member of the leasing team came down to assist",
+      label: "Leasing came down",
+    },
+    {
+      value: "the leasing team was informed for follow-up",
+      label: "Leasing informed",
+    },
+    { value: "they were directed to the leasing office", label: "Sent to office" },
+    {
+      value:
+        "the leasing team could not be reached and their details were taken for follow-up",
+      label: "No reach — details taken",
+    },
+  ],
+};
+
+// Opening a unit with the master key is a different act from lending a key
+// out: nothing leaves the desk, so nothing is held against it and there is
+// nothing to return.
+const MASTER_KEY_CONFIRM = {
+  key: "confirmation",
+  label: "Confirmed by",
+  kind: "radio",
+  options: [
+    { value: "resident confirmation via call", label: "Call confirmation" },
+    {
+      value: "checking the resident visitor list",
+      label: "Visitor list",
+    },
+  ],
+};
+
 // Courier picker for the Package role. "Other" is a sentinel: picking it
 // reveals COURIER_OTHER_FIELD, whose `replaces` hands its typed value back
 // to {courier} so every template references only {courier}.
@@ -365,7 +402,6 @@ export const HELPER = {
   roles: [
     {
       id: "resident",
-      code: "re",
       label: "Resident",
       fields: [NAME_FIELD, UNIT_FIELD, CONTACT_FIELD],
       reasons: [
@@ -454,6 +490,7 @@ export const HELPER = {
         {
           id: "grabbedDolly",
           label: "Grabbed dolly",
+          tracksOut: { dir: "out", kind: "a dolly" },
           template:
             "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; the concierge assisted after confirmation.",
         },
@@ -476,11 +513,33 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to request that guest {guestName} be sent up.",
           fields: [{ key: "guestName", label: "Guest name", kind: "text" }],
         },
+        {
+          id: "returnedDolly",
+          label: "Returned dolly",
+          tracksOut: { dir: "in", kind: "a dolly" },
+          template:
+            "Resident[ {name}] from unit ({unit}) returned the dolly to the front desk.",
+        },
+        {
+          id: "askedLeasing",
+          label: "Asked to speak with leasing",
+          template:
+            "Resident[ {name}] from unit ({unit}) {contact} to speak with the leasing office[ regarding {purpose}]; {outcome}.",
+          fields: [
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            LEASING_REQUEST_OUTCOME,
+          ],
+        },
       ],
     },
     {
       id: "guest",
-      code: "gu",
       label: "Guest",
       fields: [
         NAME_FIELD,
@@ -543,7 +602,7 @@ export const HELPER = {
         },
         {
           id: "givenKeys",
-          tracksKeys: { dir: "out", kind: "unit keys" },
+          tracksOut: { dir: "out", kind: "unit keys" },
           label: "Given unit keys",
           template:
             "Guest[ {name}] {contact} for unit ({unit}[ {residentName}]) and requested unit keys; {outcome}.",
@@ -551,7 +610,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Guest[ {name}] returned the unit keys for unit ({unit}[ {residentName}]) to the front desk and their ID was handed back.",
@@ -568,7 +627,6 @@ export const HELPER = {
     },
     {
       id: "appDelivery",
-      code: "ad",
       label: "App delivery",
       fields: [APP_FIELD, APP_OTHER_FIELD, UNIT_FIELD],
       reasons: [
@@ -626,7 +684,6 @@ export const HELPER = {
     },
     {
       id: "dogWalker",
-      code: "dw",
       label: "Dog Walker",
       fields: [NAME_FIELD, COMPANY_FIELD, UNIT_FIELD],
       reasons: [
@@ -639,7 +696,7 @@ export const HELPER = {
         },
         {
           id: "pickedUpKeys",
-          tracksKeys: { dir: "out", kind: "unit keys" },
+          tracksOut: { dir: "out", kind: "unit keys" },
           label: "Picked up unit keys",
           template:
             "Dog walker[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
@@ -647,7 +704,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Dog walker[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
@@ -661,11 +718,17 @@ export const HELPER = {
           template:
             "Dog walker[ {name}][ from {company}] picked up the keys left for them by the resident of unit ({unit}); identification confirmed, no ID held.",
         },
+        {
+          id: "masterKeyEntry",
+          label: "Let in with master key",
+          template:
+            "Dog walker[ {name}][ from {company}] arrived for unit ({unit}); no spare key was available, so the concierge used the master key to open the unit after {confirmation}.",
+          fields: [MASTER_KEY_CONFIRM],
+        },
       ],
     },
     {
       id: "cleaner",
-      code: "cl",
       label: "Cleaner",
       fields: [NAME_FIELD, COMPANY_FIELD, UNIT_FIELD],
       reasons: [
@@ -677,7 +740,7 @@ export const HELPER = {
         },
         {
           id: "pickedUpKeys",
-          tracksKeys: { dir: "out", kind: "unit keys" },
+          tracksOut: { dir: "out", kind: "unit keys" },
           label: "Picked up unit keys",
           template:
             "Cleaner[ {name}][ from {company}] arrived for unit ({unit}) and requested unit keys; {outcome}.",
@@ -685,7 +748,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned unit keys",
           template:
             "Cleaner[ {name}][ from {company}] returned the unit keys for unit ({unit}) to the front desk and their ID was handed back.",
@@ -699,11 +762,17 @@ export const HELPER = {
           template:
             "Cleaner[ {name}][ from {company}] picked up the keys left for them by the resident of unit ({unit}); identification confirmed, no ID held.",
         },
+        {
+          id: "masterKeyEntry",
+          label: "Let in with master key",
+          template:
+            "Cleaner[ {name}][ from {company}] arrived for unit ({unit}); no spare key was available, so the concierge used the master key to open the unit after {confirmation}.",
+          fields: [MASTER_KEY_CONFIRM],
+        },
       ],
     },
     {
       id: "vendor",
-      code: "ve",
       label: "Vendor",
       fields: [
         NAME_FIELD,
@@ -717,7 +786,7 @@ export const HELPER = {
           // Vendor keys are ours and have to come back, so an ID is always
           // held against them.
           id: "pickedUpKeys",
-          tracksKeys: { dir: "out", kind: "vendor keys" },
+          tracksOut: { dir: "out", kind: "vendor keys" },
           label: "Picked up vendor keys",
           template:
             "Vendor[ {name}][ from {company}] requested vendor keys[ for unit ({unit})][ for the {area}][ regarding {purpose}]; {outcome}.",
@@ -734,7 +803,7 @@ export const HELPER = {
         },
         {
           id: "returnedKeys",
-          tracksKeys: { dir: "in" },
+          tracksOut: { dir: "in" },
           label: "Returned vendor keys",
           template:
             "Vendor[ {name}][ from {company}] returned the vendor keys[ for unit ({unit})][ for the {area}] to the front desk and their ID was handed back.",
@@ -758,11 +827,26 @@ export const HELPER = {
             VENDOR_ACCESS_OUTCOME,
           ],
         },
+        {
+          id: "askedLeasing",
+          label: "Asked to speak with leasing",
+          template:
+            "Vendor[ {name}][ from {company}] asked to speak with the leasing office[ regarding {purpose}]; {outcome}.",
+          fields: [
+            {
+              key: "purpose",
+              label: "Regarding",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
+            LEASING_REQUEST_OUTCOME,
+          ],
+        },
       ],
     },
     {
       id: "item",
-      code: "it",
       label: "Item / property",
       // Only the two cases the Resident and Guest reasons can't express:
       // something left for its owner rather than for another person, and
@@ -809,7 +893,6 @@ export const HELPER = {
     },
     {
       id: "maintenance",
-      code: "mt",
       label: "Maintenance",
       // What the maintenance team does at the desk. A resident reporting a
       // problem is logged on the Resident report reason instead — there is
@@ -887,7 +970,6 @@ export const HELPER = {
     },
     {
       id: "leasingOffice",
-      code: "lo",
       label: "Leasing Office",
       fields: [NAME_FIELD],
       reasons: [
@@ -970,7 +1052,6 @@ export const HELPER = {
     },
     {
       id: "prospect",
-      code: "pr",
       label: "Prospect",
       // The point of the role is handing someone to leasing, so it has to be
       // able to carry a way of reaching them when that handover doesn't
@@ -1022,7 +1103,6 @@ export const HELPER = {
     },
     {
       id: "package",
-      code: "pk",
       label: "Package",
       fields: [COURIER_FIELD, COURIER_OTHER_FIELD],
       reasons: [
@@ -1090,7 +1170,6 @@ export const HELPER = {
     },
     {
       id: "concierge",
-      code: "co",
       label: "Concierge",
       fields: [NAME_FIELD],
       reasons: [
@@ -1218,7 +1297,6 @@ export const HELPER = {
     },
     {
       id: "pilgrimParking",
-      code: "pp",
       label: "Pilgrim Parking",
       fields: [NAME_FIELD],
       reasons: [
@@ -1462,10 +1540,10 @@ export const QUICK_LOGS = [
   },
   {
     // A form rather than a plain chip: it both reports what is out and is
-    // the one place a key can be marked back in, whichever way it was
+    // the one place something can be marked back in, whichever way it was
     // logged out.
-    label: "Keys remaining out",
-    form: { kind: "keysOut", title: "Keys remaining out" },
+    label: "Still out",
+    form: { kind: "itemsOut", title: "Still out" },
   },
   {
     label: "End shift",
@@ -1483,10 +1561,20 @@ export const QUICK_LOGS = [
     text: "No activity in the lobby. Music volume reduced and lighting dimmed. Resident vestibule and inner vestibule checked, locked and secured. Remaining at the front desk.",
   },
   {
+    // One job, and it belongs at the top of the shift — the handover is
+    // only useful if it's read before the shift gets busy.
+    label: "Read previous shift logs",
+    group: "tasks",
+    task: "readPrevious",
+    required: 1,
+    windowMinutes: 60,
+    text: "Reviewed the previous shift's pass-on notes.",
+  },
+  {
     label: "Desk organized",
     group: "tasks",
     task: "deskOrganized",
-    text: "Front desk organized.",
+    text: "Front desk organized, and the dog treats and mints by the desk refilled.",
   },
   {
     label: "Lobby checked",
