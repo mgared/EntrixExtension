@@ -54,9 +54,9 @@ export function createPopupController({ onInsert, onDismiss }) {
     if (ctx) onDismiss(ctx);
   };
 
-  function open({ element, triggerStart, triggerEnd, x, y }) {
+  function open({ element, triggerStart, triggerEnd, x, y, yTop }) {
     context = { element, triggerStart, triggerEnd };
-    view.show({ x, y });
+    view.show({ x, y, yTop });
     document.addEventListener("mousedown", outsideClick, true);
     window.addEventListener("scroll", onScroll, true);
   }

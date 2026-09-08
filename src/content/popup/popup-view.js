@@ -968,32 +968,62 @@ export function createPopupView() {
   // a stale position would push Insert off the bottom of the screen.
   let anchor = { x: 0, y: 0 };
 
-  function position(x, y) {
-    const margin = 8;
+  // Below the caret's line by preference, above it when there isn't room,
+  // and — when neither side can hold it — on the roomier side with its own
+  // height capped so it scrolls internally. Clamping the top and letting the
+  // rest run off the bottom leaves the buttons unreachable, which is the one
+  // outcome worth ruling out entirely.
+  const MARGIN = 8;
+  const MIN_HEIGHT = 140;
+
+  function position(x, y, yTop = y) {
+    // Clear any cap from a previous placement so the natural height is what
+    // gets measured.
+    root.style.maxHeight = "";
+    root.style.overflowY = "";
     root.style.left = "0px";
     root.style.top = "0px";
+
     const rect = root.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const left = Math.min(Math.max(margin, x), vw - rect.width - margin);
-    let top = y;
-    if (top + rect.height + margin > vh) top = y - rect.height - margin;
-    root.style.left = `${left}px`;
-    root.style.top = `${Math.max(margin, top)}px`;
+
+    root.style.left = `${Math.min(
+      Math.max(MARGIN, x),
+      Math.max(MARGIN, vw - rect.width - MARGIN)
+    )}px`;
+
+    const below = vh - y - MARGIN;
+    const above = yTop - MARGIN;
+
+    if (rect.height <= below) {
+      root.style.top = `${y}px`;
+      return;
+    }
+    if (rect.height <= above) {
+      root.style.top = `${yTop - rect.height}px`;
+      return;
+    }
+
+    const useAbove = above > below;
+    const room = Math.max(MIN_HEIGHT, useAbove ? above : below);
+    root.style.maxHeight = `${room}px`;
+    root.style.overflowY = "auto";
+    root.style.top = `${Math.max(MARGIN, useAbove ? yTop - room : y)}px`;
   }
 
   function reposition() {
-    requestAnimationFrame(() => position(anchor.x, anchor.y));
+    requestAnimationFrame(() => position(anchor.x, anchor.y, anchor.yTop));
   }
 
   return {
-    show({ x, y }) {
+    show({ x, y, yTop }) {
       reset();
       render();
-      anchor = { x, y };
+      anchor = { x, y, yTop: yTop ?? y };
       document.documentElement.appendChild(host);
       requestAnimationFrame(() => {
-        position(x, y);
+        position(x, y, yTop ?? y);
         const first = shadow.querySelector("select, input, button");
         first?.focus();
       });

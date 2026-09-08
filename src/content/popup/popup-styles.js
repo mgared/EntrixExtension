@@ -7,6 +7,10 @@ export const POPUP_STYLES = `
     all: initial;
   }
   .root {
+    /* Border-box so a height cap set while positioning includes this
+       padding and border — as content-box it overflowed by exactly the
+       two of them. */
+    box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 13px;
     color: #1a1a1a;

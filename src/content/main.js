@@ -55,6 +55,9 @@ function boot() {
         triggerEnd: caret,
         x: rect.left,
         y: rect.top + rect.height + 4,
+        // The top of the caret's line, so the popup can flip above it
+        // rather than above the anchor that already sits below it.
+        yTop: rect.top - 4,
       });
     },
   });
