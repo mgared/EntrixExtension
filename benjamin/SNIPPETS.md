@@ -27,7 +27,6 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - Prospect (2 reasons; role fields: name, contactInfo)
 - Package (4 reasons; role fields: courier, courierOther)
 - Concierge (7 reasons; role fields: name)
-- Parking (4 reasons; role fields: name)
 
 ## Resident
 
@@ -347,26 +346,4 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Concierge reviewed the security cameras; ####.
 - **Filled:** 10:00 AM: Concierge John reviewed the security cameras; no suspicious activity was observed.
-
-## Parking
-
-### Report something
-
-- **Empty:** 10:00 AM: Parking staff came to the front desk to report that ####.
-- **Filled:** 10:00 AM: Parking staff John came to the front desk to report that their kitchen sink is leaking.
-
-### Resident parking inquiry
-
-- **Empty:** 10:00 AM: Resident of unit (####) inquired about ####; ####.
-- **Filled:** 10:00 AM: Resident of unit (234) inquired about overnight parking; the resident was advised the concierge would follow up once parking guidance is confirmed.
-
-### Drop something off
-
-- **Empty:** 10:00 AM: Parking staff dropped off #### at the front desk. (stored ####)
-- **Filled:** 10:00 AM: Parking staff John dropped off a rent check at the front desk for unit (234). (stored by desk cabinet)
-
-### Towing / violation
-
-- **Empty:** 10:00 AM: A #### with #### plate #### was ####.
-- **Filled:** 10:00 AM: A #### with #### plate #### was tagged for a parking violation.
 

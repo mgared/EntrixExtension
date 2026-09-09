@@ -52,11 +52,11 @@ Inside the config, the building-specific parts are:
 | What | Where |
 | --- | --- |
 | Building name in the log header | `SITE_NAME`, top of the file |
-| Parking company | `PARKING_VENDOR`, top of the file |
 | Site tour walk route | `SITE_TOUR_AREAS`, near the bottom |
+| Whether there's a parking role | the role list — ORA has one for Pilgrim Parking, Benjamin has none |
 
-The other 13 roles and 63 reasons are generic front-desk work and are the
-same at both buildings.
+That leaves 12 roles and 59 reasons shared verbatim between the builds —
+generic front-desk work — plus ORA's parking role on top.
 
 Two more things worth checking when you set up a new building — they're
 shared today but are written in ORA's words:

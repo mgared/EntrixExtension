@@ -21,19 +21,19 @@
 // ─────────────────────────────────────────────────────────────────────
 // SITE PROFILE — the Benjamin build.
 //
-// Everything that differs between buildings is either one of these two
-// constants or the SITE_TOUR_AREAS list near the bottom of this file.
-// Nothing else here is building-specific, so a fix made in the ORA build
-// can be copied across verbatim except for these three things.
+// What differs from the ORA build:
+//   - SITE_NAME, just below
+//   - SITE_TOUR_AREAS, near the bottom of this file
+//   - no parking role: Benjamin's desk has no parking company to deal
+//     with, so the twelve remaining roles are all front-desk work that
+//     is identical at both buildings
+//
+// Nothing else here is building-specific, so a fix made to a role or a
+// reason in the ORA build can be copied across verbatim.
 // ─────────────────────────────────────────────────────────────────────
 
 // Heads the shift-log skeleton the Begin shift chip writes.
 const SITE_NAME = "Benjamin";
-
-// The parking company the front desk deals with. Appears in the parking
-// role's label and in three of its sentences.
-// TODO: replace with Benjamin's actual parking company.
-const PARKING_VENDOR = "Parking";
 
 const CONTACT_FIELD = {
   key: "contact",
@@ -1312,146 +1312,8 @@ export const HELPER = {
         },
       ],
     },
-    {
-      id: "parking",
-      label: PARKING_VENDOR,
-      fields: [NAME_FIELD],
-      reasons: [
-        {
-          id: "report",
-          label: "Report something",
-          template: `${PARKING_VENDOR} staff[ {name}] came to the front desk to report that {description}.`,
-          fields: [
-            { key: "description", label: "Report details", kind: "text" },
-          ],
-        },
-        {
-          id: "residentInquiry",
-          label: "Resident parking inquiry",
-          // Voiced from the resident rather than the vendor: the role groups
-          // parking matters, and this is the parking question residents ask.
-          template:
-            "Resident of unit ({unit}) inquired about {topic}[ for a {vehicle}][ ({plateState} plate {plate})]; {action}.",
-          fields: [
-            UNIT_FIELD,
-            {
-              key: "topic",
-              label: "Topic",
-              kind: "select",
-              options: [
-                "overnight parking",
-                "guest parking",
-                "a parking pass",
-                "a parking violation",
-              ],
-            },
-            {
-              key: "vehicle",
-              label: "Vehicle",
-              kind: "text",
-              optional: true,
-              placeholder: "Honda Accord",
-            },
-            {
-              key: "plateState",
-              label: "Plate state",
-              kind: "text",
-              optional: true,
-              placeholder: "NJ",
-            },
-            {
-              key: "plate",
-              label: "Plate #",
-              kind: "text",
-              optional: true,
-              placeholder: "W14WWJ",
-            },
-            {
-              key: "action",
-              label: "Action",
-              kind: "select",
-              options: [
-                {
-                  value:
-                    "the resident was advised the concierge would follow up once parking guidance is confirmed",
-                  label: "Will follow up",
-                },
-                {
-                  value: `${PARKING_VENDOR} was contacted for guidance`,
-                  label: "Contacted parking",
-                },
-                { value: "a parking pass was issued", label: "Pass issued" },
-              ],
-            },
-          ],
-        },
-        {
-          id: "dropOff",
-          label: "Drop something off",
-          template: `${PARKING_VENDOR} staff[ {name}] dropped off {item} at the front desk[ for unit ({unit})]. (stored {storage})`,
-          fields: [
-            { key: "item", label: "Item", kind: "text" },
-            OPTIONAL_UNIT_FIELD,
-            STORAGE_FIELD,
-          ],
-        },
-        {
-          // A tow is the parking entry most likely to be disputed weeks
-          // later, so the vehicle, the plate and who authorised it are
-          // fields rather than something to remember to type.
-          id: "enforcement",
-          label: "Towing / violation",
-          template:
-            "A {vehicle} with {plateState} plate {plate}[, parked at {location},] was {ppAction}.[ Authorized by {authorizedBy}.]",
-          fields: [
-            { key: "vehicle", label: "Vehicle", kind: "text", placeholder: "Honda Accord" },
-            { key: "plateState", label: "Plate state", kind: "text", placeholder: "NJ" },
-            { key: "plate", label: "Plate #", kind: "text", placeholder: "W14WWJ" },
-            {
-              key: "ppAction",
-              label: "Action",
-              kind: "select",
-              options: [
-                {
-                  value: "tagged for a parking violation",
-                  label: "Tagged",
-                },
-                { value: "towed from the property", label: "Towed" },
-                {
-                  value: "reported as parked without authorization",
-                  label: "Reported unauthorized",
-                },
-              ],
-            },
-            {
-              key: "location",
-              label: "Parked at",
-              kind: "text",
-              optional: true,
-              placeholder: "(optional)",
-            },
-            {
-              key: "authorizedBy",
-              label: "Authorized by",
-              kind: "text",
-              optional: true,
-              placeholder: "(optional)",
-            },
-          ],
-        },
-      ],
-    },
   ],
 };
-
-// The coffee machines get a status picker on top of the "all clear" tick,
-// since servicing them is part of the walk rather than just checking them.
-const COFFEE_STATUSES = [
-  "stocked",
-  "rinsed",
-  "stocked and rinsed",
-  "down awaiting repair",
-];
 
 // Areas walked on a site tour, in walking order. Each renders a row with
 // a tick box and an issue box, and every control is optional: an area left
@@ -1461,11 +1323,8 @@ const COFFEE_STATUSES = [
 // sentence — most areas are just "all clear", but some have a specific
 // thing the walker is confirming. `options` adds a status dropdown, and
 // `people: true` adds an occupancy count box.
-// !! PLACEHOLDER — this is NOT Benjamin's walk route. !!
-//
-// These four entries exist only to show the four row shapes; replace the
-// whole list with Benjamin's real areas, in the order they're walked.
-// Each entry is one row in the Site tour form:
+// Benjamin's walk route, in walking order. Each entry is one row in the
+// Site tour form:
 //
 //   { id, label }                     tick box + free-text issue box
 //   { id, label, clear: "..." }       ...with custom wording on the tick
@@ -1473,16 +1332,28 @@ const COFFEE_STATUSES = [
 //   { id, label, people: true }       ...plus an occupancy count box
 //
 // `id` is internal (any unique string). `label` is what the walker sees
-// and what the sentence names. An area left untouched is not mentioned.
+// and what the sentence names. `clear` is what ticking the box reports;
+// it defaults to "all clear" where no wording is given. Every control is
+// optional — an area left untouched is simply not mentioned in the log.
 export const SITE_TOUR_AREAS = [
+  { id: "entranceVestibule", label: "Entrance vestibule" },
   {
-    id: "lobby",
-    label: "Lobby area",
-    clear: "waiting area chairs organized, all clear",
+    id: "lobbyWaiting",
+    label: "Lobby waiting area",
+    clear: "all clear and organized",
   },
-  { id: "mailRoom", label: "Mail room" },
-  { id: "coffee1", label: "Coffee machine", options: COFFEE_STATUSES },
+  { id: "emergencyExit", label: "Emergency exit", clear: "secured" },
+  { id: "sitting4", label: "4th floor sitting area" },
   { id: "gym", label: "GYM" },
+  { id: "conferenceRoom", label: "Conference room" },
+  { id: "kitchen", label: "Kitchen" },
+  { id: "pool", label: "Pool area", people: true },
+  { id: "grill", label: "Grill area", people: true },
+  { id: "terrace", label: "Terrace" },
+  { id: "fireplace", label: "Fire place" },
+  { id: "p1", label: "P1" },
+  { id: "p2", label: "P2" },
+  { id: "p3", label: "P3" },
 ];
 
 // Concierge shifts as [start, end) hours on a 24h clock. The hours are
