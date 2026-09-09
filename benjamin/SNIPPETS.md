@@ -15,7 +15,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Roles at a glance
 
-- Resident (11 reasons; role fields: name, unit, contact)
+- Resident (12 reasons; role fields: name, unit, contact)
 - Guest (6 reasons; role fields: name, unit, residentName, contact)
 - App delivery (4 reasons; role fields: app, appOther, unit)
 - Dog Walker (5 reasons; role fields: name, company, unit)
@@ -26,8 +26,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - Leasing Office (5 reasons; role fields: name)
 - Prospect (2 reasons; role fields: name, contactInfo)
 - Package (4 reasons; role fields: courier, courierOther)
-- Concierge (7 reasons; role fields: name)
-- Pilgrim Parking (4 reasons; role fields: name)
+- Concierge (8 reasons; role fields: name)
 
 ## Resident
 
@@ -60,6 +59,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly; the concierge assisted after confirmation.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly; the concierge assisted after confirmation.
+
+### Book the loading dock
+
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to book the loading dock for ####, ####; ####.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to book the loading dock for 2026-05-02, 9:00 AM – 12:00 PM, for a furniture delivery; the loading dock was reserved for that time.
 
 ### Request elevator access
 
@@ -328,6 +332,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) regarding ####; ####.
 - **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) regarding ####; the resident was reached and notified.
 
+### Loading dock readied
+
+- **Empty:** 10:00 AM: The resident in unit (####) came to the front desk to advise they were ready to use the loading dock; concierge prepared the loading dock and elevator.
+- **Filled:** 10:00 AM: The resident in unit (234) came to the front desk to advise they were ready to use the loading dock for a furniture delivery; concierge John prepared the loading dock and elevator for their 9:00 AM – 12:00 PM booking.
+
 ### Sorted/processed packages
 
 - **Empty:** 10:00 AM: Concierge sorted and processed packages in the package room while maintaining visibility at the front desk.
@@ -347,26 +356,4 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Concierge reviewed the security cameras; ####.
 - **Filled:** 10:00 AM: Concierge John reviewed the security cameras; no suspicious activity was observed.
-
-## Pilgrim Parking
-
-### Report something
-
-- **Empty:** 10:00 AM: Pilgrim Parking staff came to the front desk to report that ####.
-- **Filled:** 10:00 AM: Pilgrim Parking staff John came to the front desk to report that their kitchen sink is leaking.
-
-### Resident parking inquiry
-
-- **Empty:** 10:00 AM: Resident of unit (####) inquired about ####; ####.
-- **Filled:** 10:00 AM: Resident of unit (234) inquired about overnight parking; the resident was advised the concierge would follow up once parking guidance is confirmed.
-
-### Drop something off
-
-- **Empty:** 10:00 AM: Pilgrim Parking staff dropped off #### at the front desk. (stored ####)
-- **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234). (stored by desk cabinet)
-
-### Towing / violation
-
-- **Empty:** 10:00 AM: A #### with #### plate #### was ####.
-- **Filled:** 10:00 AM: A #### with #### plate #### was tagged for a parking violation.
 
