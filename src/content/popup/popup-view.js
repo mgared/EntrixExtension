@@ -562,6 +562,24 @@ export function createPopupView() {
     clearLabel.appendChild(document.createTextNode(area.clear || "all clear"));
     row.appendChild(clearLabel);
 
+    // "All clear" and something to report contradict each other, so an
+    // area can never carry both: typing a note unticks the box, and the
+    // box stays disabled until the note is emptied again. Disabling it
+    // rather than blanking the note means nothing typed is ever thrown
+    // away to resolve the conflict.
+    const syncClear = () => {
+      const reported = !!String(s.issue ?? "").trim();
+      if (reported && s.clear) {
+        s.clear = false;
+        clear.checked = false;
+      }
+      clear.disabled = reported;
+      clearLabel.classList.toggle("check-off", reported);
+      clearLabel.title = reported
+        ? "Empty the note to mark this area all clear"
+        : "";
+    };
+
     // Areas with a fixed set of states (the coffee machines) get a picker
     // beside the tick. Every control on a row is additive — ticking,
     // picking a status and typing a note all end up in the sentence. Rows
@@ -595,9 +613,11 @@ export function createPopupView() {
     issue.value = s.issue;
     issue.addEventListener("input", () => {
       s.issue = issue.value;
+      syncClear();
       updatePreview();
     });
     row.appendChild(issue);
+    syncClear();
 
     if (area.people) {
       const people = document.createElement("input");

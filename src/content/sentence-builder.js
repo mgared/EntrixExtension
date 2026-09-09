@@ -381,7 +381,10 @@ export function buildSiteTour({ areas = [], state = {} }) {
 
     const text = [];
     const html = [];
-    if (s.clear) {
+    // A note and an "all clear" contradict each other, so the note wins.
+    // The popup already stops both from being set; this keeps the rule
+    // with the sentence, where it is the sentence's own invariant.
+    if (s.clear && !issue) {
       const cleared = area.clear || "all clear";
       text.push(cleared);
       html.push(esc(cleared));

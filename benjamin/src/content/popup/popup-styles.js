@@ -150,6 +150,12 @@ export const POPUP_STYLES = `
   .check input {
     margin: 0;
   }
+  /* A tick that a typed note has ruled out stays visible but dimmed, so
+     it reads as unavailable rather than missing. */
+  .check-off {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
   .flags {
     display: flex;
     flex-wrap: wrap;
