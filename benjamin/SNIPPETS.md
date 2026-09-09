@@ -63,7 +63,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Book the loading dock
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to book the loading dock for ####, ####; ####.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to book the loading dock for 2026-05-02, 9:00 AM – 12:00 PM, for a move-in; the booking was recorded and passed to the leasing office to confirm.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to book the loading dock for 2026-05-02, 9:00 AM – 12:00 PM, for a furniture delivery; the loading dock was reserved for that time.
 
 ### Request elevator access
 
@@ -334,8 +334,8 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### Loading dock readied
 
-- **Empty:** 10:00 AM: Concierge had the loading dock and elevator ready for unit (####)'s booked time.
-- **Filled:** 10:00 AM: Concierge John had the loading dock and elevator ready for unit (234)'s booked time, 9:00 AM – 12:00 PM, for a move-in.
+- **Empty:** 10:00 AM: The resident in unit (####) came to the front desk to advise they were ready to use the loading dock; concierge prepared the loading dock and elevator.
+- **Filled:** 10:00 AM: The resident in unit (234) came to the front desk to advise they were ready to use the loading dock for a furniture delivery; concierge John prepared the loading dock and elevator for their 9:00 AM – 12:00 PM booking.
 
 ### Sorted/processed packages
 

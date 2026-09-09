@@ -432,6 +432,9 @@ const OPTIONAL_DOCK_SLOT_FIELD = {
   placeholder: "(optional)",
 };
 
+// Why the dock is wanted. A move is only one of the reasons — furniture
+// deliveries are the ordinary case — so nothing here is assumed and
+// "Other" opens a free-text box for anything the list misses.
 const DOCK_PURPOSE_FIELD = {
   key: "purpose",
   label: "For",
@@ -439,12 +442,23 @@ const DOCK_PURPOSE_FIELD = {
   optional: true,
   placeholder: "(not stated)",
   options: [
-    { value: "a move-in", label: "Move-in" },
-    { value: "a move-out", label: "Move-out" },
     { value: "a furniture delivery", label: "Furniture delivery" },
     { value: "a large delivery", label: "Large delivery" },
+    { value: "a move-in", label: "Move-in" },
+    { value: "a move-out", label: "Move-out" },
     { value: "a contractor", label: "Contractor" },
+    { value: "Other", label: "Other…" },
   ],
+};
+
+const DOCK_PURPOSE_OTHER_FIELD = {
+  key: "purposeOther",
+  label: "For",
+  kind: "text",
+  // Carries its own article, like the options above.
+  placeholder: "an appliance swap",
+  replaces: "purpose",
+  showWhen: { key: "purpose", value: "Other" },
 };
 
 export const HELPER = {
@@ -545,10 +559,8 @@ export const HELPER = {
             "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; the concierge assisted after confirmation.",
         },
         {
-          // Whether the desk can confirm a dock reservation outright or
-          // only take it down for the leasing office is Benjamin's call,
-          // so the outcome is picked rather than assumed — including the
-          // case where the slot is already taken.
+          // The desk books the dock itself, so the only outcomes are that
+          // the slot was taken or that it was already gone.
           id: "bookedDock",
           label: "Book the loading dock",
           template:
@@ -557,29 +569,20 @@ export const HELPER = {
             { key: "bookingDate", label: "Date", kind: "date" },
             DOCK_SLOT_FIELD,
             DOCK_PURPOSE_FIELD,
+            DOCK_PURPOSE_OTHER_FIELD,
             {
               key: "outcome",
               label: "Outcome",
               kind: "select",
               options: [
                 {
-                  value:
-                    "the booking was recorded and passed to the leasing office to confirm",
-                  label: "Recorded — leasing to confirm",
-                },
-                {
-                  value: "the booking was confirmed with the leasing office",
-                  label: "Confirmed with leasing",
+                  value: "the loading dock was reserved for that time",
+                  label: "Reserved",
                 },
                 {
                   value:
                     "the slot was already reserved and the resident was asked to pick another time",
                   label: "Slot already taken",
-                },
-                {
-                  value:
-                    "the resident was directed to the leasing office to complete the reservation",
-                  label: "Sent to leasing",
                 },
               ],
             },
@@ -1309,17 +1312,19 @@ export const HELPER = {
           ],
         },
         {
-          // A desk action, not a resident one: the dock is readied at the
-          // booked time, which may be before anyone from the unit turns
-          // up. Wording it this way keeps the entry true either way.
+          // The desk doesn't set up against the clock — it sets up when
+          // the resident says they're ready, so the entry names what
+          // prompted it.
           id: "dockReady",
           label: "Loading dock readied",
           template:
-            "Concierge[ {name}] had the loading dock and elevator ready for unit ({unit})'s booked time[, {slot}][, for {purpose}].[ {note}]",
+            "The resident in unit ({unit}) {contact} to advise they were ready to use the loading dock[ for {purpose}]; concierge[ {name}] prepared the loading dock and elevator[ for their {slot} booking].[ {note}]",
           fields: [
             UNIT_FIELD,
-            OPTIONAL_DOCK_SLOT_FIELD,
+            CONTACT_FIELD,
             DOCK_PURPOSE_FIELD,
+            DOCK_PURPOSE_OTHER_FIELD,
+            OPTIONAL_DOCK_SLOT_FIELD,
             {
               key: "note",
               label: "Note",
