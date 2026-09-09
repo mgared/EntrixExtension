@@ -397,6 +397,11 @@ const OPTIONAL_UNIT_FIELD = {
   placeholder: "(optional)",
 };
 
+// The staff manual, opened by the Guide button in the popup. Empty string
+// hides the button.
+export const MANUAL_URL =
+  "https://claude.ai/code/artifact/2cef9ea9-eefc-4c43-a608-fcd55c785218";
+
 export const HELPER = {
   defaultRoleId: "resident",
   roles: [

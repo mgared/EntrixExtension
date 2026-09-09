@@ -17,6 +17,7 @@ import {
   getDefaultRoleId,
   getQuickLogs,
   getHighlights,
+  getManualUrl,
 } from "../../config/form-schema.js";
 import {
   buildSentence,
@@ -716,6 +717,22 @@ export function createPopupView() {
     hint.className = "hint";
     hint.textContent = "Enter = Insert · Esc = Cancel";
     actions.appendChild(hint);
+
+    // The manual, for anyone who needs reminding what a chip does. Opens in
+    // its own tab so nothing typed here is lost. Both this and the hint take
+    // an auto margin, which splits the free space and leaves the link sitting
+    // between them rather than crowding the buttons.
+    const manual = getManualUrl();
+    if (manual) {
+      const guide = document.createElement("button");
+      guide.className = "guide";
+      guide.textContent = "Guide";
+      guide.title = "How to use this — opens in a new tab";
+      guide.addEventListener("click", () => {
+        window.open(manual, "_blank", "noopener,noreferrer");
+      });
+      actions.appendChild(guide);
+    }
 
     const cancel = document.createElement("button");
     cancel.className = "secondary";

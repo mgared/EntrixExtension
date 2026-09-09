@@ -259,6 +259,18 @@ export const POPUP_STYLES = `
     color: #fff;
   }
   button.primary:hover { background: #1765cc; }
+  /* A way out to the manual, not one of the form's own actions — so it
+     reads as a link rather than a third button competing with Insert. */
+  .guide {
+    margin-right: auto;
+    background: transparent;
+    border-color: transparent;
+    color: #1a73e8;
+    padding: 6px 8px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .guide:hover { background: rgba(26, 115, 232, 0.08); }
   button.secondary {
     background: transparent;
     color: #444;

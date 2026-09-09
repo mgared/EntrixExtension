@@ -461,6 +461,11 @@ const DOCK_PURPOSE_OTHER_FIELD = {
   showWhen: { key: "purpose", value: "Other" },
 };
 
+// The staff manual, opened by the Guide button in the popup. Empty string
+// hides the button — Benjamin has no manual of its own yet, and the ORA
+// one names ORA's areas, so pointing there would mislead.
+export const MANUAL_URL = "";
+
 export const HELPER = {
   defaultRoleId: "resident",
   roles: [

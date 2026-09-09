@@ -361,7 +361,7 @@
 <div class="shell">
 
   <header class="masthead">
-    <p class="kicker">Front desk · ORA &amp; Benjamin</p>
+    <p class="kicker">ORA · Front desk</p>
     <h1>Phrase Snippets Manual</h1>
     <p class="standfirst">
       A keyboard shortcut that writes your shift-log entries for you, so the wording
@@ -388,7 +388,6 @@
       <li><a href="#stillout">Still out</a></li>
       <li><a href="#tasks">Task chips &amp; the badge</a></li>
       <li><a href="#limits">What it can't do</a></li>
-      <li><a href="#buildings">The two buildings</a></li>
       <li><a href="#trouble">If something goes wrong</a></li>
     </ol>
   </nav>
@@ -411,6 +410,15 @@
         The two semicolons disappear when the entry goes in — you never have to delete them.
         Every entry is stamped with the time it was inserted, and starts on its own line.
       </p>
+
+      <h3>Getting back to this page</h3>
+      <p>
+        <strong>Guide</strong>, along the bottom of the panel, opens this manual in a new
+        tab. Nothing you have typed is lost — the panel stays open behind it.
+      </p>
+      <figure>
+        <img src="{{IMG:08-actions}}" alt="The bottom bar of the panel: the hint 'Enter = Insert, Esc = Cancel' on the left, a Guide link in the middle, and Cancel and Insert buttons on the right.">
+      </figure>
     </section>
 
     <section id="check">
@@ -537,19 +545,32 @@
         in the timeline.
       </p>
 
+      <p>
+        Write it as more detail about <em>this entry</em>, aimed at the team you
+        ticked — what they are walking into, or what you need them to do. It reads
+        as one note with the entry it belongs to, so it has to follow on from it.
+      </p>
+
       <figure>
-        <img src="{{IMG:04-flagged}}" alt="The panel with Notify maintenance ticked. A note box has appeared reading 'Mouse sighting by the trash chute — pest control to be called', and the preview sentence is now highlighted in yellow.">
+        <img src="{{IMG:04-flagged}}" alt="The panel with Notify maintenance ticked on a leaking-sink report. A note box reads 'Water is pooling under the cabinet; the resident has put a bucket down and asks for someone first thing tomorrow', and the preview sentence is highlighted in yellow.">
         <figcaption>With a box ticked, the preview shows you the highlight exactly as it will land.</figcaption>
       </figure>
 
+      <p>That one entry lands in two places, highlighted in both:</p>
+
       <div class="log is-flagged">
         <span class="log-label">In the timeline</span>
-        <mark><span class="t">02:22 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to request entry into their unit because they forgot their keys.</mark>
+        <mark><span class="t">02:59 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to report that their kitchen sink is leaking.</mark>
       </div>
-      <div class="log">
+      <div class="log is-flagged">
         <span class="log-label">And under FACILITY/MAINTENANCE NOTES</span>
-        * <span class="t">02:22 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to request entry into their unit because they forgot their keys. Mouse sighting by the trash chute — pest control to be called.
+        * <mark><span class="t">02:59 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to report that their kitchen sink is leaking. Water is pooling under the cabinet; the resident has put a bucket down and asks for someone first thing tomorrow.</mark>
       </div>
+
+      <p>
+        The filed copy is the same sentence with your note on the end. Only the copy
+        carries the note — the timeline stays a clean record of what happened, when.
+      </p>
     </section>
 
     <section id="chips">
@@ -855,39 +876,6 @@
       </div>
     </section>
 
-    <section id="buildings">
-      <h2>The two buildings</h2>
-      <hr class="rule">
-      <p>
-        There are two separate versions, one per building. They work identically; what
-        differs is the wording that is specific to each site.
-      </p>
-
-      <div class="scroller">
-        <table>
-          <thead>
-            <tr><th></th><th>ORA</th><th>Benjamin</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Site tour</td><td>19 areas</td><td>14 areas, including P1–P3</td></tr>
-            <tr><td>Parking</td><td>A Pilgrim Parking role</td><td>None</td></tr>
-            <tr><td>Loading dock</td><td>—</td><td>Booking it, and readying it</td></tr>
-            <tr><td>Reasons</td><td>63</td><td>61</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p>
-        The screenshots in this manual are from the ORA version. Everything else — the
-        popup, the flags, the chips, the blanks, the tracking — is the same in both.
-      </p>
-      <p>
-        If you have both installed in the same browser, <strong>only enable the one for the
-        building you are at</strong>. Two enabled at once means two panels open every time you
-        type <kbd>;;</kbd>.
-      </p>
-    </section>
-
     <section id="trouble">
       <h2>If something goes wrong</h2>
       <hr class="rule">
@@ -901,10 +889,6 @@
             <tr>
               <td>Typing <kbd>;;</kbd> does nothing</td>
               <td>Reload the page. A page that was already open when the extension was installed or updated has not loaded it yet.</td>
-            </tr>
-            <tr>
-              <td>Two panels open at once</td>
-              <td>Both buildings' versions are enabled. Turn one off in the browser's extensions page.</td>
             </tr>
             <tr>
               <td>The panel covers what you were typing</td>
@@ -930,7 +914,7 @@
   </main>
 
   <footer>
-    Phrase Snippets · front desk shift logs at ORA and Benjamin.
+    Phrase Snippets · front desk shift logs at ORA.
     Questions, or a reason that should exist and doesn't — say so, and it can be added.
   </footer>
 
