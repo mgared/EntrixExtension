@@ -462,9 +462,9 @@ const DOCK_PURPOSE_OTHER_FIELD = {
 };
 
 // The staff manual, opened by the Guide button in the popup. Empty string
-// hides the button — Benjamin has no manual of its own yet, and the ORA
-// one names ORA's areas, so pointing there would mislead.
-export const MANUAL_URL = "";
+// hides the button.
+export const MANUAL_URL =
+  "https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9";
 
 export const HELPER = {
   defaultRoleId: "resident",

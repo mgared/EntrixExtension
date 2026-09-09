@@ -1,4 +1,4 @@
-<title>ORA Front Desk Manual</title>
+<title>Benjamin Front Desk Manual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -392,8 +392,8 @@
 <div class="shell">
 
   <header class="masthead">
-    <p class="kicker">ORA · Front desk</p>
-    <h1>ORA Front Desk Manual</h1>
+    <p class="kicker">Benjamin · Front desk</p>
+    <h1>Benjamin Front Desk Manual</h1>
     <p class="standfirst">
       A keyboard shortcut that writes your shift-log entries for you, so the wording
       stays the same whoever is on duty. It drafts the line. Reading it is still your job.
@@ -418,6 +418,7 @@
       <li><a href="#begin">Begin shift</a></li>
       <li><a href="#tour">Site tour</a></li>
       <li><a href="#stillout">Still out</a></li>
+      <li><a href="#dock">The loading dock</a></li>
       <li><a href="#tasks">Tasks it chases you about</a></li>
       <li><a href="#limits">What it can't do</a></li>
       <li><a href="#trouble">If something goes wrong</a></li>
@@ -836,15 +837,14 @@
       <hr class="rule">
 
       <figure>
-        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist: a row per area with a tick box, a 'Something to report' text box, and for some areas a status dropdown or a headcount. The GYM row has a note typed in and its tick box is greyed out.">
-        <figcaption>Every area you walked, in walking order. The GYM row shows what happens when you type a note — see below.</figcaption>
+        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist for Benjamin: a row per area with a tick box and a 'Something to report' text box, and a headcount on the pool and grill. The GYM row has a note typed in and its tick box is greyed out.">
+        <figcaption>All fourteen areas, in walking order — the list runs on past the fold to the terrace, the fire place and P1 to P3. The GYM row shows what happens when you type a note.</figcaption>
       </figure>
 
       <p>One row per area. Everything on a row is optional:</p>
       <ul>
-        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; some say something more specific, like <em>secured</em> on the emergency exit or <em>organized and neat</em> on the meeting rooms.</li>
+        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; two say something more specific, <em>all clear and organized</em> on the lobby waiting area and <em>secured</em> on the emergency exit.</li>
         <li><strong>Something to report</strong> — anything that was not right.</li>
-        <li><strong>A status dropdown</strong> on the coffee machines, because servicing them is part of the walk.</li>
         <li><strong>A headcount</strong> on the pool and grill areas.</li>
       </ul>
 
@@ -864,7 +864,7 @@
 
       <div class="log">
         <span class="log-label">The whole walk, one line</span>
-        <span class="t">02:22 PM</span>: Site tour completed. Lobby area: waiting area chairs organized, all clear; Mail room: all clear; Genius bar: all clear; Leasing Office: all clear; Meeting rooms: organized and neat; Coffee machine #1: all clear; GYM: <b>treadmill out of order</b>; Pool area: 3 people.
+        <span class="t">03:31 PM</span>: Site tour completed. Entrance vestibule: all clear; Lobby waiting area: all clear and organized; Emergency exit: secured; 4th floor sitting area: all clear; GYM: <b>treadmill out of order</b>; Conference room: all clear; Pool area: 3 people.
       </div>
 
       <p>Anything you reported comes out in bold, so it does not get lost in the middle of a long line.</p>
@@ -905,6 +905,53 @@
           desk for someone to collect and keep.
         </p>
       </div>
+    </section>
+
+    <section id="dock">
+      <h2>The loading dock</h2>
+      <hr class="rule">
+
+      <p>
+        A dock booking is two log entries, usually days apart, and they live under
+        different roles because different people do them.
+      </p>
+
+      <h3>1 · When they book it</h3>
+      <p>
+        <strong>Resident → Book the loading dock.</strong> Take the date and the time slot,
+        and what they want it for if they say. Two outcomes: you reserved it, or the slot
+        was already gone and they need to pick another time.
+      </p>
+
+      <figure>
+        <img src="{{IMG:09-dock}}" alt="The panel with Resident and 'Book the loading dock' selected, showing Date, Time slot, For and Outcome boxes filled in for a furniture delivery.">
+      </figure>
+
+      <div class="log">
+        <span class="t">03:31 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to book the loading dock for 2026-05-02, 9:00 AM – 12:00 PM, for a furniture delivery; the loading dock was reserved for that time.
+      </div>
+
+      <p>
+        <strong>For</strong> is a dropdown — furniture delivery, large delivery, move-in,
+        move-out, contractor — with an <em>Other…</em> box for anything else. It is optional;
+        skip it and the sentence simply does not mention it.
+      </p>
+
+      <h3>2 · When they turn up to use it</h3>
+      <p>
+        <strong>Concierge → Loading dock readied.</strong> Log this when the resident comes
+        down or calls to say they are ready and you set the dock and elevator up. The
+        entry names what prompted you, so it does not claim anyone arrived until they did.
+      </p>
+
+      <div class="log">
+        <span class="t">03:32 PM</span>: The resident in unit (<b>804</b>) called in to advise they were ready to use the loading dock for a move-out; concierge <b>Misael</b> prepared the loading dock and elevator.
+      </div>
+
+      <p>
+        The time slot is optional here — the timestamp already says when — and there is a
+        free note box for what actually happened.
+      </p>
     </section>
 
     <section id="tasks">
@@ -1093,7 +1140,7 @@
   </main>
 
   <footer>
-    Phrase Snippets · front desk shift logs at ORA.
+    Phrase Snippets · front desk shift logs at Benjamin.
     Questions, or a reason that should exist and doesn't — say so, and it can be added.
   </footer>
 

@@ -42,10 +42,12 @@ the two never mix.
 
 ## What's different between the builds
 
-Only two files. Everything else is byte-identical:
+Only the config, the manifest and each build's own docs. Everything the
+extension runs on is byte-identical:
 
 - **`manifest.json`** — the name and description
 - **`src/config/franklin-helper.js`** — the site profile
+- **`docs/`** — the staff manual and its screenshots, one per building
 
 Inside the config, the building-specific parts are:
 
@@ -72,14 +74,31 @@ Also shared, so change them in both if a building differs: `SHIFTS`
 (7am-3pm / 3pm-11pm / 11pm-7am) and `SHIFT_SECTIONS` (the six trailing log
 headings).
 
+## The staff manuals
+
+Each build has its own, opened by the **Guide** button along the bottom of
+the popup. The URL lives in `MANUAL_URL` at the top of that build's
+`franklin-helper.js`; an empty string hides the button.
+
+| Building | Manual |
+| --- | --- |
+| ORA | https://claude.ai/code/artifact/2cef9ea9-eefc-4c43-a608-fcd55c785218 |
+| Benjamin | https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9 |
+
+`docs/manual.src.html` is the one to edit — it keeps `{{IMG:name}}` tokens
+so it stays readable and diffable. `docs/manual.html` is the built copy
+with the PNGs inlined as data URIs, and that is what gets published.
+Screenshots in `docs/screenshots/` are captured from the running popup,
+not mocked up, so they show each building's own areas and chips.
+
 ## Copying a fix from one building to the other
 
-Because only the two files above diverge, any fix outside them can be
-copied straight across:
+Because nothing outside the config, the manifest and `docs/` diverges,
+any fix elsewhere can be copied straight across:
 
 ```sh
 # from the repo root — copies every shared file into the Benjamin build
-for f in $(git ls-files | grep -v '^benjamin/' | grep -v -e '^manifest.json$' \
+for f in $(git ls-files | grep -v '^benjamin/' | grep -v '^docs/' | grep -v -e '^manifest.json$' \
     -e '^src/config/franklin-helper.js$' -e '^SNIPPETS.md$' -e '^README.md$' -e '^.gitignore$'); do
   cp "$f" "benjamin/$f"
 done
@@ -94,7 +113,7 @@ done
 ```
 
 Only `manifest.json`, `src/config/franklin-helper.js`, `SNIPPETS.md`,
-`README.md` and `.gitignore` should show up.
+`README.md`, `.gitignore` and everything under `docs/` should show up.
 
 If you changed a role or reason template, regenerate the reference doc for
 that build:
@@ -125,4 +144,7 @@ src/content/positioning/          finds the caret on screen
 src/content/sentence-builder.js   templates → the final sentence
 src/content/shift-state.js        shift, tasks, and items lent out
 src/shared/editable.js            input / textarea / contenteditable
+docs/manual.src.html              the staff manual, with {{IMG:…}} tokens
+docs/manual.html                  built manual, images inlined — published
+docs/screenshots/                 captured from the running popup
 ```
