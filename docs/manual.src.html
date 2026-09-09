@@ -251,6 +251,37 @@
   .log + .log { margin-top: -6px; }
   .blank { color: var(--alert); font-weight: 700; border-bottom: 1px dotted var(--alert); }
 
+  /* The desktop notification, reproduced with its real wording. */
+  .toast {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    max-width: 400px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin: 0 0 8px;
+  }
+  .toast img { width: 34px; height: 34px; border-radius: 6px; flex: 0 0 auto; }
+  .toast-title { font-weight: 600; font-size: .92rem; line-height: 1.3; }
+  .toast-body { font-size: .88rem; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+  .toast-src { font-size: .75rem; color: var(--ink-faint); margin-top: 5px; }
+
+  /* The toolbar count, at roughly the size Chrome draws it. */
+  .badge {
+    display: inline-block;
+    background: #ff4d4f;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    vertical-align: 1px;
+  }
+
   /* Callouts: only two, and they mean different things. */
   .callout {
     border: 1px solid var(--rule);
@@ -386,7 +417,7 @@
       <li><a href="#begin">Begin shift</a></li>
       <li><a href="#tour">Site tour</a></li>
       <li><a href="#stillout">Still out</a></li>
-      <li><a href="#tasks">Task chips &amp; the badge</a></li>
+      <li><a href="#tasks">Tasks it chases you about</a></li>
       <li><a href="#limits">What it can't do</a></li>
       <li><a href="#trouble">If something goes wrong</a></li>
     </ol>
@@ -792,13 +823,17 @@
     </section>
 
     <section id="tasks">
-      <h2>Task chips &amp; the badge</h2>
+      <h2>Tasks it chases you about</h2>
       <hr class="rule">
 
       <p>
-        Once you have started a shift, the three task chips track themselves. The colour
-        tells you where you stand at a glance:
+        Three chips are on a clock — <strong>Site tour</strong>, <strong>Read previous shift
+        logs</strong> and <strong>Desk organized</strong>. Once you have started a shift, the
+        extension counts them and chases you when one falls behind. Nothing else in the
+        extension notifies you about anything.
       </p>
+
+      <h3>The colour on the chip</h3>
 
       <div class="scroller">
         <table>
@@ -814,17 +849,72 @@
         </table>
       </div>
 
+      <h3>The badge on the toolbar icon</h3>
       <p>
-        You do not have to keep the popup open for this to work. When a task goes overdue,
-        a number appears on the extension's toolbar icon and stays there until the task is
-        done. You also get a notification once when the deadline passes, and again every
-        half hour after that if it is still outstanding — the badge is easy to not look at.
+        You do not have to keep the panel open — or even be looking at the log. When a task
+        goes overdue, a red count appears on the extension's icon in the browser toolbar
+        and <strong>stays there until the task is done</strong>:
+      </p>
+      <p style="font-size:1.05rem">
+        Phrase Snippets <span class="badge">2</span> &nbsp;— two tasks overdue right now.
       </p>
       <p>
-        Deadlines are worked out from the shift you picked in <em>Begin shift</em>, and the
-        later ones have to close an hour before your shift ends, so nothing is left to land
-        in the handover. <strong>Press <em>End shift</em> when you leave</strong> — otherwise the
-        deadlines keep running and the chips sit red overnight.
+        The badge is the signal that cannot be missed or dismissed. It is not affected by
+        Do Not Disturb, and it does not go away on its own. Tick the task off and it clears
+        straight away.
+      </p>
+
+      <h3>The desktop notification</h3>
+      <p>
+        A notification also pops up the moment a deadline passes, and again
+        <strong>every half hour</strong> while the task is still outstanding — once and never
+        again is too easy to swipe away and forget. This is what it says:
+      </p>
+
+      <div class="toast">
+        <img src="{{IMG:icon}}" alt="">
+        <div>
+          <div class="toast-title">Shift task overdue</div>
+          <div class="toast-body">Site tour — 2 still needed before the shift ends.</div>
+          <div class="toast-src">Google Chrome · Phrase Snippets</div>
+        </div>
+      </div>
+
+      <p>
+        One per overdue task. Clicking it brings the window you were working in back to
+        the front.
+      </p>
+
+      <div class="callout important">
+        <h3>If you never see a notification</h3>
+        <p>
+          Check two things, in this order:
+        </p>
+        <ol>
+          <li>
+            <strong>Did you press <em>Begin shift</em>?</strong> Deadlines are worked out from
+            the shift you picked there. No shift started means no deadlines, no badge and
+            no notifications — the chips just sit plain.
+          </li>
+          <li>
+            <strong>Are notifications allowed for Chrome?</strong> If the computer is set to
+            Do Not Disturb, or Chrome is not permitted to show notifications, the pop-up
+            never appears. The badge still works, so watch the toolbar icon.
+          </li>
+        </ol>
+      </div>
+
+      <h3>When the deadlines fall</h3>
+      <p>
+        They come from the shift you picked in <em>Begin shift</em>. The first site tour is
+        due inside your first two hours; <em>Read previous shift logs</em> inside your first
+        hour. Later ones have to close an hour before your shift ends, so nothing is left
+        to land in the handover.
+      </p>
+      <p>
+        <strong>Press <em>End shift</em> when you leave.</strong> It stops the clock. Skip it and
+        the deadlines keep running after you have gone home — the badge sits on the icon
+        overnight and the next person inherits red chips that mean nothing.
       </p>
     </section>
 
@@ -897,6 +987,10 @@
             <tr>
               <td>A flagged entry did not get filed</td>
               <td>The section heading is missing from the log. Start the shift with <em>Begin shift</em> and the headings are there from the outset.</td>
+            </tr>
+            <tr>
+              <td>A red number on the toolbar icon that will not go away</td>
+              <td>One or more tracked tasks are overdue. Do them, or press <em>End shift</em> if the shift is over.</td>
             </tr>
             <tr>
               <td>Task chips are red and it is not your shift</td>
