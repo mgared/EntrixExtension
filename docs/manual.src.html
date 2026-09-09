@@ -409,6 +409,7 @@
     <h2>Contents</h2>
     <ol>
       <li><a href="#start">Getting started</a></li>
+      <li><a href="#begin-first">Start with Begin shift</a></li>
       <li><a href="#check">Check every line</a></li>
       <li><a href="#popup">The popup</a></li>
       <li><a href="#blanks">Filling in blanks</a></li>
@@ -442,6 +443,11 @@
         Every entry is stamped with the time it was inserted, and starts on its own line.
       </p>
 
+      <p>
+        One thing to do first, though — see <a href="#begin-first">Start with Begin
+        shift</a>. Everything that keeps count depends on it.
+      </p>
+
       <h3>Getting back to this page</h3>
       <p>
         <strong>Guide</strong>, along the bottom of the panel, opens this manual in a new
@@ -450,6 +456,85 @@
       <figure>
         <img src="{{IMG:08-actions}}" alt="The bottom bar of the panel: the hint 'Enter = Insert, Esc = Cancel' on the left, a Guide link in the middle, and Cancel and Insert buttons on the right.">
       </figure>
+    </section>
+
+    <section id="begin-first">
+      <h2>Start with Begin shift</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>Press it before anything else</h3>
+        <p>
+          Everything the extension keeps count of is measured from the moment you press
+          <strong>Begin shift</strong>. Without it there is no shift to measure against, so
+          the tracking has nothing to stand on — it does not guess, it just stays quiet.
+        </p>
+      </div>
+
+      <p>
+        You can still use the extension without starting a shift, and most of it works
+        exactly the same. It is worth knowing which half is which:
+      </p>
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>Works either way</th><th>Needs Begin shift</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Every role and reason, worded the same</td>
+              <td>The colours and ✓ on the three task chips</td>
+            </tr>
+            <tr>
+              <td>The timestamp on every entry</td>
+              <td>The red count on the toolbar icon</td>
+            </tr>
+            <tr>
+              <td>Site tour, and the sentence it writes</td>
+              <td>Overdue notifications</td>
+            </tr>
+            <tr>
+              <td>Night lockup, Lobby checked, Time, Key returned</td>
+              <td>Filing a flagged entry under its section heading</td>
+            </tr>
+            <tr>
+              <td>The yellow highlight on a flagged entry</td>
+              <td>A <em>Still out</em> list that is actually about today</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What goes wrong quietly</h3>
+      <p>
+        None of these announce themselves, which is why they are worth knowing:
+      </p>
+      <ul>
+        <li>
+          <strong>The task chips just sit plain.</strong> Not green, not red — plain. That
+          looks like "nothing due", not like "not tracking". No badge and no notifications
+          either.
+        </li>
+        <li>
+          <strong>A flagged entry is highlighted but not filed.</strong> The yellow tint
+          still lands on your line, but the copy has nowhere to go: <em>Begin shift</em> is
+          what writes the section headings into the log, and without them the filing simply
+          does not happen. Nothing warns you.
+        </li>
+        <li>
+          <strong><em>Still out</em> keeps whatever was already on it.</strong> Handing keys
+          over still adds them and returning them still takes them off, so the list works —
+          but it is never cleared, so it can be showing you a previous shift's keys
+          alongside yours. <em>Begin shift</em> is what empties it.
+        </li>
+      </ul>
+
+      <p>
+        So: log whatever you like without starting a shift — the entries themselves are
+        just as good. Only don't read anything into the task colours, the badge or the
+        <em>Still out</em> list until a shift has been started.
+      </p>
     </section>
 
     <section id="check">
