@@ -30,6 +30,10 @@ const SAMPLE = {
   staff: "Sarah",
   deliveredDate: "2026-04-25",
   guestName: "Marcus",
+  // Only the Benjamin build has loading-dock reasons, but an unused
+  // sample costs nothing and keeps this file identical in both.
+  bookingDate: "2026-05-02",
+  slot: "9:00 AM – 12:00 PM",
   residentName: "Marry",
   // contact comes from each role's default ("came to the front desk").
   // select/radio sample values come from each field's first option.
@@ -88,7 +92,8 @@ push(
     "name=`John`, unit=`234`, recipient=`Helen`, " +
     "description=`their kitchen sink is leaking`, date=`2026-05-02`, " +
     "subject=`a maintenance follow-up`, item=`a rent check`, staff=`Sarah`, " +
-    "deliveredDate=`2026-04-25`, guestName=`Marcus`. Select/radio fields " +
+    "deliveredDate=`2026-04-25`, guestName=`Marcus`, " +
+    "bookingDate=`2026-05-02`, slot=`9:00 AM – 12:00 PM`. Select/radio fields " +
     "use the first option of each field."
 );
 push("");

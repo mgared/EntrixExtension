@@ -414,6 +414,39 @@ const OPTIONAL_UNIT_FIELD = {
   placeholder: "(optional)",
 };
 
+// Benjamin's loading dock is reserved ahead of time and then set up when
+// the slot comes round — two log entries, hours or days apart, sharing the
+// same two facts. Required on the booking, where the slot is the point of
+// the entry; optional on the setup, where the timestamp already says when
+// and the slot is only a cross-reference back to the booking.
+const DOCK_SLOT_FIELD = {
+  key: "slot",
+  label: "Time slot",
+  kind: "text",
+  placeholder: "9:00 AM – 12:00 PM",
+};
+
+const OPTIONAL_DOCK_SLOT_FIELD = {
+  ...DOCK_SLOT_FIELD,
+  optional: true,
+  placeholder: "(optional)",
+};
+
+const DOCK_PURPOSE_FIELD = {
+  key: "purpose",
+  label: "For",
+  kind: "select",
+  optional: true,
+  placeholder: "(not stated)",
+  options: [
+    { value: "a move-in", label: "Move-in" },
+    { value: "a move-out", label: "Move-out" },
+    { value: "a furniture delivery", label: "Furniture delivery" },
+    { value: "a large delivery", label: "Large delivery" },
+    { value: "a contractor", label: "Contractor" },
+  ],
+};
+
 export const HELPER = {
   defaultRoleId: "resident",
   roles: [
@@ -510,6 +543,47 @@ export const HELPER = {
           tracksOut: { dir: "out", kind: "a dolly" },
           template:
             "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; the concierge assisted after confirmation.",
+        },
+        {
+          // Whether the desk can confirm a dock reservation outright or
+          // only take it down for the leasing office is Benjamin's call,
+          // so the outcome is picked rather than assumed — including the
+          // case where the slot is already taken.
+          id: "bookedDock",
+          label: "Book the loading dock",
+          template:
+            "Resident[ {name}] from unit ({unit}) {contact} to book the loading dock for {bookingDate}, {slot}[, for {purpose}]; {outcome}.",
+          fields: [
+            { key: "bookingDate", label: "Date", kind: "date" },
+            DOCK_SLOT_FIELD,
+            DOCK_PURPOSE_FIELD,
+            {
+              key: "outcome",
+              label: "Outcome",
+              kind: "select",
+              options: [
+                {
+                  value:
+                    "the booking was recorded and passed to the leasing office to confirm",
+                  label: "Recorded — leasing to confirm",
+                },
+                {
+                  value: "the booking was confirmed with the leasing office",
+                  label: "Confirmed with leasing",
+                },
+                {
+                  value:
+                    "the slot was already reserved and the resident was asked to pick another time",
+                  label: "Slot already taken",
+                },
+                {
+                  value:
+                    "the resident was directed to the leasing office to complete the reservation",
+                  label: "Sent to leasing",
+                },
+              ],
+            },
+          ],
         },
         {
           id: "elevatorAccess",
@@ -1232,6 +1306,27 @@ export const HELPER = {
             UNIT_FIELD,
             { key: "message", label: "Regarding", kind: "text" },
             CONTACT_OUTCOME,
+          ],
+        },
+        {
+          // A desk action, not a resident one: the dock is readied at the
+          // booked time, which may be before anyone from the unit turns
+          // up. Wording it this way keeps the entry true either way.
+          id: "dockReady",
+          label: "Loading dock readied",
+          template:
+            "Concierge[ {name}] had the loading dock and elevator ready for unit ({unit})'s booked time[, {slot}][, for {purpose}].[ {note}]",
+          fields: [
+            UNIT_FIELD,
+            OPTIONAL_DOCK_SLOT_FIELD,
+            DOCK_PURPOSE_FIELD,
+            {
+              key: "note",
+              label: "Note",
+              kind: "text",
+              optional: true,
+              placeholder: "(optional)",
+            },
           ],
         },
         {

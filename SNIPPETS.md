@@ -11,7 +11,7 @@ node extension/generate-snippets-doc.mjs
 
 Every log is auto-prefixed with the current clock time, e.g. `10:00 AM: Resident…`. The doc pins it to `10:00 AM` for stable diffs.
 
-Sample values used in the "Filled" line for text/date fields: name=`John`, unit=`234`, recipient=`Helen`, description=`their kitchen sink is leaking`, date=`2026-05-02`, subject=`a maintenance follow-up`, item=`a rent check`, staff=`Sarah`, deliveredDate=`2026-04-25`, guestName=`Marcus`. Select/radio fields use the first option of each field.
+Sample values used in the "Filled" line for text/date fields: name=`John`, unit=`234`, recipient=`Helen`, description=`their kitchen sink is leaking`, date=`2026-05-02`, subject=`a maintenance follow-up`, item=`a rent check`, staff=`Sarah`, deliveredDate=`2026-04-25`, guestName=`Marcus`, bookingDate=`2026-05-02`, slot=`9:00 AM – 12:00 PM`. Select/radio fields use the first option of each field.
 
 ## Roles at a glance
 

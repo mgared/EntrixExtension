@@ -11,11 +11,11 @@ node extension/generate-snippets-doc.mjs
 
 Every log is auto-prefixed with the current clock time, e.g. `10:00 AM: Resident…`. The doc pins it to `10:00 AM` for stable diffs.
 
-Sample values used in the "Filled" line for text/date fields: name=`John`, unit=`234`, recipient=`Helen`, description=`their kitchen sink is leaking`, date=`2026-05-02`, subject=`a maintenance follow-up`, item=`a rent check`, staff=`Sarah`, deliveredDate=`2026-04-25`, guestName=`Marcus`. Select/radio fields use the first option of each field.
+Sample values used in the "Filled" line for text/date fields: name=`John`, unit=`234`, recipient=`Helen`, description=`their kitchen sink is leaking`, date=`2026-05-02`, subject=`a maintenance follow-up`, item=`a rent check`, staff=`Sarah`, deliveredDate=`2026-04-25`, guestName=`Marcus`, bookingDate=`2026-05-02`, slot=`9:00 AM – 12:00 PM`. Select/radio fields use the first option of each field.
 
 ## Roles at a glance
 
-- Resident (11 reasons; role fields: name, unit, contact)
+- Resident (12 reasons; role fields: name, unit, contact)
 - Guest (6 reasons; role fields: name, unit, residentName, contact)
 - App delivery (4 reasons; role fields: app, appOther, unit)
 - Dog Walker (5 reasons; role fields: name, company, unit)
@@ -26,7 +26,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - Leasing Office (5 reasons; role fields: name)
 - Prospect (2 reasons; role fields: name, contactInfo)
 - Package (4 reasons; role fields: courier, courierOther)
-- Concierge (7 reasons; role fields: name)
+- Concierge (8 reasons; role fields: name)
 
 ## Resident
 
@@ -59,6 +59,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly; the concierge assisted after confirmation.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly; the concierge assisted after confirmation.
+
+### Book the loading dock
+
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to book the loading dock for ####, ####; ####.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to book the loading dock for 2026-05-02, 9:00 AM – 12:00 PM, for a move-in; the booking was recorded and passed to the leasing office to confirm.
 
 ### Request elevator access
 
@@ -326,6 +331,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) regarding ####; ####.
 - **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) regarding ####; the resident was reached and notified.
+
+### Loading dock readied
+
+- **Empty:** 10:00 AM: Concierge had the loading dock and elevator ready for unit (####)'s booked time.
+- **Filled:** 10:00 AM: Concierge John had the loading dock and elevator ready for unit (234)'s booked time, 9:00 AM – 12:00 PM, for a move-in.
 
 ### Sorted/processed packages
 
