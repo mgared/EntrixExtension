@@ -461,15 +461,18 @@ const DOCK_PURPOSE_OTHER_FIELD = {
   showWhen: { key: "purpose", value: "Other" },
 };
 
-// Two reference pages the popup can open, each hidden when its URL is
+// Two reference pages the popup can open, each hidden when its value is
 // empty. The Guide is how to use the extension; Site info is the building
 // and the policies that apply at it.
-export const MANUAL_URL =
-  "https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9";
+//
+// A path is resolved against the extension itself, so the pages ship with
+// the build and open with no account, no network and no external service.
+// A full https:// URL is used as-is, for a site that hosts them elsewhere.
+export const MANUAL_URL = "docs/manual.html";
 
 // Building, policies, contacts. Opened by the Site info button.
-export const SITE_INFO_URL =
-  "https://claude.ai/code/artifact/e2fe6aa9-8194-47ef-8064-c2adc6ceddd9";
+// Bundled with the extension — see MANUAL_URL above.
+export const SITE_INFO_URL = "docs/site-info.html";
 
 export const HELPER = {
   defaultRoleId: "resident",
