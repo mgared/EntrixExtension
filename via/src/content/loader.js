@@ -10,6 +10,6 @@
     const entry = chrome.runtime.getURL("src/content/main.js");
     await import(entry);
   } catch (err) {
-    console.error("[phrase-snippets] loader failed:", err);
+    console.error("[apex-shift-log-helper] loader failed:", err);
   }
 })();

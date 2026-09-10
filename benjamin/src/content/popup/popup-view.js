@@ -40,7 +40,7 @@ import {
   clearItemOut,
 } from "../shift-state.js";
 
-const HOST_TAG = "phrase-snippets-popup";
+const HOST_TAG = "apex-shift-log-helper-popup";
 
 export function createPopupView() {
   const host = document.createElement(HOST_TAG);

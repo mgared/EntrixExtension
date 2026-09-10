@@ -66,7 +66,7 @@ function fillForReason(role, reason) {
 const lines = [];
 const push = (s = "") => lines.push(s);
 
-push("# Phrase Snippets — Scenario Reference");
+push("# Apex Shift Log Helper: Scenario Reference");
 push("");
 push("Every reason, plus a filled example showing the");
 push("`;;` popup output when the form fields are typed in. Regenerate:");

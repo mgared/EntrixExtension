@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Phrase Snippets — VIA",
+  "name": "Apex Shift Log Helper (VIA)",
   "version": "0.1.0",
   "description": "Concierge shift-log snippets for VIA, inserted at the caret.",
   "permissions": [
@@ -44,7 +44,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Phrase Snippets (VIA) — shift tasks",
+    "default_title": "Apex Shift Log Helper (VIA): shift tasks",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

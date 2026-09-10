@@ -1,4 +1,4 @@
-# Phrase Snippets
+# Apex Shift Log Helper
 
 A Chrome extension that helps concierges write shift logs faster. Typing
 `;;` in any text box opens a popup with role → reason dropdowns, one-click
@@ -11,9 +11,9 @@ install whichever you need.
 
 | Building | Folder | Extension name in Chrome |
 | --- | --- | --- |
-| ORA | repo root | Phrase Snippets — ORA |
-| Benjamin | `benjamin/` | Phrase Snippets — Benjamin |
-| VIA | `via/` | Phrase Snippets — VIA |
+| ORA | repo root | Apex Shift Log Helper (ORA) |
+| Benjamin | `benjamin/` | Apex Shift Log Helper (Benjamin) |
+| VIA | `via/` | Apex Shift Log Helper (VIA) |
 
 ### Installing
 
