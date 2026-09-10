@@ -1,0 +1,1102 @@
+<title>Benjamin Site Information</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* ---- tokens: light is the base, both dark paths redefine only these ---- */
+  :root {
+    --ground: #e9edf3;
+    --paper: #ffffff;
+    --sunk: #f3f6fa;
+    --ink: #131820;
+    --ink-soft: #5a6474;
+    --ink-faint: #8b94a3;
+    --rule: #d6dde7;
+    --rule-soft: #e6ebf1;
+    --accent: #14509b;
+    --accent-soft: #e7effa;
+    --flag: #fff54d;
+    --flag-ink: #131820;
+    --alert: #c0392b;
+    --alert-soft: #fdecea;
+    --good: #2f6b38;
+    --good-soft: #eaf4ec;
+    --shadow: 0 1px 2px rgba(19, 24, 32, .05), 0 8px 28px rgba(19, 24, 32, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1219;
+      --paper: #161d27;
+      --sunk: #1c242f;
+      --ink: #e7ecf3;
+      --ink-soft: #a3aebe;
+      --ink-faint: #788495;
+      --rule: #2b3542;
+      --rule-soft: #232c38;
+      --accent: #7dabf2;
+      --accent-soft: #1b2a3f;
+      --flag: #f2e03a;
+      --flag-ink: #131820;
+      --alert: #f08379;
+      --alert-soft: #33201f;
+      --good: #8ac795;
+      --good-soft: #1b2a20;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1219;
+    --paper: #161d27;
+    --sunk: #1c242f;
+    --ink: #e7ecf3;
+    --ink-soft: #a3aebe;
+    --ink-faint: #788495;
+    --rule: #2b3542;
+    --rule-soft: #232c38;
+    --accent: #7dabf2;
+    --accent-soft: #1b2a3f;
+    --flag: #f2e03a;
+    --flag-ink: #131820;
+    --alert: #f08379;
+    --alert-soft: #33201f;
+    --good: #8ac795;
+    --good-soft: #1b2a20;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 56px;
+  }
+  @media (min-width: 1020px) {
+    .shell { grid-template-columns: 224px minmax(0, 1fr); }
+  }
+
+  /* ---- masthead ---- */
+  .masthead {
+    grid-column: 1 / -1;
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 48px;
+  }
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(2.3rem, 5.5vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -.02em;
+    margin: 0 0 22px;
+    text-wrap: balance;
+    max-width: 15ch;
+  }
+  .standfirst {
+    font-size: 1.14rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0;
+  }
+
+  /* The thing the whole tool exists to produce, shown at full size. */
+  .specimen {
+    margin: 40px 0 0;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 3px;
+    padding: 22px 26px;
+    box-shadow: var(--shadow);
+    max-width: 78ch;
+  }
+  .specimen p { margin: 0; font-size: 1.06rem; line-height: 1.6; }
+  .specimen .t {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .specimen b { font-weight: 700; }
+  .specimen-note {
+    margin: 14px 0 0;
+    font-size: .86rem;
+    color: var(--ink-faint);
+    max-width: 78ch;
+  }
+
+  /* ---- sidebar nav ---- */
+  nav.toc { display: none; }
+  @media (min-width: 1020px) {
+    nav.toc {
+      display: block;
+      position: sticky;
+      top: 32px;
+      align-self: start;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding-bottom: 24px;
+    }
+  }
+  .toc h2 {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin: 0 0 14px;
+  }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .toc a {
+    display: block;
+    padding: 5px 10px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: .89rem;
+    border-left: 2px solid var(--rule-soft);
+    line-height: 1.35;
+  }
+  .toc a:hover { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---- body ---- */
+  main { min-width: 0; max-width: 74ch; }
+  section { margin: 0 0 64px; scroll-margin-top: 24px; }
+
+  h2 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 600;
+    font-size: 1.72rem;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 600;
+    font-size: 1.12rem;
+    margin: 34px 0 8px;
+    text-wrap: balance;
+  }
+  .rule {
+    height: 1px;
+    background: var(--rule);
+    border: 0;
+    margin: 0 0 22px;
+  }
+  p { margin: 0 0 16px; }
+  main ul, main ol { margin: 0 0 16px; padding-left: 22px; }
+  main li { margin-bottom: 7px; }
+  a { color: var(--accent); }
+
+  strong { font-weight: 600; }
+
+  kbd {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .82em;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* A sample of what lands in the log. */
+  .log {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: .95rem;
+    line-height: 1.55;
+  }
+  .log .t { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .log.is-flagged { border-left-color: var(--flag); }
+  .log mark { background: var(--flag); color: var(--flag-ink); }
+  .log-label {
+    display: block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 7px;
+  }
+  .log + .log { margin-top: -6px; }
+  .blank { color: var(--alert); font-weight: 700; border-bottom: 1px dotted var(--alert); }
+
+  /* The desktop notification, reproduced with its real wording. */
+  .toast {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    max-width: 400px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin: 0 0 8px;
+  }
+  .toast img { width: 34px; height: 34px; border-radius: 6px; flex: 0 0 auto; }
+  .toast-title { font-weight: 600; font-size: .92rem; line-height: 1.3; }
+  .toast-body { font-size: .88rem; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+  .toast-src { font-size: .75rem; color: var(--ink-faint); margin-top: 5px; }
+
+  /* The toolbar count, at roughly the size Chrome draws it. */
+  .badge {
+    display: inline-block;
+    background: #ff4d4f;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    vertical-align: 1px;
+  }
+
+  /* Callouts: only two, and they mean different things. */
+  .callout {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 0 0 24px;
+    background: var(--paper);
+  }
+  .callout.important {
+    border-color: var(--alert);
+    background: var(--alert-soft);
+  }
+  .callout > :last-child { margin-bottom: 0; }
+  .callout h3 { margin-top: 0; font-size: 1.05rem; }
+  .callout.important h3 { color: var(--alert); }
+
+  /* Figures */
+  figure { margin: 0 0 26px; }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+  }
+  figcaption {
+    margin-top: 10px;
+    font-size: .855rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Chip catalog */
+  .chips { display: flex; flex-direction: column; gap: 0; margin: 0 0 8px; }
+  .chip-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  @media (min-width: 640px) {
+    .chip-entry { grid-template-columns: 190px minmax(0, 1fr); gap: 0 24px; align-items: baseline; }
+  }
+  .chip-entry:last-child { border-bottom: 1px solid var(--rule-soft); }
+  .chip-entry p { margin: 0 0 8px; }
+  .chip-entry p:last-child { margin-bottom: 0; }
+  .pill {
+    display: inline-block;
+    font-size: .82rem;
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--sunk);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  /* --ground flips with the theme, so this stays legible on the red in
+     both: a light face on dark red, a dark face on light red. */
+  .pill.overdue { background: var(--alert); border-color: var(--alert); color: var(--ground); font-weight: 600; }
+  .pill.done { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .whenfor {
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+  .whenfor b { color: var(--ink); font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 20px;
+    font-size: .93rem;
+  }
+  .scroller { overflow-x: auto; margin: 0 0 20px; }
+  .scroller table { margin: 0; min-width: 420px; }
+  th, td {
+    text-align: left;
+    padding: 9px 14px 9px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  footer {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+    margin-top: 8px;
+    font-size: .88rem;
+    color: var(--ink-faint);
+    max-width: 74ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+<style>
+  /* Sections nobody has filled in yet. Loud on purpose: a policy page that
+     looks complete when it is not is worse than no policy page. */
+  .todo {
+    border: 1px dashed var(--alert);
+    border-radius: 4px;
+    background: var(--alert-soft);
+    padding: 16px 20px;
+    margin: 0 0 20px;
+  }
+  .todo > :last-child { margin-bottom: 0; }
+  .todo-tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--alert);
+    border: 1px solid var(--alert);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-bottom: 9px;
+  }
+  .floors { display: flex; flex-direction: column; gap: 0; margin: 0 0 20px; }
+  .floor {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px 20px;
+    padding: 13px 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  @media (min-width: 620px) {
+    .floor { grid-template-columns: 130px minmax(0, 1fr); gap: 0 22px; align-items: baseline; }
+  }
+  .floor:last-child { border-bottom: 1px solid var(--rule-soft); }
+  .floor-name {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .floor-areas { color: var(--ink); }
+</style>
+<style>
+  /* Two pages, one set. The switcher says so before the reader has to
+     wonder, and marks which of them they are on. */
+  .switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    margin: 0 0 24px;
+    font-size: .85rem;
+  }
+  .switch a,
+  .switch span {
+    padding: 5px 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .switch a:hover { background: var(--accent-soft); color: var(--accent); }
+  .switch a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .switch [aria-current="page"] {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(19, 24, 32, .07);
+  }
+</style>
+<div class="shell">
+
+  <header class="masthead">
+    <nav class="switch" aria-label="Reference pages">
+      <a href="https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9">Guide</a>
+      <span aria-current="page">Site info</span>
+    </nav>
+    <p class="kicker">Benjamin · Front desk</p>
+    <h1>Benjamin Site Information</h1>
+    <p class="standfirst">
+      The limits, hours and contacts the desk reaches for mid-shift. It is a quick
+      reference, not the policy itself.
+    </p>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#property">The property</a></li>
+      <li><a href="#emergency">Emergency maintenance</a></li>
+      <li><a href="#leasing">Leasing office</a></li>
+      <li><a href="#pte">Letting people up</a></li>
+      <li><a href="#deliveries">Deliveries</a></li>
+      <li><a href="#packages">Packages into a unit</a></li>
+      <li><a href="#amenities">Amenities</a></li>
+      <li><a href="#outdoor">Outdoor spaces</a></li>
+      <li><a href="#reservations">Reservations</a></li>
+      <li><a href="#parking">Parking: residents</a></li>
+      <li><a href="#staffparking">Parking: staff</a></li>
+      <li><a href="#noise">Noise complaints</a></li>
+      <li><a href="#incident">Incident reports</a></li>
+      <li><a href="#log">Writing the log</a></li>
+      <li><a href="#contacts">Who to call</a></li>
+      <li><a href="#logins">Logins and codes</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <div class="callout important">
+      <h3>Please be advised</h3>
+      <p>
+        This page is on <strong>soft launch and is not complete</strong>. It carries
+        the necessary information only, condensed for quick lookup during a shift.
+      </p>
+      <p>
+        For anything not here, and for the full and current policy,
+        <strong>go to the Connecteam knowledge base</strong>. Connecteam is the
+        source of truth; this page is the shortcut.
+      </p>
+    </div>
+
+    <section id="property">
+      <h2>The property</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <tbody>
+            <tr><td>The Benjamin</td><td>25 Northern Ave, Boston, MA</td></tr>
+            <tr><td>Units</td><td>354</td></tr>
+            <tr><td>Concierge line</td><td><strong>617-202-0073</strong></td></tr>
+            <tr><td>Leasing office</td><td><strong>617-304-8408</strong> · benjaminvip@berkshireresi.com<br>4th floor, VIA building</td></tr>
+            <tr><td>Garage office (P1)</td><td><strong>857-350-3585</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The building is <strong>100% non-smoking</strong>, everywhere, no exceptions.
+      </p>
+    </section>
+
+    <section id="emergency">
+      <h2>Emergency maintenance</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>After hours, the resident makes the call</h3>
+        <p>
+          <strong>4 PM to 7 AM, every day.</strong> Direct the resident to call
+          <strong>617-304-8408</strong> themselves. An automated agent answers and
+          takes the work order from them.
+        </p>
+        <p>
+          <strong>Do not call on their behalf.</strong> The service team needs the
+          resident's callback number, not the desk's — otherwise the callback comes
+          here while you are with someone else, and it gets missed.
+        </p>
+      </div>
+
+      <h3>What counts as an emergency</h3>
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th>Emergency</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Threat to safety</td>
+              <td>Fire · flood · severe weather · police action · protecting a crime scene · broken windows, locks or doors</td>
+            </tr>
+            <tr>
+              <td>Heating and cooling</td>
+              <td>No heat <strong>below 50°F</strong> outside · no AC <strong>above 80°F</strong></td>
+            </tr>
+            <tr>
+              <td>Utilities</td>
+              <td>Electrical or gas failure of any kind · no hot or cold water</td>
+            </tr>
+            <tr>
+              <td>Plumbing</td>
+              <td>Overflowing toilet · a stopped toilet that is the unit's only one · leaks, broken pipes, moisture, water intrusion or mold</td>
+            </tr>
+            <tr>
+              <td>Appliances</td>
+              <td>Refrigerator or stove out. Sometimes a garbage disposal</td>
+            </tr>
+            <tr>
+              <td>Access</td>
+              <td>Any unsecured entry, windows included · controlled access gate malfunctioning</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        It counts however it reached you: a resident reported it, an inspection found
+        it, or you saw it yourself.
+      </p>
+
+      <h3>When the desk raises it</h3>
+      <p>For anything the building itself has, rather than a resident calling it in:</p>
+      <ol>
+        <li>Add the service request to <strong>YARDI</strong>, marked emergency or urgent.</li>
+        <li>Call <strong>617-304-8408</strong> and follow the prompts.</li>
+        <li>Leave a detailed message and <strong>ask for a callback with an ETA</strong>.</li>
+        <li>Log all of it, and keep updating the entry as it moves.</li>
+      </ol>
+
+      <p>What a good entry looks like, start to finish:</p>
+      <div class="log">
+        604 (Smith) claims refrigerator is not staying cool. Called emergency maint at
+        10:40pm. Jason called back and gave ETA of 11pm. Informed resident of ETA.
+        <strong>UPDATE:</strong> Jason on site at 11pm and gave all clear of issue
+        fixed at 11:15pm. Service request number: xxxx
+      </div>
+      <p>
+        Times, names, the ETA, what you told the resident, and the service request
+        number. The update is part of the entry, not a new one.
+      </p>
+
+      <div class="callout important">
+        <h3>Alarm panel sounding</h3>
+        <p>
+          Call the alarm contact <strong>immediately</strong> — the name and number are
+          on the on-call list at the desk.
+        </p>
+      </div>
+
+      <h3>Seaport security</h3>
+      <p>
+        <strong>857-225-6060</strong> reaches the Seaport supervisor on duty.
+      </p>
+
+      <h3>The on-call list</h3>
+      <p>
+        Names, numbers and who is on which shift are on the sheet at the front desk.
+        <strong>It is internal.</strong> Never give a resident a technician's direct
+        number — they call the main line.
+      </p>
+    </section>
+
+    <section id="leasing">
+      <h2>Leasing office</h2>
+      <hr class="rule">
+
+      <p>
+        <strong>617-304-8408.</strong> Every phone in the office rings, so this is the
+        number for all leasing calls. The team is on the <strong>4th floor of
+        VIA</strong> and serves both buildings.
+      </p>
+
+      <div class="callout important">
+        <h3>Never give out a staff personal number</h3>
+        <p>
+          Not to a resident, not to a prospect, not to a vendor. Leasing and tour
+          questions go to the office number or an official email, and nowhere else.
+        </p>
+      </div>
+
+      <h3>Hours</h3>
+      <div class="scroller">
+        <table>
+          <tbody>
+            <tr><td>Monday to Friday</td><td>9 AM – 6 PM</td></tr>
+            <tr><td>Saturday</td><td>10 AM – 5 PM</td></tr>
+            <tr><td>Sunday</td><td><strong>Closed</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        A leasing question outside those hours: point them at a
+        <strong>self-guided tour</strong> — theviaseaport.com or the
+        <strong>TOUR24</strong> app — or ask them to call back when the office opens.
+      </p>
+
+      <h3>Who does what</h3>
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Role</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Property manager</td><td>Matthew Dragoni · MDragoni@berkshireresi.com</td></tr>
+            <tr><td>Assistant property manager</td><td>Rosa Santana · RSantana@berkshireresi.com</td></tr>
+            <tr><td>Leasing consultant</td><td>Margaret Williamson · MWilliamson@berkshireresi.com</td></tr>
+            <tr><td>Leasing consultant</td><td>Paulina Pizzochero · PPizzochero@berkshireresi.com</td></tr>
+            <tr><td>Event coordinator</td><td>Jessica Scarafone · JScarafone@berkshireresi.com</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Email them directly if you need a particular person. If a resident needs one,
+        they get the office number.
+      </p>
+    </section>
+
+    <section id="pte">
+      <h2>Letting people up</h2>
+      <hr class="rule">
+      <p>
+        Dog walkers, housekeepers, babysitters, trainers: it all comes down to whether
+        they are on the guest list and whether <strong>PTE</strong> (permission to
+        enter) is checked.
+      </p>
+
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Situation</th><th>What you do</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>On the list, <strong>PTE checked</strong></td>
+              <td>Grant access. No call needed</td>
+            </tr>
+            <tr>
+              <td>On the list, <strong>PTE not checked</strong></td>
+              <td>Call the resident for verbal permission</td>
+            </tr>
+            <tr>
+              <td>Not on the list</td>
+              <td>Call the resident for direct authorization</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout important">
+        <h3>No answer means no access</h3>
+        <p>
+          Every time. It does not matter how convincing the person at the desk is, how
+          long they have been waiting, or how often they have been here before.
+        </p>
+      </div>
+    </section>
+
+    <section id="deliveries">
+      <h2>Deliveries</h2>
+      <hr class="rule">
+
+      <p>
+        <strong>A driver saying the resident told them to come up is not
+        authorization.</strong> Confirm it yourself, every time.
+      </p>
+
+      <ul>
+        <li>
+          <strong>The driver says the resident instructed them</strong> — call the
+          resident anyway. No answer, the delivery stays at the desk.
+        </li>
+        <li>
+          <strong>The resident calls down first</strong> — check the number they are
+          calling from matches the one on file. If it does, that is verbal PTE: send
+          the driver up, and log it.
+        </li>
+      </ul>
+
+      <p>How to put it to the resident:</p>
+      <div class="log">
+        We have your delivery at the desk, would you like me to send them up?
+      </div>
+
+      <p>
+        When in doubt, hold it at the desk. That is the version of this you never have
+        to explain afterwards.
+      </p>
+    </section>
+
+    <section id="packages">
+      <h2>Packages into a unit</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>Rare, not routine</h3>
+        <p>
+          <strong>Do not offer PTE as a solution.</strong> Putting packages inside a
+          unit is for extreme cases only: overflow that has overwhelmed storage,
+          oversized items, a pre-move-in shipment.
+        </p>
+      </div>
+
+      <p>Start by calling the resident. <em>"Are you available to receive this today?"</em> If not, when will they be?</p>
+
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Case</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Not moved in yet</td><td>Escalate to leasing</td></tr>
+            <tr><td>Moving in within 1–3 days</td><td>You may accommodate it temporarily</td></tr>
+            <tr><td>Longer than 3 days out</td><td>Escalate to leasing for direction</td></tr>
+            <tr><td>Extended absence</td><td>The resident may email written PTE. Move packages in only if it is safe and reasonable. Case by case</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>Never move more than you can safely carry.</strong> If overflow is
+        beating the storage or the porters, tell leasing rather than working around it.
+        Log every step.
+      </p>
+    </section>
+
+    <section id="amenities">
+      <h2>Amenities</h2>
+      <hr class="rule">
+
+      <h3>Guests</h3>
+      <ul>
+        <li><strong>3 to 4 guests per resident</strong> in amenity spaces. More than that needs a reservation booked in advance.</li>
+        <li><strong>No groups after 11 PM.</strong></li>
+        <li>Guests are accompanied by their resident at all times, and the resident is responsible for how they behave.</li>
+      </ul>
+      <p>Enforce it politely, but do enforce it. Log anything that needed saying twice, and send repeat offenders to leasing.</p>
+
+      <h3>Quiet hours</h3>
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th>Amenity noise acceptable</th><th>Quiet from</th></tr></thead>
+          <tbody>
+            <tr><td>Sunday – Thursday</td><td>7 AM – 10 PM</td><td><strong>10 PM</strong></td></tr>
+            <tr><td>Friday – Saturday</td><td>7 AM – 11 PM</td><td><strong>11 PM</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Indoor spaces</h3>
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Fitness center</td><td>24/7. No slamming weights, re-rack everything</td></tr>
+            <tr><td>Conference rooms</td><td>Reservable, or first-come when unbooked. If booked, check arrivals against the host's guest list</td></tr>
+            <tr><td>Coffee station</td><td>Stocked by the cleaners. Keep it tidy, report shortages</td></tr>
+            <tr><td>Print station</td><td>Instructions are posted. Check they are still there and legible</td></tr>
+            <tr><td>Restrooms</td><td>Residents and authorized guests only. <strong>Not public</strong></td></tr>
+            <tr><td>Dog wash</td><td>P3, in the garage. Residents clean up after themselves</td></tr>
+            <tr><td>Bike room</td><td>P1. Shared with VIA, arranged through leasing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Broken equipment goes to leasing at <strong>benjaminvip@berkshireresi.com</strong>.</p>
+    </section>
+
+    <section id="outdoor">
+      <h2>Outdoor spaces</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th>Closes</th><th>Guests per resident</th></tr></thead>
+          <tbody>
+            <tr><td>Patio, in season</td><td>11 PM</td><td><strong>5</strong></td></tr>
+            <tr><td>Pool deck</td><td><strong>8 PM</strong></td><td><strong>3</strong></td></tr>
+            <tr><td>Terraces</td><td colspan="2">Closed for the winter season</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Clear the patio on time. It does not clear itself, and 11 PM is 11 PM.</p>
+      <ul>
+        <li><strong>No glass</strong> on the terrace.</li>
+        <li><strong>No pets on the pool deck</strong> except service animals, and never in the water.</li>
+      </ul>
+    </section>
+
+    <section id="reservations">
+      <h2>Reservations</h2>
+      <hr class="rule">
+      <p>
+        Residents book through the <strong>Resident Portal</strong>: log in, Concierge
+        tab, Reservations. Spaces, pricing and availability are all there.
+      </p>
+      <p>
+        <strong>Sky Lounge, conference room and game room events need leasing
+        approval.</strong>
+      </p>
+      <p>
+        The desk does not book anything. Point residents at the portal or the leasing
+        office and log the request if it needs following up.
+      </p>
+    </section>
+
+    <section id="parking">
+      <h2>Parking: residents</h2>
+      <hr class="rule">
+
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Level</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>P1</strong></td><td>Public, run by an outside operator. Anything here goes to the <strong>garage office, 857-350-3585</strong></td></tr>
+            <tr><td><strong>P2 &amp; P3</strong></td><td>Resident parking, Benjamin and VIA. Paid and assigned through leasing. Fob for the door and the vestibule between the buildings</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout important">
+        <h3>Do not tow, and do not reassign</h3>
+        <p>
+          <strong>The desk never assigns or changes a parking space</strong>, and never
+          promises one. That is leasing's, and only leasing's.
+        </p>
+      </div>
+
+      <h3>Someone is in a resident's spot</h3>
+      <ol>
+        <li>Take the plate, the make and model, and the unit number if it is known.</li>
+        <li>See if you can work out whose it is and sort it quickly.</li>
+        <li>Offer a <strong>vendor spot</strong> in the meantime: <strong>3093, 3095, 3097, 3099</strong>.</li>
+        <li>Log it properly and pass it to leasing to follow up.</li>
+      </ol>
+
+      <h3>Guests</h3>
+      <p>
+        <strong>No validation.</strong> Send them to P1 at the posted public rate, or
+        to the street.
+      </p>
+
+      <h3>Something broken in the garage</h3>
+      <p>
+        P2 and P3 go to <strong>Berkshire Maintenance</strong>. P1 goes to the garage
+        office.
+      </p>
+    </section>
+
+    <section id="staffparking">
+      <h2>Parking: staff</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <tbody>
+            <tr><td>Entrance</td><td>75 Sleeper Street</td></tr>
+            <tr><td>Clearance</td><td>7 feet</td></tr>
+            <tr><td>Apex spots</td><td><strong>2147, 2175, 2177, 2187</strong></td></tr>
+            <tr><td>Overflow, if those are taken</td><td>Vendor spots <strong>3093, 3095, 3097, 3099</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout important">
+        <h3>Get the pass before you park</h3>
+        <p>
+          Report to the Benjamin or VIA front desk and take the garage pass first. It
+          must be <strong>displayed properly</strong> while you are parked, and
+          <strong>returned to the desk at the end of your shift</strong>. Passes do not
+          go home with you.
+        </p>
+        <p>
+          Park in an Apex or vendor spot, nowhere else. Not a resident spot, not a fire
+          lane. <strong>Apex gets fined for it, and the cost may come back to you. It
+          is not reimbursed.</strong>
+        </p>
+      </div>
+
+      <p>Parking is a privilege. It can be taken away.</p>
+
+      <h3>Finding the spots</h3>
+      <ol>
+        <li>In at 75 Sleeper Street.</li>
+        <li>First left at the corner, then a right.</li>
+        <li>Down to <strong>P2</strong>.</li>
+        <li>First right, then right again, following the arrow.</li>
+        <li>To the gate, then a final right.</li>
+      </ol>
+    </section>
+
+    <section id="noise">
+      <h2>Noise complaints</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>You are an observer, not an enforcer</h3>
+        <p>
+          <strong>Never knock on a unit door about noise.</strong> Never enter, never
+          argue, never try to enforce it yourself. If a resident confronts you: stay
+          neutral, refer to policy, disengage.
+        </p>
+      </div>
+
+      <h3>Skip everything and call the police if you hear</h3>
+      <p>
+        Fighting or threats · a domestic disturbance · anything that sounds like
+        illegal activity · property being damaged · anything that makes you fear for
+        someone's safety.
+      </p>
+
+      <h3>Otherwise, four steps</h3>
+      <div class="scroller">
+        <table>
+          <tbody>
+            <tr><td><strong>1 · Verify</strong></td><td>Walk discreetly past. Audible from the hallway or a common area? If you cannot verify it, document it and monitor</td></tr>
+            <tr><td><strong>2 · Courtesy call</strong></td><td>Once confirmed, or once more than one complaint has come in</td></tr>
+            <tr><td><strong>3 · Warning</strong></td><td>If it continues, say plainly that the next step is contacting local authorities</td></tr>
+            <tr><td><strong>4 · Police</strong></td><td>Non-emergency line. Once the threshold is met this is not a judgement call</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Courtesy call:</strong></p>
+      <div class="log">
+        Hello, this is the concierge desk. We received a noise concern and as a
+        courtesy we're asking that volume be lowered out of respect for neighboring
+        residents. Thank you for your cooperation.
+      </div>
+      <p><strong>Warning:</strong></p>
+      <div class="log">
+        We have received an additional complaint regarding noise. If it continues,
+        the next step will be to contact local authorities to address the matter.
+      </div>
+
+      <p>
+        Never <em>"someone complained about you"</em>, never <em>"you need to be
+        quiet"</em>, never <em>"you're violating the rules"</em>. Always
+        <strong>"we received a concern"</strong> — it keeps the complaint anonymous and
+        you out of the middle of it.
+      </p>
+    </section>
+
+    <section id="incident">
+      <h2>Incident reports</h2>
+      <hr class="rule">
+      <p>
+        <strong>Connecteam → Forms → Incident Report.</strong> It walks you through the
+        questions so nothing gets missed.
+      </p>
+      <p>
+        Add <strong>PDaSilva@berkshireresi.com</strong> when you submit. Apex
+        management is on it automatically.
+      </p>
+
+      <h3>File one immediately for</h3>
+      <ul>
+        <li><strong>Accidents or injuries</strong> — staff, resident or guest, on site.</li>
+        <li><strong>Property damage</strong> — the building's or someone's own.</li>
+        <li><strong>Security breach</strong> — unauthorized access, theft, anything that got past a control.</li>
+        <li><strong>Complaints or disputes</strong> — anything management needs to pick up.</li>
+      </ul>
+      <p>
+        Be specific and factual, check the recipients before sending, and do it now
+        rather than at the end of the shift.
+      </p>
+    </section>
+
+    <section id="log">
+      <h2>Writing the log</h2>
+      <hr class="rule">
+      <p>
+        Anyone reading your log should come away knowing <strong>what happened, what
+        you did, and what still needs follow-up</strong>. Every entry:
+      </p>
+      <ul>
+        <li><strong>E — Event.</strong> What happened.</li>
+        <li><strong>D — Detail.</strong> Relevant facts only.</li>
+        <li><strong>O — Outcome.</strong> Resolution, status, or next step.</li>
+      </ul>
+      <p>
+        Objective, factual, concise, neutral. No opinions, no assumptions, no
+        speculation. If a concern is personal, take it to leadership rather than
+        putting it in the log.
+      </p>
+    </section>
+
+    <section id="contacts">
+      <h2>Who to call</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <tbody>
+            <tr><td><strong>Concierge line</strong></td><td><strong>617-202-0073</strong></td></tr>
+            <tr><td>Leasing office</td><td><strong>617-304-8408</strong> · benjaminvip@berkshireresi.com<br>Mon–Fri 9–6, Sat 10–5, Sun closed</td></tr>
+            <tr><td>Property manager</td><td>Matthew Dragoni · MDragoni@berkshireresi.com</td></tr>
+            <tr><td>Garage office, P1</td><td><strong>857-350-3585</strong></td></tr>
+            <tr><td><strong>Emergency maintenance</strong></td><td><strong>617-304-8408</strong> · after hours 4 PM – 7 AM, the resident calls</td></tr>
+            <tr><td>Seaport security</td><td><strong>857-225-6060</strong> · reaches the supervisor on duty</td></tr>
+            <tr><td>Garage, P2 and P3</td><td>Berkshire Maintenance</td></tr>
+            <tr><td>On-call technician, alarm contact</td><td>The list at the front desk. <strong>Internal only</strong></td></tr>
+            <tr><td>Incident reports</td><td>PDaSilva@berkshireresi.com, via Connecteam</td></tr>
+            <tr><td>Noise, after the warning</td><td>Local police <strong>non-emergency</strong> line</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="todo"><div class="todo-tag">Fill in</div>
+        <ul>
+          <li>The local police non-emergency number.</li>
+          <li>Apex, and who to reach out of hours.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="logins">
+      <h2>Logins and codes</h2>
+      <hr class="rule">
+      <div class="callout important">
+        <h3>Not on this page, on purpose</h3>
+        <p>
+          Workstation and system logins, door and lock codes: none of them belong here.
+          This page opens in a browser on a desk anyone can walk up to, and it is a
+          link that can be forwarded.
+        </p>
+        <p>
+          If you do not have access to one, ask leadership. Do not have a colleague
+          read one out, and do not write one down at the desk.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Apex Shift Log Helper · site information for Benjamin. Soft launch: incomplete by
+    design. The Connecteam knowledge base is the source of truth.
+  </footer>
+
+</div>

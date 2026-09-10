@@ -1,4 +1,4 @@
-# Phrase Snippets — Scenario Reference
+# Apex Shift Log Helper: Scenario Reference
 
 Every reason, plus a filled example showing the
 `;;` popup output when the form fields are typed in. Regenerate:

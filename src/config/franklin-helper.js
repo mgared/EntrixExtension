@@ -397,10 +397,15 @@ const OPTIONAL_UNIT_FIELD = {
   placeholder: "(optional)",
 };
 
-// The staff manual, opened by the Guide button in the popup. Empty string
-// hides the button.
+// Two reference pages the popup can open, each hidden when its URL is
+// empty. The Guide is how to use the extension; Site info is the building
+// and the policies that apply at it.
 export const MANUAL_URL =
   "https://claude.ai/code/artifact/2cef9ea9-eefc-4c43-a608-fcd55c785218";
+
+// Building, policies, contacts. Opened by the Site info button.
+export const SITE_INFO_URL =
+  "https://claude.ai/code/artifact/d69c71d1-2f25-4e55-9a40-eedcc93cdfd1";
 
 export const HELPER = {
   defaultRoleId: "resident",
@@ -1443,50 +1448,90 @@ const COFFEE_STATUSES = [
   "down awaiting repair",
 ];
 
-// Areas walked on a site tour, in walking order. Each renders a row with
-// a tick box and an issue box, and every control is optional: an area left
-// untouched is simply not mentioned in the log.
+// Areas walked on a site tour, in walking order, tagged with the floor
+// they are on. Consecutive areas sharing a `floor` form one group: the
+// form heads them with the floor name, and the sentence names the floor
+// once rather than on every area.
 //
 // `clear` is what ticking that area reports, on the box and in the
 // sentence — most areas are just "all clear", but some have a specific
 // thing the walker is confirming. `options` adds a status dropdown, and
-// `people: true` adds an occupancy count box.
+// `people: true` adds an occupancy count box. Labels drop the floor now
+// that the group carries it.
 export const SITE_TOUR_AREAS = [
   {
     id: "lobby",
+    floor: "1st floor",
     label: "Lobby area",
     clear: "waiting area chairs organized, all clear",
   },
-  { id: "mailRoom", label: "Mail room" },
-  { id: "geniusBar", label: "Genius bar" },
-  { id: "leasingOffice", label: "Leasing Office" },
-  { id: "meetingRooms", label: "Meeting rooms", clear: "organized and neat" },
-  { id: "coffee1", label: "Coffee machine #1", options: COFFEE_STATUSES },
-  { id: "gym", label: "GYM" },
-  { id: "dogWash", label: "Dog wash", clear: "clean" },
-  { id: "emergencyExit", label: "Emergency exit door", clear: "secured" },
-  { id: "terrace2", label: "2nd floor terrace" },
-  { id: "trashChute", label: "Trash Chute by Moxies" },
-  { id: "serviceElevator", label: "Service elevator and access" },
+  { id: "mailRoom", floor: "1st floor", label: "Mail room" },
+  { id: "geniusBar", floor: "1st floor", label: "Genius bar" },
+  { id: "leasingOffice", floor: "1st floor", label: "Leasing Office" },
   {
+    id: "meetingSpaces",
+    floor: "1st floor",
+    label: "Meeting spaces",
+    clear: "organized and neat",
+  },
+  {
+    id: "coffee1",
+    floor: "1st floor",
+    label: "Coffee machine #1",
+    options: COFFEE_STATUSES,
+  },
+  { id: "gym", floor: "1st floor", label: "GYM" },
+  { id: "dogWash", floor: "1st floor", label: "Dog wash", clear: "clean" },
+  {
+    id: "emergencyExit",
+    floor: "1st floor",
+    label: "Emergency exit door",
+    clear: "secured",
+  },
+  {
+    id: "freightElevator",
+    floor: "1st floor",
+    label: "Freight elevator and second lobby",
+  },
+
+  { id: "courtyard", floor: "2nd floor", label: "Courtyard" },
+  { id: "trashChute", floor: "2nd floor", label: "Trash Chute by Moxies" },
+
+  {
+    // The only reason to go up here is the 12th floor music, so that is
+    // what ticking the box reports.
     id: "electrical11",
-    label: "11th floor electrical room",
+    floor: "11th floor",
+    label: "Electrical room",
     clear: "music turned on and operational",
   },
-  { id: "patio12", label: "12th floor reservable patio and area" },
+
+  {
+    id: "patio12",
+    floor: "12th floor",
+    label: "Reservable patio and area",
+  },
   {
     id: "tvGameRoom",
+    floor: "12th floor",
     label: "TV and game room",
     clear: "TV turned on, pool table and shuffle board set",
   },
-  { id: "coffee2", label: "Coffee machine #2", options: COFFEE_STATUSES },
+  {
+    id: "coffee2",
+    floor: "12th floor",
+    label: "Coffee machine #2",
+    options: COFFEE_STATUSES,
+  },
+  { id: "innerSpace", floor: "12th floor", label: "Inner space" },
   {
     id: "fireplace12",
-    label: "12th floor Fire place",
+    floor: "12th floor",
+    label: "Fireplace",
     clear: "turned off and all clear",
   },
-  { id: "pool", label: "Pool area", people: true },
-  { id: "grill", label: "Grill area", people: true },
+  { id: "pool", floor: "12th floor", label: "Pool area", people: true },
+  { id: "grill", floor: "12th floor", label: "Grill area", people: true },
 ];
 
 // Concierge shifts as [start, end) hours on a 24h clock. The hours are
@@ -1558,7 +1603,7 @@ export const QUICK_LOGS = [
     label: "Site tour",
     group: "tasks",
     task: "siteTour",
-    text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
+    text: "Site tour completed. All amenity floors checked, all doors checked, nothing to report.",
     form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
   },
   {

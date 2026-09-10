@@ -461,10 +461,15 @@ const DOCK_PURPOSE_OTHER_FIELD = {
   showWhen: { key: "purpose", value: "Other" },
 };
 
-// The staff manual, opened by the Guide button in the popup. Empty string
-// hides the button — Benjamin has no manual of its own yet, and the ORA
-// one names ORA's areas, so pointing there would mislead.
-export const MANUAL_URL = "";
+// Two reference pages the popup can open, each hidden when its URL is
+// empty. The Guide is how to use the extension; Site info is the building
+// and the policies that apply at it.
+export const MANUAL_URL =
+  "https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9";
+
+// Building, policies, contacts. Opened by the Site info button.
+export const SITE_INFO_URL =
+  "https://claude.ai/code/artifact/e2fe6aa9-8194-47ef-8064-c2adc6ceddd9";
 
 export const HELPER = {
   defaultRoleId: "resident",
@@ -1428,37 +1433,77 @@ export const HELPER = {
 // sentence — most areas are just "all clear", but some have a specific
 // thing the walker is confirming. `options` adds a status dropdown, and
 // `people: true` adds an occupancy count box.
-// Benjamin's walk route, in walking order. Each entry is one row in the
-// Site tour form:
+// The two ordinary states of the loading dock. Neither is a fault, so
+// they sit in a picker beside the tick rather than in the report box,
+// which is for things that are wrong.
+const DOCK_STATES = ["secured", "currently in use"];
+
+// Likewise the sitting area: tidy, or in use by residents.
+const SITTING_STATES = [
+  "all clear and organized",
+  "a couple of residents currently there",
+];
+
+// Benjamin's walk route, in walking order, tagged with the floor it is
+// on. Consecutive areas sharing a `floor` form one group: the form heads
+// them with the floor name, and the sentence names the floor once rather
+// than on every area.
 //
-//   { id, label }                     tick box + free-text issue box
-//   { id, label, clear: "..." }       ...with custom wording on the tick
-//   { id, label, options: [...] }     ...plus a status dropdown
-//   { id, label, people: true }       ...plus an occupancy count box
+//   { id, floor, label }              tick box + free-text issue box
+//   { id, floor, label, clear }       ...with custom wording on the tick
+//   { id, floor, label, options }     ...plus a status dropdown
+//   { id, floor, label, people }      ...plus an occupancy count box
 //
-// `id` is internal (any unique string). `label` is what the walker sees
-// and what the sentence names. `clear` is what ticking the box reports;
-// it defaults to "all clear" where no wording is given. Every control is
-// optional — an area left untouched is simply not mentioned in the log.
+// `id` is internal (any unique string). `clear` defaults to "all clear".
+// Every control is optional — an area left untouched is not mentioned.
 export const SITE_TOUR_AREAS = [
-  { id: "entranceVestibule", label: "Entrance vestibule" },
+  { id: "entranceVestibule", floor: "1st floor", label: "Entrance vestibule" },
   {
     id: "lobbyWaiting",
+    floor: "1st floor",
     label: "Lobby waiting area",
     clear: "all clear and organized",
   },
-  { id: "emergencyExit", label: "Emergency exit", clear: "secured" },
-  { id: "sitting4", label: "4th floor sitting area" },
-  { id: "gym", label: "GYM" },
-  { id: "conferenceRoom", label: "Conference room" },
-  { id: "kitchen", label: "Kitchen" },
-  { id: "pool", label: "Pool area", people: true },
-  { id: "grill", label: "Grill area", people: true },
-  { id: "terrace", label: "Terrace" },
-  { id: "fireplace", label: "Fire place" },
-  { id: "p1", label: "P1" },
-  { id: "p2", label: "P2" },
-  { id: "p3", label: "P3" },
+  { id: "mailRoom", floor: "1st floor", label: "Mail room" },
+  {
+    id: "emergencyExit",
+    floor: "1st floor",
+    label: "Emergency exit",
+    clear: "secured",
+  },
+  // Walked like any other area. Booking it and setting it up are separate
+  // log entries under Resident and Concierge; this is just the check that
+  // it is in order on the round.
+  {
+    id: "loadingDock",
+    floor: "1st floor",
+    label: "Loading dock",
+    options: DOCK_STATES,
+    tick: false,
+  },
+
+  {
+    id: "sitting4",
+    floor: "4th floor",
+    label: "Sitting area",
+    options: SITTING_STATES,
+    tick: false,
+  },
+  { id: "gym", floor: "4th floor", label: "GYM" },
+  { id: "conferenceRoom", floor: "4th floor", label: "Conference room" },
+  { id: "kitchen", floor: "4th floor", label: "Kitchen" },
+  { id: "pool", floor: "4th floor", label: "Pool area", people: true },
+  { id: "grill", floor: "4th floor", label: "Grill area", people: true },
+  { id: "terrace", floor: "4th floor", label: "Terrace" },
+  { id: "fireplace", floor: "4th floor", label: "Fire place" },
+
+  // The three garage levels are one group: P1 and P2 are checked as
+  // levels with nothing on them to name separately, so heading each with
+  // its own floor would put the same words twice on every row.
+  { id: "p1", floor: "Parking", label: "P1" },
+  { id: "p2", floor: "Parking", label: "P2" },
+  { id: "p3", floor: "Parking", label: "P3" },
+  { id: "dogWash", floor: "Parking", label: "Dog wash", clear: "clean" },
 ];
 
 // Concierge shifts as [start, end) hours on a 24h clock. The hours are
@@ -1530,7 +1575,7 @@ export const QUICK_LOGS = [
     label: "Site tour",
     group: "tasks",
     task: "siteTour",
-    text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
+    text: "Site tour completed. All amenity floors checked, all doors checked, nothing to report.",
     form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
   },
   {

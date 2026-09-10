@@ -1,0 +1,1063 @@
+<title>ORA Site Information</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* ---- tokens: light is the base, both dark paths redefine only these ---- */
+  :root {
+    --ground: #e9edf3;
+    --paper: #ffffff;
+    --sunk: #f3f6fa;
+    --ink: #131820;
+    --ink-soft: #5a6474;
+    --ink-faint: #8b94a3;
+    --rule: #d6dde7;
+    --rule-soft: #e6ebf1;
+    --accent: #14509b;
+    --accent-soft: #e7effa;
+    --flag: #fff54d;
+    --flag-ink: #131820;
+    --alert: #c0392b;
+    --alert-soft: #fdecea;
+    --good: #2f6b38;
+    --good-soft: #eaf4ec;
+    --shadow: 0 1px 2px rgba(19, 24, 32, .05), 0 8px 28px rgba(19, 24, 32, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1219;
+      --paper: #161d27;
+      --sunk: #1c242f;
+      --ink: #e7ecf3;
+      --ink-soft: #a3aebe;
+      --ink-faint: #788495;
+      --rule: #2b3542;
+      --rule-soft: #232c38;
+      --accent: #7dabf2;
+      --accent-soft: #1b2a3f;
+      --flag: #f2e03a;
+      --flag-ink: #131820;
+      --alert: #f08379;
+      --alert-soft: #33201f;
+      --good: #8ac795;
+      --good-soft: #1b2a20;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1219;
+    --paper: #161d27;
+    --sunk: #1c242f;
+    --ink: #e7ecf3;
+    --ink-soft: #a3aebe;
+    --ink-faint: #788495;
+    --rule: #2b3542;
+    --rule-soft: #232c38;
+    --accent: #7dabf2;
+    --accent-soft: #1b2a3f;
+    --flag: #f2e03a;
+    --flag-ink: #131820;
+    --alert: #f08379;
+    --alert-soft: #33201f;
+    --good: #8ac795;
+    --good-soft: #1b2a20;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 56px;
+  }
+  @media (min-width: 1020px) {
+    .shell { grid-template-columns: 224px minmax(0, 1fr); }
+  }
+
+  /* ---- masthead ---- */
+  .masthead {
+    grid-column: 1 / -1;
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 48px;
+  }
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(2.3rem, 5.5vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -.02em;
+    margin: 0 0 22px;
+    text-wrap: balance;
+    max-width: 15ch;
+  }
+  .standfirst {
+    font-size: 1.14rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0;
+  }
+
+  /* The thing the whole tool exists to produce, shown at full size. */
+  .specimen {
+    margin: 40px 0 0;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 3px;
+    padding: 22px 26px;
+    box-shadow: var(--shadow);
+    max-width: 78ch;
+  }
+  .specimen p { margin: 0; font-size: 1.06rem; line-height: 1.6; }
+  .specimen .t {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .specimen b { font-weight: 700; }
+  .specimen-note {
+    margin: 14px 0 0;
+    font-size: .86rem;
+    color: var(--ink-faint);
+    max-width: 78ch;
+  }
+
+  /* ---- sidebar nav ---- */
+  nav.toc { display: none; }
+  @media (min-width: 1020px) {
+    nav.toc {
+      display: block;
+      position: sticky;
+      top: 32px;
+      align-self: start;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding-bottom: 24px;
+    }
+  }
+  .toc h2 {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin: 0 0 14px;
+  }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .toc a {
+    display: block;
+    padding: 5px 10px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: .89rem;
+    border-left: 2px solid var(--rule-soft);
+    line-height: 1.35;
+  }
+  .toc a:hover { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---- body ---- */
+  main { min-width: 0; max-width: 74ch; }
+  section { margin: 0 0 64px; scroll-margin-top: 24px; }
+
+  h2 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 600;
+    font-size: 1.72rem;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 600;
+    font-size: 1.12rem;
+    margin: 34px 0 8px;
+    text-wrap: balance;
+  }
+  .rule {
+    height: 1px;
+    background: var(--rule);
+    border: 0;
+    margin: 0 0 22px;
+  }
+  p { margin: 0 0 16px; }
+  main ul, main ol { margin: 0 0 16px; padding-left: 22px; }
+  main li { margin-bottom: 7px; }
+  a { color: var(--accent); }
+
+  strong { font-weight: 600; }
+
+  kbd {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .82em;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* A sample of what lands in the log. */
+  .log {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: .95rem;
+    line-height: 1.55;
+  }
+  .log .t { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .log.is-flagged { border-left-color: var(--flag); }
+  .log mark { background: var(--flag); color: var(--flag-ink); }
+  .log-label {
+    display: block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 7px;
+  }
+  .log + .log { margin-top: -6px; }
+  .blank { color: var(--alert); font-weight: 700; border-bottom: 1px dotted var(--alert); }
+
+  /* The desktop notification, reproduced with its real wording. */
+  .toast {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    max-width: 400px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin: 0 0 8px;
+  }
+  .toast img { width: 34px; height: 34px; border-radius: 6px; flex: 0 0 auto; }
+  .toast-title { font-weight: 600; font-size: .92rem; line-height: 1.3; }
+  .toast-body { font-size: .88rem; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+  .toast-src { font-size: .75rem; color: var(--ink-faint); margin-top: 5px; }
+
+  /* The toolbar count, at roughly the size Chrome draws it. */
+  .badge {
+    display: inline-block;
+    background: #ff4d4f;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    vertical-align: 1px;
+  }
+
+  /* Callouts: only two, and they mean different things. */
+  .callout {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 0 0 24px;
+    background: var(--paper);
+  }
+  .callout.important {
+    border-color: var(--alert);
+    background: var(--alert-soft);
+  }
+  .callout > :last-child { margin-bottom: 0; }
+  .callout h3 { margin-top: 0; font-size: 1.05rem; }
+  .callout.important h3 { color: var(--alert); }
+
+  /* Figures */
+  figure { margin: 0 0 26px; }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+  }
+  figcaption {
+    margin-top: 10px;
+    font-size: .855rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Chip catalog */
+  .chips { display: flex; flex-direction: column; gap: 0; margin: 0 0 8px; }
+  .chip-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  @media (min-width: 640px) {
+    .chip-entry { grid-template-columns: 190px minmax(0, 1fr); gap: 0 24px; align-items: baseline; }
+  }
+  .chip-entry:last-child { border-bottom: 1px solid var(--rule-soft); }
+  .chip-entry p { margin: 0 0 8px; }
+  .chip-entry p:last-child { margin-bottom: 0; }
+  .pill {
+    display: inline-block;
+    font-size: .82rem;
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--sunk);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  /* --ground flips with the theme, so this stays legible on the red in
+     both: a light face on dark red, a dark face on light red. */
+  .pill.overdue { background: var(--alert); border-color: var(--alert); color: var(--ground); font-weight: 600; }
+  .pill.done { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .whenfor {
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+  .whenfor b { color: var(--ink); font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 20px;
+    font-size: .93rem;
+  }
+  .scroller { overflow-x: auto; margin: 0 0 20px; }
+  .scroller table { margin: 0; min-width: 420px; }
+  th, td {
+    text-align: left;
+    padding: 9px 14px 9px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  footer {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+    margin-top: 8px;
+    font-size: .88rem;
+    color: var(--ink-faint);
+    max-width: 74ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+<style>
+  /* Sections nobody has filled in yet. Loud on purpose: a policy page that
+     looks complete when it is not is worse than no policy page. */
+  .todo {
+    border: 1px dashed var(--alert);
+    border-radius: 4px;
+    background: var(--alert-soft);
+    padding: 16px 20px;
+    margin: 0 0 20px;
+  }
+  .todo > :last-child { margin-bottom: 0; }
+  .todo-tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--alert);
+    border: 1px solid var(--alert);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-bottom: 9px;
+  }
+  .floors { display: flex; flex-direction: column; gap: 0; margin: 0 0 20px; }
+  .floor {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px 20px;
+    padding: 13px 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  @media (min-width: 620px) {
+    .floor { grid-template-columns: 130px minmax(0, 1fr); gap: 0 22px; align-items: baseline; }
+  }
+  .floor:last-child { border-bottom: 1px solid var(--rule-soft); }
+  .floor-name {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .floor-areas { color: var(--ink); }
+</style>
+<style>
+  /* Two pages, one set. The switcher says so before the reader has to
+     wonder, and marks which of them they are on. */
+  .switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    margin: 0 0 24px;
+    font-size: .85rem;
+  }
+  .switch a,
+  .switch span {
+    padding: 5px 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .switch a:hover { background: var(--accent-soft); color: var(--accent); }
+  .switch a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .switch [aria-current="page"] {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(19, 24, 32, .07);
+  }
+</style>
+<div class="shell">
+
+  <header class="masthead">
+    <nav class="switch" aria-label="Reference pages">
+      <a href="https://claude.ai/code/artifact/2cef9ea9-eefc-4c43-a608-fcd55c785218">Guide</a>
+      <span aria-current="page">Site info</span>
+    </nav>
+    <p class="kicker">ORA · Front desk</p>
+    <h1>ORA Site Information</h1>
+    <p class="standfirst">
+      The times, thresholds and sequences the desk reaches for mid-shift. It is a
+      quick reference, not the policy itself.
+    </p>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#start">Starting your shift</a></li>
+      <li><a href="#tours">Site tours</a></li>
+      <li><a href="#environment">Lights, music, TV, coffee</a></li>
+      <li><a href="#deliveries">Deliveries: the 15/30 rule</a></li>
+      <li><a href="#packages">Packages</a></li>
+      <li><a href="#amenities">Amenities</a></li>
+      <li><a href="#keys">Keys, IDs and lockouts</a></li>
+      <li><a href="#access">Access hours</a></li>
+      <li><a href="#noise">Noise complaints</a></li>
+      <li><a href="#maintenance">Emergency maintenance</a></li>
+      <li><a href="#log">Writing the log</a></li>
+      <li><a href="#recurring">Overnight and weekly</a></li>
+      <li><a href="#logins">Logins and codes</a></li>
+      <li><a href="#apex">About Apex</a></li>
+      <li><a href="#contacts">Who to call</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <div class="callout important">
+      <h3>Please be advised</h3>
+      <p>
+        This page is on <strong>soft launch and is not complete</strong>. It carries
+        the necessary information only, condensed for quick lookup during a shift.
+      </p>
+      <p>
+        For anything not here, and for the full and current policy,
+        <strong>go to the Connecteam knowledge base</strong>. Connecteam is the
+        source of truth; this page is the shortcut.
+      </p>
+    </div>
+
+    <section id="start">
+      <h2>Starting your shift</h2>
+      <hr class="rule">
+      <ol>
+        <li>Log into <strong>Connecteam</strong>. Check updates, chat and announcements.</li>
+        <li>Start your assigned <strong>checklist</strong>.</li>
+        <li>Read the <strong>previous shift log</strong> in full.</li>
+        <li>Copy the bottom section of that log into yours, then update it and clear anything no longer outstanding.</li>
+      </ol>
+      <p>
+        Greet and assist anyone entering the building. Presence at the desk is the
+        job as much as anything written down here.
+      </p>
+    </section>
+
+    <section id="tours">
+      <h2>Site tours</h2>
+      <hr class="rule">
+      <p><strong>Minimum three per shift:</strong></p>
+      <div class="scroller">
+        <table>
+          <thead><tr><th>When</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Tour 1</td><td>Within your first hour</td></tr>
+            <tr><td>Tour 2</td><td>Mid-shift</td></tr>
+            <tr><td>Tour 3</td><td>One hour before your shift ends</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Inspect and log the lobby, hallways, elevators, conference rooms, fitness
+        center, dog wash, the 12th floor amenities, the pool deck and the restrooms.
+        Straighten furniture, pillows, chairs and surfaces as you go.
+      </p>
+    </section>
+
+    <section id="environment">
+      <h2>Lights, music, TV, coffee</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th>6 AM – 6 PM</th><th>6 PM – 6 AM</th></tr></thead>
+          <tbody>
+            <tr><td>Lighting</td><td>Bright</td><td>Dim (automatic dimmer)</td></tr>
+            <tr><td>Music</td><td>On</td><td>Volume low</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>TVs are on 6 AM to 11 PM</strong>, off 11 PM to 6 AM. Channel
+        <strong>758</strong>; HGTV or Food Network are both acceptable. Lobby TVs may
+        stay on around the clock.
+      </p>
+
+      <h3>Coffee machines</h3>
+      <p>Check stock and cleanliness through the shift. Two keys, and it is easy to reach for the wrong one:</p>
+      <ul>
+        <li><strong>Top lock</strong> is coffee.</li>
+        <li><strong>Side lock</strong> is filters, powder and hot chocolate.</li>
+      </ul>
+      <p>
+        When the waste bin is full: unlock the machine, tear the filter into the bin,
+        and discard the contents.
+      </p>
+
+      <h3>The desk itself</h3>
+      <p>
+        Clean, organized, clutter-free. <strong>No personal food or drink, and no
+        sticky notes.</strong>
+      </p>
+    </section>
+
+    <section id="deliveries">
+      <h2>Deliveries: the 15/30 rule</h2>
+      <hr class="rule">
+
+      <div class="callout">
+        <h3>Every delivery, unless told otherwise</h3>
+        <p>
+          <strong>15 minutes</strong> — call the resident.<br>
+          <strong>30 minutes</strong> — take it off the desk, store it, log it.
+        </p>
+      </div>
+
+      <p>Where it goes at 30 minutes depends on what it is:</p>
+
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th>At 30 minutes</th><th>After that</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Fast food</td>
+              <td>Refrigerator, logged</td>
+              <td><strong>24 h</strong> — discard</td>
+            </tr>
+            <tr>
+              <td>Grocery / meal prep</td>
+              <td>Refrigerated storage, labelled, logged as a <em>perishable package</em></td>
+              <td><strong>24 h</strong> — call the resident, advise immediate pickup<br><strong>48 h</strong> — notify leasing to follow up</td>
+            </tr>
+            <tr>
+              <td>Non-perishable</td>
+              <td>Package room, logged as a package</td>
+              <td>Normal package handling</td>
+            </tr>
+            <tr>
+              <td>Flowers, gifts</td>
+              <td colspan="2">Call the resident <strong>immediately</strong>, do not wait out the 15 minutes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>If the fridge is full</strong>, call the resident at 30 minutes, tell
+        them refrigerated storage is unavailable, and hold the item aside. Perishables
+        still expire at 24 hours either way.
+      </p>
+
+      <h3>Drivers going upstairs</h3>
+      <p>
+        <strong>Never on the driver's word alone.</strong> If a driver asks to deliver
+        to the door, call the resident. If the resident confirms, grant elevator
+        access. <strong>If nobody answers, the driver does not go up</strong> and the
+        delivery stays at the desk.
+      </p>
+      <p>
+        If the resident calls ahead instead, check the number they are calling from
+        matches their profile, then grant access.
+      </p>
+
+      <h3>Log it</h3>
+      <p>
+        Every call, every item stored, every item discarded, every time the fridge was
+        full, and every driver granted access. If it is not in the log it did not happen.
+      </p>
+    </section>
+
+    <section id="packages">
+      <h2>Packages</h2>
+      <hr class="rule">
+      <ul>
+        <li><strong>Incoming</strong> — log in <strong>Mobile Doorman</strong>, label clearly, store by unit number.</li>
+        <li><strong>Perishables</strong> — fridge or cooler lockers, and notify the resident straight away.</li>
+        <li><strong>Outgoing</strong> — cabinet under the far right desk. Make sure carriers collect daily.</li>
+      </ul>
+    </section>
+
+    <section id="amenities">
+      <h2>Amenities</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Amenity</th><th>Access</th></tr></thead>
+          <tbody>
+            <tr><td>Gym</td><td>24 hours, fob entry only</td></tr>
+            <tr><td>Dog wash</td><td>24 hours, residents only</td></tr>
+            <tr><td>Pool</td><td>8 AM – 10 PM, seasonal. <strong>Capacity 27</strong></td></tr>
+            <tr><td>Bike room</td><td>Through the garage. Resident fob, plus a lock code</td></tr>
+            <tr><td>Printer</td><td>Across from the desk. Residents set up their own account</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The 12th floor</h3>
+      <ul>
+        <li><strong>Right side</strong> is the reserved space. Locked, and only opened for a booking. <strong>Reservations are the leasing office's, not the desk's.</strong></li>
+        <li><strong>Left side</strong> is open. Residents and guests, no reservation needed.</li>
+      </ul>
+
+      <h3>The printer</h3>
+      <p>
+        Instructions are posted on the machine itself. Your job is to point at them,
+        not to set up accounts or troubleshoot printing.
+      </p>
+
+      <h3>Bell carts and dollies</h3>
+      <p>
+        <strong>Two bell carts and two red dollies</strong>, kept in the back package
+        room. They sign out exactly like a key:
+      </p>
+      <ol>
+        <li>Collect a photo ID.</li>
+        <li>Record it on the sign-out sheet under the desk.</li>
+        <li>Hand over the equipment.</li>
+        <li>On return: inspect it, log the return, give the ID back.</li>
+      </ol>
+      <p><strong>No ID, no equipment.</strong> There is no version of this where you skip the ID.</p>
+
+      <h3>Tell management or maintenance if</h3>
+      <ul>
+        <li>Equipment is missing or damaged.</li>
+        <li>The pool is over capacity.</li>
+        <li>You see unauthorized access, or the bike room security is compromised.</li>
+        <li>An amenity is being misused.</li>
+      </ul>
+    </section>
+
+    <section id="keys">
+      <h2>Keys, IDs and lockouts</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>Never hand out a master key</h3>
+        <p>
+          For a lockout: verify <strong>three identifiers or a valid ID</strong>, then
+          <strong>escort the resident yourself</strong> using the main key. The key does
+          not leave your hand.
+        </p>
+      </div>
+
+      <h3>Releasing a key</h3>
+      <ol>
+        <li>Collect a <strong>photo ID</strong>.</li>
+        <li>Log it in the <strong>key binder</strong>.</li>
+        <li>Return the ID when the key comes back.</li>
+      </ol>
+      <p>This applies to spare fobs, vendor keys, <strong>dollies and bell carts</strong> too.</p>
+
+      <h3>Visitors and vendors</h3>
+      <p>
+        Check the <strong>Mobile Doorman</strong> authorization list first. Not listed
+        means call the resident. Only once confirmed do you grant access or issue a key.
+      </p>
+    </section>
+
+    <section id="access">
+      <h2>Access hours</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Area</th><th>Hours</th></tr></thead>
+          <tbody>
+            <tr><td>Lobby doors</td><td>Auto-lock 8 PM – 6 AM</td></tr>
+            <tr><td>Starboard vestibule</td><td>Fob 6 AM – 11 PM · locked 11 PM – 6 AM</td></tr>
+            <tr><td>Fitness center</td><td>24 hours</td></tr>
+            <tr><td>Dog wash</td><td>24 hours</td></tr>
+            <tr><td>12th floor amenity</td><td>Locked 11 PM – 6 AM</td></tr>
+            <tr><td>12th floor patio</td><td><strong>Secure manually every night</strong></td></tr>
+            <tr><td>Pool</td><td>8 AM – 10 PM, seasonal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The patio is the one on this list that will not lock itself. Nothing else needs your hands.</p>
+
+      <h3>First aid</h3>
+      <p>Front desk, and the 12th floor kitchen drawer to the left of the stovetop.</p>
+    </section>
+
+    <section id="noise">
+      <h2>Noise complaints</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>You are an observer, not an enforcer</h3>
+        <p>
+          <strong>Never knock on a unit door about noise.</strong> Never enter a unit,
+          never argue, never try to enforce anything yourself. If a resident confronts
+          you: stay neutral, refer to policy, disengage.
+        </p>
+      </div>
+
+      <h3>Skip everything and call the police if you hear</h3>
+      <p>
+        Fighting or threats · a domestic disturbance · anything that sounds like
+        illegal activity · property being damaged · anything that makes you fear for
+        someone's safety.
+      </p>
+      <p>Those do not get a courtesy call. They get authorities, immediately.</p>
+
+      <h3>Otherwise, four steps</h3>
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Step</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>1 · Verify</strong></td>
+              <td>Walk discreetly past the unit. Is it audible from the hallway or a common area? If you cannot verify it, document the complaint and keep an eye on it.</td>
+            </tr>
+            <tr>
+              <td><strong>2 · Courtesy call</strong></td>
+              <td>Once confirmed, or once you have had more than one complaint, call the resident.</td>
+            </tr>
+            <tr>
+              <td><strong>3 · Warning</strong></td>
+              <td>If it continues, call again and say plainly that the next step is contacting local authorities.</td>
+            </tr>
+            <tr>
+              <td><strong>4 · Police</strong></td>
+              <td>If it still continues, or another complaint comes in, call the <strong>non-emergency line</strong>. Once the threshold is met this is not a judgement call.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What to say</h3>
+      <p><strong>Courtesy call:</strong></p>
+      <div class="log">
+        Hello, this is the concierge desk. We received a noise concern and as a
+        courtesy we're asking that volume be lowered out of respect for neighboring
+        residents. Thank you for your cooperation.
+      </div>
+      <p><strong>Warning:</strong></p>
+      <div class="log">
+        We have received an additional complaint regarding noise. If it continues,
+        the next step will be to contact local authorities to address the matter.
+      </div>
+      <p>
+        State it calmly. It is policy, not a threat, and it is not personal.
+      </p>
+
+      <h3>What never to say</h3>
+      <p>
+        Not <em>"someone complained about you"</em>. Not <em>"you need to be quiet"</em>.
+        Not <em>"you're violating the rules"</em>. Always
+        <strong>"we received a concern"</strong> — it keeps the complaint anonymous and
+        keeps you out of the middle of it.
+      </p>
+
+      <h3>Log every one</h3>
+      <p>
+        In E.D.O. format: the time the complaint came in, the unit, whether you could
+        verify it, every call you made, the outcome, and whether police were contacted.
+      </p>
+    </section>
+
+    <section id="maintenance">
+      <h2>Emergency maintenance</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>Emergency maintenance line: 857-342-4353</h3>
+        <p>
+          Residents may call it themselves, and may submit requests through the
+          <strong>Willowbridge App</strong>.
+        </p>
+        <p>
+          <strong>Never give a resident a technician's direct number.</strong> The
+          on-call schedule at the desk is internal.
+        </p>
+      </div>
+
+      <h3>When in doubt, it is an emergency</h3>
+      <p>Call, then document. Do not spend the time deciding.</p>
+
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th>Call immediately</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Safety and security</td>
+              <td>Fire · flood · storm damage · police activity · a crime scene to protect · broken windows, doors or locks</td>
+            </tr>
+            <tr>
+              <td>Heating and cooling</td>
+              <td>No heat when it is <strong>below 50°F</strong> outside · no AC when it is <strong>above 80°F</strong></td>
+            </tr>
+            <tr>
+              <td>Utilities</td>
+              <td>Power failure · gas problem or suspected leak · no hot or cold water</td>
+            </tr>
+            <tr>
+              <td>Plumbing</td>
+              <td>Overflowing toilet · a clogged toilet that is the unit's only one · active leaks · broken pipes · water coming in · damp, moisture damage or mold</td>
+            </tr>
+            <tr>
+              <td>Appliances</td>
+              <td>Refrigerator or stove out. Sometimes the garbage disposal</td>
+            </tr>
+            <tr>
+              <td>Access</td>
+              <td>A door or window that will not secure · controlled access gates malfunctioning</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        It counts however you found out: a resident told you, an inspection turned it
+        up, or you saw it yourself.
+      </p>
+
+      <div class="callout important">
+        <h3>The alarm panel</h3>
+        <p>
+          If it sounds, <strong>call emergency maintenance and follow their
+          instructions</strong>. Do not reset it yourself. Every reset is guided by
+          maintenance, every time.
+        </p>
+      </div>
+
+      <h3>Every time you call them, log</h3>
+      <p>
+        The time, what the issue was, who you spoke to, what you did, and where it was
+        left.
+      </p>
+
+      <h3>Not an emergency</h3>
+      <div class="scroller">
+        <table>
+          <thead><tr><th>Issue</th><th>Who</th></tr></thead>
+          <tbody>
+            <tr><td>Routine maintenance or damage</td><td>Log it, and email <strong>maint@oraseaport.com</strong></td></tr>
+            <tr><td>Cleanliness</td><td>Notify the cleaning team directly</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Watch the cameras through the shift. Document what you see, and act on it when it needs acting on.</p>
+    </section>
+
+    <section id="log">
+      <h2>Writing the log</h2>
+      <hr class="rule">
+      <p>
+        Your log should tell the story of the shift start to finish. Anyone reading it
+        should come away knowing <strong>what happened, what you did, and what still
+        needs follow-up</strong>. It is read by the concierge team, Apex leadership,
+        property management, leasing and maintenance, and decisions get made from it.
+      </p>
+
+      <h3>E.D.O.</h3>
+      <p>Every entry:</p>
+      <ul>
+        <li><strong>E — Event.</strong> What happened.</li>
+        <li><strong>D — Detail.</strong> Relevant facts only.</li>
+        <li><strong>O — Outcome.</strong> Resolution, status, or next step.</li>
+      </ul>
+
+      <h3>Tone</h3>
+      <p>
+        Objective, factual, concise, neutral. No opinions, no emotional language, no
+        assumptions, no speculation. If a concern is personal, take it to leadership
+        directly rather than putting it in the log.
+      </p>
+
+      <h3>Anything unresolved</h3>
+      <p>
+        Give the full context, what you already did, and what follow-up is needed. The
+        next shift has to be able to pick it up without asking you.
+      </p>
+
+      <h3>Submitting</h3>
+      <p>
+        At the end of every shift, to the email group <strong>PASS ON LOG</strong> —
+        concierge team, management, leasing, maintenance and leadership. If someone
+        else needs to see a particular log, CC them and tell leadership so they can be
+        added permanently.
+      </p>
+      <p>
+        End every log with your <strong>name, property, shift time and date</strong>.
+      </p>
+    </section>
+
+    <section id="recurring">
+      <h2>Overnight and weekly</h2>
+      <hr class="rule">
+
+      <h3>Night audit — overnight shift</h3>
+      <ul>
+        <li>Check every logged package against what is actually on the shelf.</li>
+        <li>Remove delivered items from the system.</li>
+        <li>Add anything missing.</li>
+      </ul>
+
+      <h3>Inventory — Monday, AM shift</h3>
+      <p>
+        Complete the inventory and submit it through <strong>Connecteam</strong>. It
+        goes to the property manager and leadership automatically.
+      </p>
+    </section>
+
+    <section id="logins">
+      <h2>Logins and codes</h2>
+      <hr class="rule">
+      <div class="callout important">
+        <h3>Not on this page, on purpose</h3>
+        <p>
+          Workstation and system logins, door and lock codes, the iPad and parcel
+          codes: none of them are here. This page opens in a browser on a desk anyone
+          can walk up to, and it is a link that can be forwarded.
+        </p>
+        <p>
+          They are held where they are meant to be held. If you do not have access,
+          ask leadership — do not ask a colleague to read one out to you, and do not
+          write one down at the desk.
+        </p>
+      </div>
+      <div class="todo"><div class="todo-tag">Fill in</div>
+        <p>
+          One line saying exactly where a concierge should go for them, so this
+          section answers the question instead of just refusing it.
+        </p>
+      </div>
+    </section>
+
+    <section id="apex">
+      <h2>About Apex</h2>
+      <hr class="rule">
+      <p>
+        Apex is who you work for, and the standard the desk is held to: professional
+        presence, situational awareness, accurate logging, timely reporting, and
+        resident-first service.
+      </p>
+      <div class="todo"><div class="todo-tag">Fill in</div>
+        <ul>
+          <li>Who a concierge reports to, and who to escalate to.</li>
+          <li>Timekeeping, scheduling, and how to request time off.</li>
+          <li>Uniform and appearance standards.</li>
+          <li>What a new starter is expected to have read before their first shift.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="contacts">
+      <h2>Who to call</h2>
+      <hr class="rule">
+      <div class="scroller">
+        <table>
+          <thead><tr><th></th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Emergency maintenance</strong></td><td><strong>857-342-4353</strong></td></tr>
+            <tr><td>Maintenance, routine</td><td>maint@oraseaport.com</td></tr>
+            <tr><td>On-call technician</td><td>The schedule sheet at the desk. <strong>Internal only</strong></td></tr>
+            <tr><td>Noise, after the warning</td><td>Local police <strong>non-emergency</strong> line</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="todo"><div class="todo-tag">Fill in</div>
+        <p>Still missing, and worth having on one page at three in the morning:</p>
+        <ul>
+          <li>The local police non-emergency number, written out.</li>
+          <li>Property manager, and who to reach after hours.</li>
+          <li>Leasing office.</li>
+          <li>Cleaning team.</li>
+          <li>Apex, and out-of-hours escalation.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Apex Shift Log Helper · site information for ORA. Soft launch: incomplete by
+    design. The Connecteam knowledge base is the source of truth.
+  </footer>
+
+</div>

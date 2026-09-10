@@ -62,7 +62,7 @@ function notify(taskId, label, remaining) {
       type: "basic",
       iconUrl: chrome.runtime.getURL("icons/icon128.png"),
       title: "Shift task overdue",
-      message: `${label} — ${remaining} still needed before the shift ends.`,
+      message: `${label}: ${remaining} still needed before the shift ends.`,
       priority: 2,
     });
   } catch {

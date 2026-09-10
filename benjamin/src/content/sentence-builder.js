@@ -298,8 +298,8 @@ export function buildItemsOut(entries = []) {
     const where = unit ? `unit (${unit})` : "the building";
     const whereH = unit ? `unit (<b>${esc(unit)}</b>)` : "the building";
 
-    t.push(`* ${where} — ${kind}${by}${since}`);
-    h.push(`* ${whereH} — ${esc(kind)}${byH}${esc(since)}`);
+    t.push(`* ${where} - ${kind}${by}${since}`);
+    h.push(`* ${whereH} - ${esc(kind)}${byH}${esc(since)}`);
   }
   return { html: h.join("<br>"), text: t.join("\n") };
 }
@@ -363,10 +363,24 @@ export function buildQuickLog(line) {
 // comma-separated — commas alone could not tell the two levels apart.
 export function buildSiteTour({ areas = [], state = {} }) {
   const time = formatTime();
-  const textParts = [];
-  const htmlParts = [];
+  // One entry per floor that contributed something, in walking order, so
+  // the sentence names a floor once instead of on every area. A floor
+  // nobody walked never opens an entry and so never appears.
+  const floors = [];
+  const floorFor = (name) => {
+    const key = name || "";
+    let f = floors.find((x) => x.key === key);
+    if (!f) {
+      f = { key, text: [], html: [] };
+      floors.push(f);
+    }
+    return f;
+  };
 
   for (const area of areas) {
+    const floor = floorFor(area.floor);
+    const textParts = floor.text;
+    const htmlParts = floor.html;
     const s = state[area.id] || {};
     const issue = String(s.issue ?? "").trim();
     const status = String(s.status ?? "").trim();
@@ -418,16 +432,26 @@ export function buildSiteTour({ areas = [], state = {} }) {
   }
 
   const head = "Site tour completed";
-  if (!textParts.length) {
+  const walked = floors.filter((f) => f.text.length);
+  if (!walked.length) {
     return { html: `<b>${esc(time)}</b>: ${head}.`, text: `${time}: ${head}.` };
   }
 
+  // Floors are separated by a full stop and areas within one by a
+  // semicolon, since an area's own clauses are already comma-separated —
+  // three levels need three separators to stay readable.
+  const floorText = (f) =>
+    f.key ? `${f.key} - ${f.text.join("; ")}` : f.text.join("; ");
+  const floorHtml = (f) =>
+    f.key ? `<b>${esc(f.key)}</b> - ${f.html.join("; ")}` : f.html.join("; ");
+
+  const body = walked.map(floorText).join(". ");
   // A typed issue may already end in punctuation — don't double it up.
-  const tail = /[.!?]$/.test(textParts[textParts.length - 1]) ? "" : ".";
+  const tail = /[.!?]$/.test(body) ? "" : ".";
 
   return {
-    html: `<b>${esc(time)}</b>: ${head}. ${htmlParts.join("; ")}${tail}`,
-    text: `${time}: ${head}. ${textParts.join("; ")}${tail}`,
+    html: `<b>${esc(time)}</b>: ${head}. ${walked.map(floorHtml).join(". ")}${tail}`,
+    text: `${time}: ${head}. ${body}${tail}`,
   };
 }
 
@@ -436,7 +460,7 @@ export function buildSentence({ role, reason, values = {} }) {
 
   if (!baseTemplate) {
     const label = role?.label || "";
-    const placeholder = label ? `${label} — pick a reason…` : "Pick a role…";
+    const placeholder = label ? `${label}: pick a reason…` : "Pick a role…";
     return { html: esc(placeholder), text: placeholder };
   }
 

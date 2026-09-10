@@ -1,4 +1,4 @@
-<title>Phrase Snippets Manual</title>
+<title>ORA Front Desk Manual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -251,6 +251,37 @@
   .log + .log { margin-top: -6px; }
   .blank { color: var(--alert); font-weight: 700; border-bottom: 1px dotted var(--alert); }
 
+  /* The desktop notification, reproduced with its real wording. */
+  .toast {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    max-width: 400px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin: 0 0 8px;
+  }
+  .toast img { width: 34px; height: 34px; border-radius: 6px; flex: 0 0 auto; }
+  .toast-title { font-weight: 600; font-size: .92rem; line-height: 1.3; }
+  .toast-body { font-size: .88rem; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+  .toast-src { font-size: .75rem; color: var(--ink-faint); margin-top: 5px; }
+
+  /* The toolbar count, at roughly the size Chrome draws it. */
+  .badge {
+    display: inline-block;
+    background: #ff4d4f;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    vertical-align: 1px;
+  }
+
   /* Callouts: only two, and they mean different things. */
   .callout {
     border: 1px solid var(--rule);
@@ -357,12 +388,47 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
+<style>
+  /* Two pages, one set. The switcher says so before the reader has to
+     wonder, and marks which of them they are on. */
+  .switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    margin: 0 0 24px;
+    font-size: .85rem;
+  }
+  .switch a,
+  .switch span {
+    padding: 5px 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .switch a:hover { background: var(--accent-soft); color: var(--accent); }
+  .switch a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .switch [aria-current="page"] {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(19, 24, 32, .07);
+  }
+</style>
 
 <div class="shell">
 
   <header class="masthead">
+    <nav class="switch" aria-label="Reference pages">
+      <span aria-current="page">Guide</span>
+      <a href="https://claude.ai/code/artifact/d69c71d1-2f25-4e55-9a40-eedcc93cdfd1">Site info</a>
+    </nav>
     <p class="kicker">ORA · Front desk</p>
-    <h1>Phrase Snippets Manual</h1>
+    <h1>ORA Front Desk Manual</h1>
     <p class="standfirst">
       A keyboard shortcut that writes your shift-log entries for you, so the wording
       stays the same whoever is on duty. It drafts the line. Reading it is still your job.
@@ -378,6 +444,7 @@
     <h2>Contents</h2>
     <ol>
       <li><a href="#start">Getting started</a></li>
+      <li><a href="#begin-first">Start with Begin shift</a></li>
       <li><a href="#check">Check every line</a></li>
       <li><a href="#popup">The popup</a></li>
       <li><a href="#blanks">Filling in blanks</a></li>
@@ -386,7 +453,7 @@
       <li><a href="#begin">Begin shift</a></li>
       <li><a href="#tour">Site tour</a></li>
       <li><a href="#stillout">Still out</a></li>
-      <li><a href="#tasks">Task chips &amp; the badge</a></li>
+      <li><a href="#tasks">Tasks it chases you about</a></li>
       <li><a href="#limits">What it can't do</a></li>
       <li><a href="#trouble">If something goes wrong</a></li>
     </ol>
@@ -411,6 +478,29 @@
         Every entry is stamped with the time it was inserted, and starts on its own line.
       </p>
 
+      <p>
+        One thing to do first, though — see <a href="#begin-first">Start with Begin
+        shift</a>. Everything that keeps count depends on it.
+      </p>
+
+      <h3>Where it works</h3>
+      <p>
+        Anywhere you can type inside <strong>a web page in Chrome</strong>. That covers
+        Outlook on the web and Gmail in a browser tab, which is where the log gets
+        written.
+      </p>
+      <div class="callout important">
+        <h3>Not in the desktop Outlook app</h3>
+        <p>
+          The extension is part of the browser, so it cannot reach into a program running
+          outside it. Open the Outlook app and type <kbd>;;</kbd> and nothing happens —
+          not a fault, just out of reach.
+        </p>
+        <p>
+          If that is where you write your logs, open Outlook in a Chrome tab instead.
+        </p>
+      </div>
+
       <h3>Getting back to this page</h3>
       <p>
         <strong>Guide</strong>, along the bottom of the panel, opens this manual in a new
@@ -419,6 +509,85 @@
       <figure>
         <img src="{{IMG:08-actions}}" alt="The bottom bar of the panel: the hint 'Enter = Insert, Esc = Cancel' on the left, a Guide link in the middle, and Cancel and Insert buttons on the right.">
       </figure>
+    </section>
+
+    <section id="begin-first">
+      <h2>Start with Begin shift</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>Press it before anything else</h3>
+        <p>
+          Everything the extension keeps count of is measured from the moment you press
+          <strong>Begin shift</strong>. Without it there is no shift to measure against, so
+          the tracking has nothing to stand on — it does not guess, it just stays quiet.
+        </p>
+      </div>
+
+      <p>
+        You can still use the extension without starting a shift, and most of it works
+        exactly the same. It is worth knowing which half is which:
+      </p>
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>Works either way</th><th>Needs Begin shift</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Every role and reason, worded the same</td>
+              <td>The colours and ✓ on the three task chips</td>
+            </tr>
+            <tr>
+              <td>The timestamp on every entry</td>
+              <td>The red count on the toolbar icon</td>
+            </tr>
+            <tr>
+              <td>Site tour, and the sentence it writes</td>
+              <td>Overdue notifications</td>
+            </tr>
+            <tr>
+              <td>Night lockup, Lobby checked, Time, Key returned</td>
+              <td>Filing a flagged entry under its section heading</td>
+            </tr>
+            <tr>
+              <td>The yellow highlight on a flagged entry</td>
+              <td>A <em>Still out</em> list that is actually about today</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What goes wrong quietly</h3>
+      <p>
+        None of these announce themselves, which is why they are worth knowing:
+      </p>
+      <ul>
+        <li>
+          <strong>The task chips just sit plain.</strong> Not green, not red — plain. That
+          looks like "nothing due", not like "not tracking". No badge and no notifications
+          either.
+        </li>
+        <li>
+          <strong>A flagged entry is highlighted but not filed.</strong> The yellow tint
+          still lands on your line, but the copy has nowhere to go: <em>Begin shift</em> is
+          what writes the section headings into the log, and without them the filing simply
+          does not happen. Nothing warns you.
+        </li>
+        <li>
+          <strong><em>Still out</em> keeps whatever was already on it.</strong> Handing keys
+          over still adds them and returning them still takes them off, so the list works —
+          but it is never cleared, so it can be showing you a previous shift's keys
+          alongside yours. <em>Begin shift</em> is what empties it.
+        </li>
+      </ul>
+
+      <p>
+        So: log whatever you like without starting a shift — the entries themselves are
+        just as good. Only don't read anything into the task colours, the badge or the
+        <em>Still out</em> list until a shift has been started.
+      </p>
     </section>
 
     <section id="check">
@@ -458,7 +627,7 @@
       <hr class="rule">
 
       <figure>
-        <img src="{{IMG:01-popup}}" alt="The Phrase Snippets panel: Role, Name, Unit and Contact boxes across the top, a Reason dropdown, four notify checkboxes, a live preview of the sentence, and rows of chips below.">
+        <img src="{{IMG:01-popup}}" alt="The Apex Shift Log Helper panel: Role, Name, Unit and Contact boxes across the top, a Reason dropdown, four notify checkboxes, a live preview of the sentence, and rows of chips below.">
         <figcaption>The panel as it opens. Everything above the preview builds the sentence; everything below it is a one-click shortcut.</figcaption>
       </figure>
 
@@ -720,22 +889,28 @@
       <hr class="rule">
 
       <figure>
-        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist: a row per area with a tick box, a 'Something to report' text box, and for some areas a status dropdown or a headcount. The GYM row has a note typed in and its tick box is greyed out.">
-        <figcaption>Every area you walked, in walking order. The GYM row shows what happens when you type a note — see below.</figcaption>
+        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist for ORA, headed 1ST FLOOR, with a row per area: a tick box, a 'Something to report' box, and a status dropdown on the coffee machine. The GYM row has a note typed in and its tick box is greyed out.">
+        <figcaption>ORA's twenty areas across four floors. The GYM row shows what happens when you type a note.</figcaption>
       </figure>
 
-      <p>One row per area. Everything on a row is optional:</p>
+      <p>
+        The checklist is grouped by floor, in the order the walk is done — 1st floor, 2nd floor, 11th floor, then 12th floor.
+        The floor heading stays on screen while you scroll, so you always know which one
+        you are looking at.
+      </p>
+
+      <p>One row per area, and everything on a row is optional:</p>
       <ul>
-        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; some say something more specific, like <em>secured</em> on the emergency exit or <em>organized and neat</em> on the meeting rooms.</li>
+        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; some say something more specific, like <em>secured</em> on the emergency exit door or <em>organized and neat</em> on the meeting spaces. The coffee machines also carry a status dropdown, because servicing them is part of the walk.</li>
         <li><strong>Something to report</strong> — anything that was not right.</li>
-        <li><strong>A status dropdown</strong> on the coffee machines, because servicing them is part of the walk.</li>
         <li><strong>A headcount</strong> on the pool and grill areas.</li>
       </ul>
 
       <p>
-        <strong>An area you do not touch is not mentioned at all.</strong> That is the point —
-        the log only ever claims what you actually looked at. If you only walked half the
-        building, only fill in that half.
+        <strong>An area you do not touch is not mentioned at all</strong>, and neither is a
+        floor you did not walk — its heading simply does not appear in the sentence. That
+        is the point: the log only ever claims what you actually looked at. If you only got
+        round half the building, only fill in that half.
       </p>
 
       <h3>All clear and a note cancel each other out</h3>
@@ -746,12 +921,21 @@
         clear is your call, not the form's.
       </p>
 
+      <h3>What it writes</h3>
+      <p>
+        Still one line, however many floors you covered. Each floor is named once and its
+        areas follow it:
+      </p>
+
       <div class="log">
         <span class="log-label">The whole walk, one line</span>
-        <span class="t">02:22 PM</span>: Site tour completed. Lobby area: waiting area chairs organized, all clear; Mail room: all clear; Genius bar: all clear; Leasing Office: all clear; Meeting rooms: organized and neat; Coffee machine #1: all clear; GYM: <b>treadmill out of order</b>; Pool area: 3 people.
+        <span class="t">02:11 PM</span>: Site tour completed. <b>1st floor</b> - Lobby area: waiting area chairs organized, all clear; Mail room: all clear; Genius bar: all clear; Leasing Office: all clear; Meeting spaces: organized and neat; Coffee machine #1: all clear, stocked and rinsed; GYM: <b>treadmill out of order</b>; Dog wash: clean; Emergency exit door: secured; Freight elevator and second lobby: all clear. <b>2nd floor</b> - Courtyard: all clear; Trash Chute by Moxies: all clear. <b>11th floor</b> - Electrical room: music turned on and operational. <b>12th floor</b> - Reservable patio and area: all clear; TV and game room: TV turned on, pool table and shuffle board set; Coffee machine #2: all clear; Inner space: all clear; Fireplace: turned off and all clear; Pool area: all clear (3 people); Grill area: all clear.
       </div>
 
-      <p>Anything you reported comes out in bold, so it does not get lost in the middle of a long line.</p>
+      <p>
+        Anything you reported comes out in bold, so it does not get lost in the middle of a
+        long line.
+      </p>
     </section>
 
     <section id="stillout">
@@ -792,13 +976,17 @@
     </section>
 
     <section id="tasks">
-      <h2>Task chips &amp; the badge</h2>
+      <h2>Tasks it chases you about</h2>
       <hr class="rule">
 
       <p>
-        Once you have started a shift, the three task chips track themselves. The colour
-        tells you where you stand at a glance:
+        Three chips are on a clock — <strong>Site tour</strong>, <strong>Read previous shift
+        logs</strong> and <strong>Desk organized</strong>. Once you have started a shift, the
+        extension counts them and chases you when one falls behind. Nothing else in the
+        extension notifies you about anything.
       </p>
+
+      <h3>The colour on the chip</h3>
 
       <div class="scroller">
         <table>
@@ -814,17 +1002,72 @@
         </table>
       </div>
 
+      <h3>The badge on the toolbar icon</h3>
       <p>
-        You do not have to keep the popup open for this to work. When a task goes overdue,
-        a number appears on the extension's toolbar icon and stays there until the task is
-        done. You also get a notification once when the deadline passes, and again every
-        half hour after that if it is still outstanding — the badge is easy to not look at.
+        You do not have to keep the panel open — or even be looking at the log. When a task
+        goes overdue, a red count appears on the extension's icon in the browser toolbar
+        and <strong>stays there until the task is done</strong>:
+      </p>
+      <p style="font-size:1.05rem">
+        Apex Shift Log Helper <span class="badge">2</span> &nbsp;· two tasks overdue right now.
       </p>
       <p>
-        Deadlines are worked out from the shift you picked in <em>Begin shift</em>, and the
-        later ones have to close an hour before your shift ends, so nothing is left to land
-        in the handover. <strong>Press <em>End shift</em> when you leave</strong> — otherwise the
-        deadlines keep running and the chips sit red overnight.
+        The badge is the signal that cannot be missed or dismissed. It is not affected by
+        Do Not Disturb, and it does not go away on its own. Tick the task off and it clears
+        straight away.
+      </p>
+
+      <h3>The desktop notification</h3>
+      <p>
+        A notification also pops up the moment a deadline passes, and again
+        <strong>every half hour</strong> while the task is still outstanding — once and never
+        again is too easy to swipe away and forget. This is what it says:
+      </p>
+
+      <div class="toast">
+        <img src="{{IMG:icon}}" alt="">
+        <div>
+          <div class="toast-title">Shift task overdue</div>
+          <div class="toast-body">Site tour: 2 still needed before the shift ends.</div>
+          <div class="toast-src">Google Chrome · Apex Shift Log Helper</div>
+        </div>
+      </div>
+
+      <p>
+        One per overdue task. Clicking it brings the window you were working in back to
+        the front.
+      </p>
+
+      <div class="callout important">
+        <h3>If you never see a notification</h3>
+        <p>
+          Check two things, in this order:
+        </p>
+        <ol>
+          <li>
+            <strong>Did you press <em>Begin shift</em>?</strong> Deadlines are worked out from
+            the shift you picked there. No shift started means no deadlines, no badge and
+            no notifications — the chips just sit plain.
+          </li>
+          <li>
+            <strong>Are notifications allowed for Chrome?</strong> If the computer is set to
+            Do Not Disturb, or Chrome is not permitted to show notifications, the pop-up
+            never appears. The badge still works, so watch the toolbar icon.
+          </li>
+        </ol>
+      </div>
+
+      <h3>When the deadlines fall</h3>
+      <p>
+        They come from the shift you picked in <em>Begin shift</em>. The first site tour is
+        due inside your first two hours; <em>Read previous shift logs</em> inside your first
+        hour. Later ones have to close an hour before your shift ends, so nothing is left
+        to land in the handover.
+      </p>
+      <p>
+        <strong>Press <em>End shift</em> when you leave.</strong> It stops the clock. Skip it and
+        the deadlines keep running after you have gone home — the badge sits on the icon
+        overnight and the next person inherits red chips that mean nothing.
       </p>
     </section>
 
@@ -891,12 +1134,20 @@
               <td>Reload the page. A page that was already open when the extension was installed or updated has not loaded it yet.</td>
             </tr>
             <tr>
+              <td>Nothing happens in the Outlook app</td>
+              <td>The extension only works inside Chrome. Open Outlook in a browser tab.</td>
+            </tr>
+            <tr>
               <td>The panel covers what you were typing</td>
               <td>Expected when your cursor is near the bottom of the window — it opens upward so the Insert button stays reachable. Press <kbd>Esc</kbd> to dismiss it.</td>
             </tr>
             <tr>
               <td>A flagged entry did not get filed</td>
               <td>The section heading is missing from the log. Start the shift with <em>Begin shift</em> and the headings are there from the outset.</td>
+            </tr>
+            <tr>
+              <td>A red number on the toolbar icon that will not go away</td>
+              <td>One or more tracked tasks are overdue. Do them, or press <em>End shift</em> if the shift is over.</td>
             </tr>
             <tr>
               <td>Task chips are red and it is not your shift</td>
@@ -914,7 +1165,7 @@
   </main>
 
   <footer>
-    Phrase Snippets · front desk shift logs at ORA.
+    Apex Shift Log Helper · front desk shift logs at ORA.
     Questions, or a reason that should exist and doesn't — say so, and it can be added.
   </footer>
 

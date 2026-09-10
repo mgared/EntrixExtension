@@ -1,0 +1,1238 @@
+<title>VIA Front Desk Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* ---- tokens: light is the base, both dark paths redefine only these ---- */
+  :root {
+    --ground: #e9edf3;
+    --paper: #ffffff;
+    --sunk: #f3f6fa;
+    --ink: #131820;
+    --ink-soft: #5a6474;
+    --ink-faint: #8b94a3;
+    --rule: #d6dde7;
+    --rule-soft: #e6ebf1;
+    --accent: #14509b;
+    --accent-soft: #e7effa;
+    --flag: #fff54d;
+    --flag-ink: #131820;
+    --alert: #c0392b;
+    --alert-soft: #fdecea;
+    --good: #2f6b38;
+    --good-soft: #eaf4ec;
+    --shadow: 0 1px 2px rgba(19, 24, 32, .05), 0 8px 28px rgba(19, 24, 32, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1219;
+      --paper: #161d27;
+      --sunk: #1c242f;
+      --ink: #e7ecf3;
+      --ink-soft: #a3aebe;
+      --ink-faint: #788495;
+      --rule: #2b3542;
+      --rule-soft: #232c38;
+      --accent: #7dabf2;
+      --accent-soft: #1b2a3f;
+      --flag: #f2e03a;
+      --flag-ink: #131820;
+      --alert: #f08379;
+      --alert-soft: #33201f;
+      --good: #8ac795;
+      --good-soft: #1b2a20;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1219;
+    --paper: #161d27;
+    --sunk: #1c242f;
+    --ink: #e7ecf3;
+    --ink-soft: #a3aebe;
+    --ink-faint: #788495;
+    --rule: #2b3542;
+    --rule-soft: #232c38;
+    --accent: #7dabf2;
+    --accent-soft: #1b2a3f;
+    --flag: #f2e03a;
+    --flag-ink: #131820;
+    --alert: #f08379;
+    --alert-soft: #33201f;
+    --good: #8ac795;
+    --good-soft: #1b2a20;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 56px;
+  }
+  @media (min-width: 1020px) {
+    .shell { grid-template-columns: 224px minmax(0, 1fr); }
+  }
+
+  /* ---- masthead ---- */
+  .masthead {
+    grid-column: 1 / -1;
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 48px;
+  }
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(2.3rem, 5.5vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -.02em;
+    margin: 0 0 22px;
+    text-wrap: balance;
+    max-width: 15ch;
+  }
+  .standfirst {
+    font-size: 1.14rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0;
+  }
+
+  /* The thing the whole tool exists to produce, shown at full size. */
+  .specimen {
+    margin: 40px 0 0;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 3px;
+    padding: 22px 26px;
+    box-shadow: var(--shadow);
+    max-width: 78ch;
+  }
+  .specimen p { margin: 0; font-size: 1.06rem; line-height: 1.6; }
+  .specimen .t {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .specimen b { font-weight: 700; }
+  .specimen-note {
+    margin: 14px 0 0;
+    font-size: .86rem;
+    color: var(--ink-faint);
+    max-width: 78ch;
+  }
+
+  /* ---- sidebar nav ---- */
+  nav.toc { display: none; }
+  @media (min-width: 1020px) {
+    nav.toc {
+      display: block;
+      position: sticky;
+      top: 32px;
+      align-self: start;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding-bottom: 24px;
+    }
+  }
+  .toc h2 {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin: 0 0 14px;
+  }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .toc a {
+    display: block;
+    padding: 5px 10px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: .89rem;
+    border-left: 2px solid var(--rule-soft);
+    line-height: 1.35;
+  }
+  .toc a:hover { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---- body ---- */
+  main { min-width: 0; max-width: 74ch; }
+  section { margin: 0 0 64px; scroll-margin-top: 24px; }
+
+  h2 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 600;
+    font-size: 1.72rem;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: Bitter, Georgia, serif;
+    font-weight: 600;
+    font-size: 1.12rem;
+    margin: 34px 0 8px;
+    text-wrap: balance;
+  }
+  .rule {
+    height: 1px;
+    background: var(--rule);
+    border: 0;
+    margin: 0 0 22px;
+  }
+  p { margin: 0 0 16px; }
+  main ul, main ol { margin: 0 0 16px; padding-left: 22px; }
+  main li { margin-bottom: 7px; }
+  a { color: var(--accent); }
+
+  strong { font-weight: 600; }
+
+  kbd {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .82em;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* A sample of what lands in the log. */
+  .log {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: .95rem;
+    line-height: 1.55;
+  }
+  .log .t { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .log.is-flagged { border-left-color: var(--flag); }
+  .log mark { background: var(--flag); color: var(--flag-ink); }
+  .log-label {
+    display: block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 7px;
+  }
+  .log + .log { margin-top: -6px; }
+  .blank { color: var(--alert); font-weight: 700; border-bottom: 1px dotted var(--alert); }
+
+  /* The desktop notification, reproduced with its real wording. */
+  .toast {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    max-width: 400px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin: 0 0 8px;
+  }
+  .toast img { width: 34px; height: 34px; border-radius: 6px; flex: 0 0 auto; }
+  .toast-title { font-weight: 600; font-size: .92rem; line-height: 1.3; }
+  .toast-body { font-size: .88rem; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+  .toast-src { font-size: .75rem; color: var(--ink-faint); margin-top: 5px; }
+
+  /* The toolbar count, at roughly the size Chrome draws it. */
+  .badge {
+    display: inline-block;
+    background: #ff4d4f;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    vertical-align: 1px;
+  }
+
+  /* Callouts: only two, and they mean different things. */
+  .callout {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 0 0 24px;
+    background: var(--paper);
+  }
+  .callout.important {
+    border-color: var(--alert);
+    background: var(--alert-soft);
+  }
+  .callout > :last-child { margin-bottom: 0; }
+  .callout h3 { margin-top: 0; font-size: 1.05rem; }
+  .callout.important h3 { color: var(--alert); }
+
+  /* Figures */
+  figure { margin: 0 0 26px; }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+  }
+  figcaption {
+    margin-top: 10px;
+    font-size: .855rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Chip catalog */
+  .chips { display: flex; flex-direction: column; gap: 0; margin: 0 0 8px; }
+  .chip-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  @media (min-width: 640px) {
+    .chip-entry { grid-template-columns: 190px minmax(0, 1fr); gap: 0 24px; align-items: baseline; }
+  }
+  .chip-entry:last-child { border-bottom: 1px solid var(--rule-soft); }
+  .chip-entry p { margin: 0 0 8px; }
+  .chip-entry p:last-child { margin-bottom: 0; }
+  .pill {
+    display: inline-block;
+    font-size: .82rem;
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--sunk);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  /* --ground flips with the theme, so this stays legible on the red in
+     both: a light face on dark red, a dark face on light red. */
+  .pill.overdue { background: var(--alert); border-color: var(--alert); color: var(--ground); font-weight: 600; }
+  .pill.done { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .whenfor {
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+  .whenfor b { color: var(--ink); font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 20px;
+    font-size: .93rem;
+  }
+  .scroller { overflow-x: auto; margin: 0 0 20px; }
+  .scroller table { margin: 0; min-width: 420px; }
+  th, td {
+    text-align: left;
+    padding: 9px 14px 9px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  footer {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+    margin-top: 8px;
+    font-size: .88rem;
+    color: var(--ink-faint);
+    max-width: 74ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+<style>
+  /* Two pages, one set. The switcher says so before the reader has to
+     wonder, and marks which of them they are on. */
+  .switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    margin: 0 0 24px;
+    font-size: .85rem;
+  }
+  .switch a,
+  .switch span {
+    padding: 5px 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .switch a:hover { background: var(--accent-soft); color: var(--accent); }
+  .switch a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .switch [aria-current="page"] {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(19, 24, 32, .07);
+  }
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <nav class="switch" aria-label="Reference pages">
+      <span aria-current="page">Guide</span>
+      <a href="https://claude.ai/code/artifact/dc8e5119-b092-4233-a797-727231db5dad">Site info</a>
+    </nav>
+    <p class="kicker">VIA · Front desk</p>
+    <h1>VIA Front Desk Manual</h1>
+    <p class="standfirst">
+      A keyboard shortcut that writes your shift-log entries for you, so the wording
+      stays the same whoever is on duty. It drafts the line. Reading it is still your job.
+    </p>
+
+    <div class="specimen">
+      <p><span class="t">02:21 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to request entry into their unit because they forgot their keys.</p>
+    </div>
+    <p class="specimen-note">One entry, four clicks. That is the whole idea.</p>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#begin-first">Start with Begin shift</a></li>
+      <li><a href="#check">Check every line</a></li>
+      <li><a href="#popup">The popup</a></li>
+      <li><a href="#blanks">Filling in blanks</a></li>
+      <li><a href="#flags">The four notify boxes</a></li>
+      <li><a href="#chips">Chips, one by one</a></li>
+      <li><a href="#begin">Begin shift</a></li>
+      <li><a href="#tour">Site tour</a></li>
+      <li><a href="#stillout">Still out</a></li>
+      <li><a href="#dock">The loading dock</a></li>
+      <li><a href="#tasks">Tasks it chases you about</a></li>
+      <li><a href="#limits">What it can't do</a></li>
+      <li><a href="#trouble">If something goes wrong</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section id="start">
+      <h2>Getting started</h2>
+      <hr class="rule">
+      <p>
+        Put your cursor where you want the entry, then type two semicolons — <kbd>;;</kbd>.
+        A panel opens at your cursor.
+      </p>
+      <p>
+        Pick a <strong>role</strong> (who you are writing about), then a <strong>reason</strong>
+        (what happened). Fill in the boxes that appear. Watch the preview. Press
+        <kbd>Enter</kbd> to insert it, or <kbd>Esc</kbd> to close without writing anything.
+      </p>
+      <p>
+        The two semicolons disappear when the entry goes in — you never have to delete them.
+        Every entry is stamped with the time it was inserted, and starts on its own line.
+      </p>
+
+      <p>
+        One thing to do first, though — see <a href="#begin-first">Start with Begin
+        shift</a>. Everything that keeps count depends on it.
+      </p>
+
+      <h3>Where it works</h3>
+      <p>
+        Anywhere you can type inside <strong>a web page in Chrome</strong>. That covers
+        Outlook on the web and Gmail in a browser tab, which is where the log gets
+        written.
+      </p>
+      <div class="callout important">
+        <h3>Not in the desktop Outlook app</h3>
+        <p>
+          The extension is part of the browser, so it cannot reach into a program running
+          outside it. Open the Outlook app and type <kbd>;;</kbd> and nothing happens —
+          not a fault, just out of reach.
+        </p>
+        <p>
+          If that is where you write your logs, open Outlook in a Chrome tab instead.
+        </p>
+      </div>
+
+      <h3>Getting back to this page</h3>
+      <p>
+        <strong>Guide</strong>, along the bottom of the panel, opens this manual in a new
+        tab. Nothing you have typed is lost — the panel stays open behind it.
+      </p>
+      <figure>
+        <img src="{{IMG:08-actions}}" alt="The bottom bar of the panel: the hint 'Enter = Insert, Esc = Cancel' on the left, a Guide link in the middle, and Cancel and Insert buttons on the right.">
+      </figure>
+    </section>
+
+    <section id="begin-first">
+      <h2>Start with Begin shift</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>Press it before anything else</h3>
+        <p>
+          Everything the extension keeps count of is measured from the moment you press
+          <strong>Begin shift</strong>. Without it there is no shift to measure against, so
+          the tracking has nothing to stand on — it does not guess, it just stays quiet.
+        </p>
+      </div>
+
+      <p>
+        You can still use the extension without starting a shift, and most of it works
+        exactly the same. It is worth knowing which half is which:
+      </p>
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>Works either way</th><th>Needs Begin shift</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Every role and reason, worded the same</td>
+              <td>The colours and ✓ on the three task chips</td>
+            </tr>
+            <tr>
+              <td>The timestamp on every entry</td>
+              <td>The red count on the toolbar icon</td>
+            </tr>
+            <tr>
+              <td>Site tour, and the sentence it writes</td>
+              <td>Overdue notifications</td>
+            </tr>
+            <tr>
+              <td>Night lockup, Lobby checked, Time, Key returned</td>
+              <td>Filing a flagged entry under its section heading</td>
+            </tr>
+            <tr>
+              <td>The yellow highlight on a flagged entry</td>
+              <td>A <em>Still out</em> list that is actually about today</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What goes wrong quietly</h3>
+      <p>
+        None of these announce themselves, which is why they are worth knowing:
+      </p>
+      <ul>
+        <li>
+          <strong>The task chips just sit plain.</strong> Not green, not red — plain. That
+          looks like "nothing due", not like "not tracking". No badge and no notifications
+          either.
+        </li>
+        <li>
+          <strong>A flagged entry is highlighted but not filed.</strong> The yellow tint
+          still lands on your line, but the copy has nowhere to go: <em>Begin shift</em> is
+          what writes the section headings into the log, and without them the filing simply
+          does not happen. Nothing warns you.
+        </li>
+        <li>
+          <strong><em>Still out</em> keeps whatever was already on it.</strong> Handing keys
+          over still adds them and returning them still takes them off, so the list works —
+          but it is never cleared, so it can be showing you a previous shift's keys
+          alongside yours. <em>Begin shift</em> is what empties it.
+        </li>
+      </ul>
+
+      <p>
+        So: log whatever you like without starting a shift — the entries themselves are
+        just as good. Only don't read anything into the task colours, the badge or the
+        <em>Still out</em> list until a shift has been started.
+      </p>
+    </section>
+
+    <section id="check">
+      <h2>Check every line before you move on</h2>
+      <hr class="rule">
+
+      <div class="callout important">
+        <h3>This is the one rule that matters</h3>
+        <p>
+          The tool writes a <em>draft</em>. It does not know what actually happened —
+          only what you picked from the menus. After every insert, read the line back
+          and fix it if it is not exactly right.
+        </p>
+        <p>
+          A log is a record. If a line says something that did not happen, that is on
+          the person whose name is at the top of the shift, not on the extension.
+        </p>
+      </div>
+
+      <p>Things worth checking every time:</p>
+      <ul>
+        <li><strong>Is the unit number right?</strong> A wrong unit is the easiest mistake to make and the hardest to spot later.</li>
+        <li><strong>Does the sentence claim something you did not do?</strong> If it says a team was notified, make sure you notified them.</li>
+        <li><strong>Are there <span class="blank">####</span> marks left?</strong> Those are blanks you have not filled in. Never leave them in a finished log.</li>
+        <li><strong>Does it fit what really happened?</strong> If the closest reason is only <em>close</em>, insert it and then edit the wording. That is faster than typing from scratch, and it is still your sentence.</li>
+      </ul>
+
+      <p>
+        And when nothing in the menus fits at all — just type the entry yourself. The
+        extension is there to save you time on the ninety per cent that repeats, not to
+        stop you writing. See <a href="#limits">What it can't do</a>.
+      </p>
+    </section>
+
+    <section id="popup">
+      <h2>The popup</h2>
+      <hr class="rule">
+
+      <figure>
+        <img src="{{IMG:01-popup}}" alt="The Apex Shift Log Helper panel: Role, Name, Unit and Contact boxes across the top, a Reason dropdown, four notify checkboxes, a live preview of the sentence, and rows of chips below.">
+        <figcaption>The panel as it opens. Everything above the preview builds the sentence; everything below it is a one-click shortcut.</figcaption>
+      </figure>
+
+      <p>Reading top to bottom:</p>
+      <ul>
+        <li><strong>Role</strong> — who the entry is about. Resident, Guest, Package, Vendor, Cleaner, Maintenance, Concierge and so on.</li>
+        <li><strong>The boxes beside it</strong> — these change with the role. A resident entry asks for a name, a unit, and whether they came to the desk or called in.</li>
+        <li><strong>Reason</strong> — what happened. The list changes depending on the role you picked.</li>
+        <li><strong>More boxes</strong> — some reasons ask for extra detail. They appear under the reason once you choose it.</li>
+        <li><strong>Preview</strong> — the exact sentence that will be inserted. It updates as you type. If the preview is wrong, the log will be wrong.</li>
+        <li><strong>Chips</strong> — one-click entries that skip the role and reason entirely. Covered <a href="#chips">below</a>.</li>
+      </ul>
+
+      <p>
+        Name is optional almost everywhere. If you did not catch a name, leave it blank
+        and the sentence simply will not mention one.
+      </p>
+    </section>
+
+    <section id="blanks">
+      <h2>Filling in blanks</h2>
+      <hr class="rule">
+      <p>
+        If you insert an entry with a required box still empty, the sentence goes in with
+        a <span class="blank">####</span> in that spot rather than a made-up value:
+      </p>
+
+      <div class="log">
+        <span class="log-label">Inserted with the unit left blank</span>
+        <span class="t">02:21 PM</span>: Resident from unit (<span class="blank">####</span>) came to the front desk to request entry into their unit because they forgot their keys.
+      </div>
+
+      <p>
+        That is deliberate — a visible gap you must fill beats a quiet guess. The first
+        blank is selected as soon as the entry lands, so you can type straight into it.
+        Press <kbd>Tab</kbd> to jump to the next blank and <kbd>Shift</kbd> + <kbd>Tab</kbd>
+        to go back. Once you type over a blank it stops being one.
+      </p>
+      <p>
+        Names in the shift skeleton come in red for the same reason: so the people on and
+        off site stand out in a page that is otherwise a wall of timestamps.
+      </p>
+    </section>
+
+    <section id="flags">
+      <h2>The four notify boxes</h2>
+      <hr class="rule">
+
+      <figure>
+        <img src="{{IMG:03-flags}}" alt="A row of four checkboxes, each next to a yellow colour swatch: Notify concierge, Notify property manager, Notify maintenance, Incident.">
+      </figure>
+
+      <p>Ticking one of these does <strong>two</strong> things:</p>
+      <ol>
+        <li>Highlights the entry in yellow, so anyone scanning the log spots it.</li>
+        <li>Files a second copy of it further down the log, under the matching section heading.</li>
+      </ol>
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>Tick this</th><th>Copy is filed under</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Notify concierge</td><td>CONCIERGE TEAM NOTES</td></tr>
+            <tr><td>Notify property manager</td><td>PROPERTY MANAGEMENT NOTES</td></tr>
+            <tr><td>Notify maintenance</td><td>FACILITY/MAINTENANCE NOTES</td></tr>
+            <tr><td>Incident</td><td>INCIDENTS OF NOTE</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        You can tick more than one — the entry is filed under each heading you pick.
+        The filing only works if those headings already exist in the log, which they will
+        if the shift was started with <a href="#begin">Begin shift</a>.
+      </p>
+
+      <h3>The note box</h3>
+      <p>
+        Ticking any box opens <em>What should they expect or do?</em> underneath. Whatever
+        you write there is added to the <strong>filed copy only</strong> — not to the line at
+        your cursor. It is the place for the bit the next team needs that does not belong
+        in the timeline.
+      </p>
+
+      <p>
+        Write it as more detail about <em>this entry</em>, aimed at the team you
+        ticked — what they are walking into, or what you need them to do. It reads
+        as one note with the entry it belongs to, so it has to follow on from it.
+      </p>
+
+      <figure>
+        <img src="{{IMG:04-flagged}}" alt="The panel with Notify maintenance ticked on a leaking-sink report. A note box reads 'Water is pooling under the cabinet; the resident has put a bucket down and asks for someone first thing tomorrow', and the preview sentence is highlighted in yellow.">
+        <figcaption>With a box ticked, the preview shows you the highlight exactly as it will land.</figcaption>
+      </figure>
+
+      <p>That one entry lands in two places, highlighted in both:</p>
+
+      <div class="log is-flagged">
+        <span class="log-label">In the timeline</span>
+        <mark><span class="t">02:59 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to report that their kitchen sink is leaking.</mark>
+      </div>
+      <div class="log is-flagged">
+        <span class="log-label">And under FACILITY/MAINTENANCE NOTES</span>
+        * <mark><span class="t">02:59 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to report that their kitchen sink is leaking. Water is pooling under the cabinet; the resident has put a bucket down and asks for someone first thing tomorrow.</mark>
+      </div>
+
+      <p>
+        The filed copy is the same sentence with your note on the end. Only the copy
+        carries the note — the timeline stays a clean record of what happened, when.
+      </p>
+    </section>
+
+    <section id="chips">
+      <h2>Chips, one by one</h2>
+      <hr class="rule">
+
+      <p>
+        Chips are the entries you write over and over. They skip the role and reason
+        menus. A chip with a <strong>…</strong> after its name opens a short form first;
+        the rest insert straight away.
+      </p>
+
+      <figure>
+        <img src="{{IMG:02-chips}}" alt="Two rows of chips. Quick logs: Time, Key returned, Begin shift, Still out, End shift, Night lockup, Lobby checked. Tasks: Site tour in solid red, Read previous shift logs in green with a tick, Desk organized part-filled with pink.">
+        <figcaption>Quick logs on top, tracked Tasks below. The Tasks row is coloured by how you are doing — see <a href="#tasks">Task chips</a>.</figcaption>
+      </figure>
+
+      <h3>Quick logs</h3>
+      <div class="chips">
+
+        <div class="chip-entry">
+          <div><span class="pill">Time</span></div>
+          <div>
+            <p>Drops in just the timestamp and leaves your cursor after it.</p>
+            <p class="whenfor"><b>Use it for</b> anything you are going to type yourself. It saves you looking at the clock and keeps the format identical to every other line.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">Key returned</span></div>
+          <div>
+            <p>The only chip that does <em>not</em> start a new line. It adds “Key returned” to the end of the entry your cursor is already sitting on.</p>
+            <p class="whenfor"><b>Use it for</b> closing off the line where you logged the key going out, so the handing-out and the coming-back read as one event.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">Begin shift…</span></div>
+          <div>
+            <p>Builds the entire skeleton for your shift: the header, an empty line for every hour, and the standing note sections. <a href="#begin">Full details below.</a></p>
+            <p class="whenfor"><b>Use it for</b> the first thing you do when you sit down.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">Still out…</span></div>
+          <div>
+            <p>Lists everything the desk has lent out and not got back. Also the one place to mark something as returned. <a href="#stillout">Full details below.</a></p>
+            <p class="whenfor"><b>Use it for</b> the handover, and any time you need to know who has what.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">End shift…</span></div>
+          <div>
+            <p>Writes the closing line — you off site, your relief on site — and asks whether you handed the concierge keys over. It also stops the task deadlines.</p>
+            <p class="whenfor"><b>Use it for</b> the last thing you do before you leave. If you skip it, the task chips stay red forever.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">Night lockup</span></div>
+          <div>
+            <p>Inserts the full lockup wording: lobby quiet, music down, lights dimmed, vestibules checked and secured, back at the desk.</p>
+            <p class="whenfor"><b>Use it for</b> the overnight round. Read it back — if you did not actually dim the lights, edit the line.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">Lobby checked</span></div>
+          <div>
+            <p>A one-line “lobby inspected, all clear”.</p>
+            <p class="whenfor"><b>Use it for</b> a quick look round that does not need the full site tour.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <h3>Tasks</h3>
+      <p>
+        These three do the same job as a quick log, but the extension also keeps count
+        and colours the chip by how you are doing.
+      </p>
+
+      <div class="chips">
+
+        <div class="chip-entry">
+          <div><span class="pill overdue">Site tour…</span></div>
+          <div>
+            <p>Opens the walk checklist. <a href="#tour">Full details below.</a></p>
+            <p class="whenfor"><b>Expected</b> twice a shift. The first one inside the first two hours.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill done">Read previous shift logs ✓</span></div>
+          <div>
+            <p>Records that you read the last shift's pass-on notes.</p>
+            <p class="whenfor"><b>Expected</b> once, inside your first hour. The handover is only useful if it is read before the desk gets busy.</p>
+          </div>
+        </div>
+
+        <div class="chip-entry">
+          <div><span class="pill">Desk organized</span></div>
+          <div>
+            <p>Records the desk tidied and the dog treats and mints refilled.</p>
+            <p class="whenfor"><b>Expected</b> twice a shift.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="begin">
+      <h2>Begin shift</h2>
+      <hr class="rule">
+
+      <figure>
+        <img src="{{IMG:06-begin-shift}}" alt="The Begin shift form: Your name, Off-going, Shift dropdown and a 'Concierge keys received' checkbox, with a preview showing the shift header and one blank line per hour.">
+        <figcaption>Your name and the off-going concierge's name come out in red in the finished log.</figcaption>
+      </figure>
+
+      <p>Fill in three things and tick one box:</p>
+      <ul>
+        <li><strong>Your name</strong> and <strong>Off-going</strong> — who is coming on and who is leaving.</li>
+        <li><strong>Shift</strong> — which rota you are on. This sets the hour lines and every task deadline for the rest of the shift.</li>
+        <li><strong>Concierge keys received</strong> — tick it if you took the keys, and the opening line says so.</li>
+      </ul>
+
+      <p>What you get is a ready-made page: the header line, a blank timestamped line for every hour of your shift, and the standing sections at the bottom waiting to be filled.</p>
+
+      <div class="callout">
+        <h3>Begin shift also resets the tracking</h3>
+        <p>
+          Starting a shift wipes the task counts and the <em>Still out</em> list. That is on
+          purpose — you inherit no ticked tasks and no key list from the last person.
+        </p>
+        <p>
+          So use it <strong>once</strong>, at the start. Pressing it again mid-shift will clear
+          everything you have logged as still out.
+        </p>
+      </div>
+    </section>
+
+    <section id="tour">
+      <h2>Site tour</h2>
+      <hr class="rule">
+
+      <figure>
+        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist for VIA, headed 1ST FLOOR, with a row per area: a tick box and a 'Something to report' box, and a headcount on the pool and grill. The GYM row has a note typed in and its tick box is greyed out.">
+        <figcaption>VIA's twenty-one areas across six groups. The GYM row shows what happens when you type a note.</figcaption>
+      </figure>
+
+      <p>
+        The checklist is grouped by floor, in the order the walk is done — 1st floor, 4th floor,
+        6th, 8th, 9th, then the parking levels.
+        The floor heading stays on screen while you scroll, so you always know which one
+        you are looking at.
+      </p>
+
+      <p>One row per area, and everything on a row is optional:</p>
+      <ul>
+        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; some say something more specific, like <em>secured</em> on the emergency exit or <em>all clear and organized</em> on the lobby waiting area.</li>
+        <li><strong>Something to report</strong> — anything that was not right.</li>
+        <li><strong>A headcount</strong> on the pool and grill areas.</li>
+        <li><strong>A dropdown instead of a tick</strong> on the loading dock and the sitting
+          area. Both have two ordinary states and neither is a fault, so you pick one rather
+          than ticking: the dock is <em>secured</em> or <em>currently in use</em>, the sitting
+          area <em>all clear and organized</em> or <em>a couple of residents currently
+          there</em>. Those rows have no tick box at all — the pick is the report.</li>
+      </ul>
+
+      <p>
+        There are <strong>two Innovation rooms</strong>, on the 6th and the 8th, and they are
+        named the same. The floor heading above the row is what tells them apart — check
+        which one you are under before ticking.
+      </p>
+
+      <p>
+        <strong>An area you do not touch is not mentioned at all</strong>, and neither is a
+        floor you did not walk — its heading simply does not appear in the sentence. That
+        is the point: the log only ever claims what you actually looked at. If you only got
+        round half the building, only fill in that half.
+      </p>
+
+      <h3>All clear and a note cancel each other out</h3>
+      <p>
+        Those two contradict each other, so the form will not let you have both. Start
+        typing a note and the tick clears itself and greys out. Empty the note and the
+        tick comes back — but it does not tick itself again, because whether the area was
+        clear is your call, not the form's.
+      </p>
+
+      <h3>What it writes</h3>
+      <p>
+        Still one line, however many floors you covered. Each floor is named once and its
+        areas follow it:
+      </p>
+
+      <div class="log">
+        <span class="log-label">The whole walk, one line</span>
+        <span class="t">03:51 PM</span>: Site tour completed. <b>1st floor</b> - Entrance vestibule: all clear; Lobby waiting area: all clear and organized; Emergency exit: secured; Mail room: all clear; Loading dock: currently in use. <b>4th floor</b> - Sitting area: a couple of residents currently there; GYM: <b>treadmill out of order</b>; Conference room: all clear; Game room: all clear; Kitchen: all clear; Pool area: all clear (4 people); Grill area: all clear (2 people); Outside terrace: all clear; Fire place: all clear. <b>6th floor</b> - Innovation room: all clear. <b>8th floor</b> - Innovation room: all clear. <b>9th floor</b> - Sky View terrace: all clear. <b>Parking</b> - P1: all clear; P2: all clear; P3: all clear; Dog wash: clean.
+      </div>
+
+      <p>
+        Anything you reported comes out in bold, so it does not get lost in the middle of a
+        long line.
+      </p>
+    </section>
+
+    <section id="stillout">
+      <h2>Still out</h2>
+      <hr class="rule">
+
+      <figure>
+        <img src="{{IMG:07-still-out}}" alt="The Still out form listing three items with a Returned checkbox each: unit keys held by Sparkle Cleaning for unit 1204, a dolly for unit 804, and vendor keys held by Otis Elevator for the building.">
+        <figcaption>Keys and dollies on one list, each with the time it went out.</figcaption>
+      </figure>
+
+      <p>
+        Things get onto this list <strong>by themselves</strong>. When you log a reason that
+        hands something over — keys to a cleaner, a dolly to a resident, vendor keys — the
+        extension adds it. When you log the matching return, it comes off.
+      </p>
+      <p>
+        This form is the backstop for everything else. Tick <strong>Returned</strong> next to
+        anything that has come back, and it is off the list whichever way it was logged out.
+      </p>
+      <p>
+        Insert it at handover and the next person sees exactly what is outstanding. If
+        nothing is out, it says so rather than leaving an empty heading.
+      </p>
+
+      <div class="callout">
+        <h3>The ID rule</h3>
+        <p>
+          If you hand over a key that has to come back — a master key, a spare, a vendor
+          key — <strong>you hold an ID. No exceptions.</strong> The reason wordings say
+          “exchanged for an ID” because that is what happened.
+        </p>
+        <p>
+          The one case where you do not hold an ID: a key the resident owns and left at the
+          desk for someone to collect and keep.
+        </p>
+      </div>
+    </section>
+
+    <section id="dock">
+      <h2>The loading dock</h2>
+      <hr class="rule">
+
+      <p>
+        A dock booking is two log entries, usually days apart, and they live under
+        different roles because different people do them.
+      </p>
+
+      <p>
+        There is a third, unrelated one: the dock is also an area on the
+        <a href="#tour">site tour</a>, on the 1st floor. That is just the walk-past check
+        that it is in order — nothing to do with who booked it.
+      </p>
+
+      <h3>1 · When they book it</h3>
+      <p>
+        <strong>Resident → Book the loading dock.</strong> Take the date and the time slot,
+        and what they want it for if they say. Two outcomes: you reserved it, or the slot
+        was already gone and they need to pick another time.
+      </p>
+
+      <figure>
+        <img src="{{IMG:09-dock}}" alt="The panel with Resident and 'Book the loading dock' selected, showing Date, Time slot, For and Outcome boxes filled in for a furniture delivery.">
+      </figure>
+
+      <div class="log">
+        <span class="t">03:31 PM</span>: Resident <b>Alvarez</b> from unit (<b>1204</b>) came to the front desk to book the loading dock for 2026-05-02, 9:00 AM – 12:00 PM, for a furniture delivery; the loading dock was reserved for that time.
+      </div>
+
+      <p>
+        <strong>For</strong> is a dropdown — furniture delivery, large delivery, move-in,
+        move-out, contractor — with an <em>Other…</em> box for anything else. It is optional;
+        skip it and the sentence simply does not mention it.
+      </p>
+
+      <h3>2 · When they turn up to use it</h3>
+      <p>
+        <strong>Concierge → Loading dock readied.</strong> Log this when the resident comes
+        down or calls to say they are ready and you set the dock and elevator up. The
+        entry names what prompted you, so it does not claim anyone arrived until they did.
+      </p>
+
+      <div class="log">
+        <span class="t">03:32 PM</span>: The resident in unit (<b>804</b>) called in to advise they were ready to use the loading dock for a move-out; concierge <b>Misael</b> prepared the loading dock and elevator.
+      </div>
+
+      <p>
+        The time slot is optional here — the timestamp already says when — and there is a
+        free note box for what actually happened.
+      </p>
+    </section>
+
+    <section id="tasks">
+      <h2>Tasks it chases you about</h2>
+      <hr class="rule">
+
+      <p>
+        Three chips are on a clock — <strong>Site tour</strong>, <strong>Read previous shift
+        logs</strong> and <strong>Desk organized</strong>. Once you have started a shift, the
+        extension counts them and chases you when one falls behind. Nothing else in the
+        extension notifies you about anything.
+      </p>
+
+      <h3>The colour on the chip</h3>
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>Chip looks like</th><th>Means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="pill">Plain</span></td><td>Nothing due yet, or no shift started.</td></tr>
+            <tr><td><span class="pill" style="background:linear-gradient(90deg,var(--alert-soft) 55%,var(--sunk) 55%)">Part-filled</span></td><td>The clock is running. The fill grows as the deadline approaches.</td></tr>
+            <tr><td><span class="pill overdue">Solid red</span></td><td>Overdue. Do it now.</td></tr>
+            <tr><td><span class="pill done">Green with ✓</span></td><td>Done as many times as expected this shift.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The badge on the toolbar icon</h3>
+      <p>
+        You do not have to keep the panel open — or even be looking at the log. When a task
+        goes overdue, a red count appears on the extension's icon in the browser toolbar
+        and <strong>stays there until the task is done</strong>:
+      </p>
+      <p style="font-size:1.05rem">
+        Apex Shift Log Helper <span class="badge">2</span> &nbsp;· two tasks overdue right now.
+      </p>
+      <p>
+        The badge is the signal that cannot be missed or dismissed. It is not affected by
+        Do Not Disturb, and it does not go away on its own. Tick the task off and it clears
+        straight away.
+      </p>
+
+      <h3>The desktop notification</h3>
+      <p>
+        A notification also pops up the moment a deadline passes, and again
+        <strong>every half hour</strong> while the task is still outstanding — once and never
+        again is too easy to swipe away and forget. This is what it says:
+      </p>
+
+      <div class="toast">
+        <img src="{{IMG:icon}}" alt="">
+        <div>
+          <div class="toast-title">Shift task overdue</div>
+          <div class="toast-body">Site tour: 2 still needed before the shift ends.</div>
+          <div class="toast-src">Google Chrome · Apex Shift Log Helper</div>
+        </div>
+      </div>
+
+      <p>
+        One per overdue task. Clicking it brings the window you were working in back to
+        the front.
+      </p>
+
+      <div class="callout important">
+        <h3>If you never see a notification</h3>
+        <p>
+          Check two things, in this order:
+        </p>
+        <ol>
+          <li>
+            <strong>Did you press <em>Begin shift</em>?</strong> Deadlines are worked out from
+            the shift you picked there. No shift started means no deadlines, no badge and
+            no notifications — the chips just sit plain.
+          </li>
+          <li>
+            <strong>Are notifications allowed for Chrome?</strong> If the computer is set to
+            Do Not Disturb, or Chrome is not permitted to show notifications, the pop-up
+            never appears. The badge still works, so watch the toolbar icon.
+          </li>
+        </ol>
+      </div>
+
+      <h3>When the deadlines fall</h3>
+      <p>
+        They come from the shift you picked in <em>Begin shift</em>. The first site tour is
+        due inside your first two hours; <em>Read previous shift logs</em> inside your first
+        hour. Later ones have to close an hour before your shift ends, so nothing is left
+        to land in the handover.
+      </p>
+      <p>
+        <strong>Press <em>End shift</em> when you leave.</strong> It stops the clock. Skip it and
+        the deadlines keep running after you have gone home — the badge sits on the icon
+        overnight and the next person inherits red chips that mean nothing.
+      </p>
+    </section>
+
+    <section id="limits">
+      <h2>What it can't do</h2>
+      <hr class="rule">
+
+      <p>
+        The menus cover the shifts that repeat. They will never cover everything, and they
+        are not meant to. Expect to write entries yourself — that is normal use, not a
+        failure.
+      </p>
+
+      <h3>Things you will have to type</h3>
+      <ul>
+        <li><strong>Anything unusual.</strong> A fire alarm, a medical call, a police visit, a flood, a lift entrapment. Rare things do not belong in a menu you scroll past forty times a day.</li>
+        <li><strong>Conversations with any nuance.</strong> A complaint with a history to it, a dispute between neighbours, anything where the wording matters more than the facts.</li>
+        <li><strong>Anything you would want quoted back accurately.</strong> If it might be read by a lawyer or an insurer, write it in your own words.</li>
+        <li><strong>Follow-ups.</strong> The tool logs an event; it does not know that this is the third time the same resident has asked.</li>
+      </ul>
+
+      <h3>Things it deliberately will not say</h3>
+      <ul>
+        <li>
+          <strong>It will not raise a maintenance request.</strong> A concierge cannot file one.
+          The most the wording will claim is that you gave the resident the Emergency
+          Maintenance number to call themselves.
+        </li>
+        <li>
+          <strong>It will not claim a team was notified unless you say so.</strong> Reasons that
+          involve leasing or maintenance ask what actually happened — including “could not
+          be reached”, because that is the outcome the next shift most needs to know.
+        </li>
+      </ul>
+
+      <h3>What it gets wrong</h3>
+      <ul>
+        <li><strong>Close-but-not-right wording.</strong> Insert the nearest reason and edit it. Still faster than typing the whole line.</li>
+        <li><strong>Both copies of a flagged entry are word-for-word identical.</strong> If the maintenance team needs different detail than the concierge team, use the note box — or edit the filed copy afterwards.</li>
+        <li><strong>It does not know what you did while it was closed.</strong> Task counts only move when you press the chip.</li>
+      </ul>
+
+      <div class="callout important">
+        <h3>Same rule, one more time</h3>
+        <p>
+          Read every line after it goes in. The extension is a typist, not a witness —
+          it writes what you selected, not what happened.
+        </p>
+      </div>
+    </section>
+
+    <section id="trouble">
+      <h2>If something goes wrong</h2>
+      <hr class="rule">
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th>What you see</th><th>What to do</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Typing <kbd>;;</kbd> does nothing</td>
+              <td>Reload the page. A page that was already open when the extension was installed or updated has not loaded it yet.</td>
+            </tr>
+            <tr>
+              <td>Nothing happens in the Outlook app</td>
+              <td>The extension only works inside Chrome. Open Outlook in a browser tab.</td>
+            </tr>
+            <tr>
+              <td>The panel covers what you were typing</td>
+              <td>Expected when your cursor is near the bottom of the window — it opens upward so the Insert button stays reachable. Press <kbd>Esc</kbd> to dismiss it.</td>
+            </tr>
+            <tr>
+              <td>A flagged entry did not get filed</td>
+              <td>The section heading is missing from the log. Start the shift with <em>Begin shift</em> and the headings are there from the outset.</td>
+            </tr>
+            <tr>
+              <td>A red number on the toolbar icon that will not go away</td>
+              <td>One or more tracked tasks are overdue. Do them, or press <em>End shift</em> if the shift is over.</td>
+            </tr>
+            <tr>
+              <td>Task chips are red and it is not your shift</td>
+              <td>The last shift was never ended. Press <em>Begin shift</em> to reset, or <em>End shift</em> to stop the clock.</td>
+            </tr>
+            <tr>
+              <td>Something you lent out is not on <em>Still out</em></td>
+              <td>The reason you logged it under does not track handovers. Note it in the handover by hand.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Apex Shift Log Helper · front desk shift logs at VIA.
+    Questions, or a reason that should exist and doesn't — say so, and it can be added.
+  </footer>
+
+</div>
