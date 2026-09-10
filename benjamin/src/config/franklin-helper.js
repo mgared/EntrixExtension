@@ -1454,6 +1454,10 @@ export const SITE_TOUR_AREAS = [
     label: "Emergency exit",
     clear: "secured",
   },
+  // Walked like any other area. Booking it and setting it up are separate
+  // log entries under Resident and Concierge — this is just the check that
+  // it is in order on the round.
+  { id: "loadingDock", floor: "1st floor", label: "Loading dock" },
 
   { id: "sitting4", floor: "4th floor", label: "Sitting area" },
   { id: "gym", floor: "4th floor", label: "GYM" },
