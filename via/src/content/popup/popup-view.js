@@ -748,9 +748,22 @@ export function createPopupView() {
     // between the hint and the buttons rather than crowding them.
     const links = document.createElement("div");
     links.className = "links";
+    // A bare path is one of the extension's own pages, so it works with no
+    // account, no network and nothing hosted elsewhere. A full URL is left
+    // alone, for a site that keeps its pages somewhere else.
+    const resolve = (u) => {
+      if (!u) return "";
+      if (/^https?:\/\//i.test(u)) return u;
+      try {
+        return chrome.runtime.getURL(u);
+      } catch {
+        return "";
+      }
+    };
+
     for (const [label, url, tip] of [
-      ["Guide", getManualUrl(), "How to use this. Opens in a new tab"],
-      ["Site info", getSiteInfoUrl(), "The building and its policies. Opens in a new tab"],
+      ["Guide", resolve(getManualUrl()), "How to use this. Opens in a new tab"],
+      ["Site info", resolve(getSiteInfoUrl()), "The building and its policies. Opens in a new tab"],
     ]) {
       if (!url) continue;
       const link = document.createElement("button");
