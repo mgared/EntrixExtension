@@ -88,8 +88,11 @@ export const POPUP_STYLES = `
     align-items: flex-start;
     line-height: 1.3;
   }
+  /* Wide enough for the longest state any area offers — a clipped option
+     is unreadable at a glance, which is the only moment that matters on a
+     walk. The report box beside it flexes to take what is left. */
   .tour-status {
-    flex: 0 0 155px;
+    flex: 0 0 215px;
     font-size: 12.5px;
     padding: 4px 6px;
   }

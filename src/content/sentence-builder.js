@@ -298,8 +298,8 @@ export function buildItemsOut(entries = []) {
     const where = unit ? `unit (${unit})` : "the building";
     const whereH = unit ? `unit (<b>${esc(unit)}</b>)` : "the building";
 
-    t.push(`* ${where} — ${kind}${by}${since}`);
-    h.push(`* ${whereH} — ${esc(kind)}${byH}${esc(since)}`);
+    t.push(`* ${where} - ${kind}${by}${since}`);
+    h.push(`* ${whereH} - ${esc(kind)}${byH}${esc(since)}`);
   }
   return { html: h.join("<br>"), text: t.join("\n") };
 }
@@ -441,9 +441,9 @@ export function buildSiteTour({ areas = [], state = {} }) {
   // semicolon, since an area's own clauses are already comma-separated —
   // three levels need three separators to stay readable.
   const floorText = (f) =>
-    f.key ? `${f.key} — ${f.text.join("; ")}` : f.text.join("; ");
+    f.key ? `${f.key} - ${f.text.join("; ")}` : f.text.join("; ");
   const floorHtml = (f) =>
-    f.key ? `<b>${esc(f.key)}</b> — ${f.html.join("; ")}` : f.html.join("; ");
+    f.key ? `<b>${esc(f.key)}</b> - ${f.html.join("; ")}` : f.html.join("; ");
 
   const body = walked.map(floorText).join(". ");
   // A typed issue may already end in punctuation — don't double it up.
@@ -460,7 +460,7 @@ export function buildSentence({ role, reason, values = {} }) {
 
   if (!baseTemplate) {
     const label = role?.label || "";
-    const placeholder = label ? `${label} — pick a reason…` : "Pick a role…";
+    const placeholder = label ? `${label}: pick a reason…` : "Pick a role…";
     return { html: esc(placeholder), text: placeholder };
   }
 

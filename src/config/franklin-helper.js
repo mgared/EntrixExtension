@@ -1598,7 +1598,7 @@ export const QUICK_LOGS = [
     label: "Site tour",
     group: "tasks",
     task: "siteTour",
-    text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
+    text: "Site tour completed. All amenity floors checked, all doors checked, nothing to report.",
     form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
   },
   {

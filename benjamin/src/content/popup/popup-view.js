@@ -557,39 +557,51 @@ export function createPopupView() {
     name.textContent = area.label;
     row.appendChild(name);
 
-    const clearLabel = document.createElement("label");
-    clearLabel.className = "check";
-    const clear = document.createElement("input");
-    clear.type = "checkbox";
-    clear.checked = !!s.clear;
-    clear.addEventListener("change", () => {
-      s.clear = clear.checked;
-      updatePreview();
-    });
-    clearLabel.appendChild(clear);
-    // The box says exactly what ticking it will report, which for most
-    // areas is "all clear" but for some is the specific thing being
-    // confirmed — no guessing what a tick means.
-    clearLabel.appendChild(document.createTextNode(area.clear || "all clear"));
-    row.appendChild(clearLabel);
+    // Most areas confirm themselves with a tick. An area whose picker
+    // already covers every normal state (`tick: false`) has nothing left
+    // for a tick to add, and having both produced "all clear, currently
+    // in use" — so the column is held open empty and the picker speaks
+    // for the row.
+    let syncClear = () => {};
+    if (area.tick === false) {
+      const spacer = document.createElement("div");
+      spacer.className = "check";
+      row.appendChild(spacer);
+    } else {
+      const clearLabel = document.createElement("label");
+      clearLabel.className = "check";
+      const clear = document.createElement("input");
+      clear.type = "checkbox";
+      clear.checked = !!s.clear;
+      clear.addEventListener("change", () => {
+        s.clear = clear.checked;
+        updatePreview();
+      });
+      clearLabel.appendChild(clear);
+      // The box says exactly what ticking it will report, which for most
+      // areas is "all clear" but for some is the specific thing being
+      // confirmed: no guessing what a tick means.
+      clearLabel.appendChild(document.createTextNode(area.clear || "all clear"));
+      row.appendChild(clearLabel);
 
-    // "All clear" and something to report contradict each other, so an
-    // area can never carry both: typing a note unticks the box, and the
-    // box stays disabled until the note is emptied again. Disabling it
-    // rather than blanking the note means nothing typed is ever thrown
-    // away to resolve the conflict.
-    const syncClear = () => {
-      const reported = !!String(s.issue ?? "").trim();
-      if (reported && s.clear) {
-        s.clear = false;
-        clear.checked = false;
-      }
-      clear.disabled = reported;
-      clearLabel.classList.toggle("check-off", reported);
-      clearLabel.title = reported
-        ? "Empty the note to mark this area all clear"
-        : "";
-    };
+      // "All clear" and something to report contradict each other, so an
+      // area can never carry both: typing a note unticks the box, and the
+      // box stays disabled until the note is emptied again. Disabling it
+      // rather than blanking the note means nothing typed is ever thrown
+      // away to resolve the conflict.
+      syncClear = () => {
+        const reported = !!String(s.issue ?? "").trim();
+        if (reported && s.clear) {
+          s.clear = false;
+          clear.checked = false;
+        }
+        clear.disabled = reported;
+        clearLabel.classList.toggle("check-off", reported);
+        clearLabel.title = reported
+          ? "Empty the note to mark this area all clear"
+          : "";
+      };
+    }
 
     // Areas with a fixed set of states (the coffee machines) get a picker
     // beside the tick. Every control on a row is additive — ticking,

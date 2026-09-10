@@ -1428,6 +1428,17 @@ export const HELPER = {
 // sentence — most areas are just "all clear", but some have a specific
 // thing the walker is confirming. `options` adds a status dropdown, and
 // `people: true` adds an occupancy count box.
+// The two ordinary states of the loading dock. Neither is a fault, so
+// they sit in a picker beside the tick rather than in the report box,
+// which is for things that are wrong.
+const DOCK_STATES = ["secured", "currently in use"];
+
+// Likewise the sitting area: tidy, or in use by residents.
+const SITTING_STATES = [
+  "all clear and organized",
+  "a couple of residents currently there",
+];
+
 // Benjamin's walk route, in walking order, tagged with the floor it is
 // on. Consecutive areas sharing a `floor` form one group: the form heads
 // them with the floor name, and the sentence names the floor once rather
@@ -1456,11 +1467,23 @@ export const SITE_TOUR_AREAS = [
     clear: "secured",
   },
   // Walked like any other area. Booking it and setting it up are separate
-  // log entries under Resident and Concierge — this is just the check that
+  // log entries under Resident and Concierge; this is just the check that
   // it is in order on the round.
-  { id: "loadingDock", floor: "1st floor", label: "Loading dock" },
+  {
+    id: "loadingDock",
+    floor: "1st floor",
+    label: "Loading dock",
+    options: DOCK_STATES,
+    tick: false,
+  },
 
-  { id: "sitting4", floor: "4th floor", label: "Sitting area" },
+  {
+    id: "sitting4",
+    floor: "4th floor",
+    label: "Sitting area",
+    options: SITTING_STATES,
+    tick: false,
+  },
   { id: "gym", floor: "4th floor", label: "GYM" },
   { id: "conferenceRoom", floor: "4th floor", label: "Conference room" },
   { id: "kitchen", floor: "4th floor", label: "Kitchen" },
@@ -1547,7 +1570,7 @@ export const QUICK_LOGS = [
     label: "Site tour",
     group: "tasks",
     task: "siteTour",
-    text: "Site tour completed — all amenity floors checked, all doors checked, nothing to report.",
+    text: "Site tour completed. All amenity floors checked, all doors checked, nothing to report.",
     form: { kind: "siteTour", title: "Site tour", areas: SITE_TOUR_AREAS },
   },
   {
