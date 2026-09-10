@@ -449,6 +449,24 @@
         shift</a>. Everything that keeps count depends on it.
       </p>
 
+      <h3>Where it works</h3>
+      <p>
+        Anywhere you can type inside <strong>a web page in Chrome</strong>. That covers
+        Outlook on the web and Gmail in a browser tab, which is where the log gets
+        written.
+      </p>
+      <div class="callout important">
+        <h3>Not in the desktop Outlook app</h3>
+        <p>
+          The extension is part of the browser, so it cannot reach into a program running
+          outside it. Open the Outlook app and type <kbd>;;</kbd> and nothing happens —
+          not a fault, just out of reach.
+        </p>
+        <p>
+          If that is where you write your logs, open Outlook in a Chrome tab instead.
+        </p>
+      </div>
+
       <h3>Getting back to this page</h3>
       <p>
         <strong>Guide</strong>, along the bottom of the panel, opens this manual in a new
@@ -837,21 +855,28 @@
       <hr class="rule">
 
       <figure>
-        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist for Benjamin: a row per area with a tick box and a 'Something to report' text box, and a headcount on the pool and grill. The GYM row has a note typed in and its tick box is greyed out.">
-        <figcaption>All fourteen areas, in walking order — the list runs on past the fold to the terrace, the fire place and P1 to P3. The GYM row shows what happens when you type a note.</figcaption>
+        <img src="{{IMG:05-site-tour}}" alt="The Site tour checklist for Benjamin, headed 1ST FLOOR, with a row per area: a tick box and a 'Something to report' box, and a headcount on the pool and grill. The GYM row has a note typed in and its tick box is greyed out.">
+        <figcaption>Benjamin's seventeen areas across three groups. The GYM row shows what happens when you type a note.</figcaption>
       </figure>
 
-      <p>One row per area. Everything on a row is optional:</p>
+      <p>
+        The checklist is grouped by floor, in the order the walk is done — 1st floor, then 4th floor, then the parking levels.
+        The floor heading stays on screen while you scroll, so you always know which one
+        you are looking at.
+      </p>
+
+      <p>One row per area, and everything on a row is optional:</p>
       <ul>
-        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; two say something more specific, <em>all clear and organized</em> on the lobby waiting area and <em>secured</em> on the emergency exit.</li>
+        <li><strong>The tick box</strong> — says what you confirmed. For most areas that is “all clear”; some say something more specific, like <em>secured</em> on the emergency exit or <em>all clear and organized</em> on the lobby waiting area.</li>
         <li><strong>Something to report</strong> — anything that was not right.</li>
         <li><strong>A headcount</strong> on the pool and grill areas.</li>
       </ul>
 
       <p>
-        <strong>An area you do not touch is not mentioned at all.</strong> That is the point —
-        the log only ever claims what you actually looked at. If you only walked half the
-        building, only fill in that half.
+        <strong>An area you do not touch is not mentioned at all</strong>, and neither is a
+        floor you did not walk — its heading simply does not appear in the sentence. That
+        is the point: the log only ever claims what you actually looked at. If you only got
+        round half the building, only fill in that half.
       </p>
 
       <h3>All clear and a note cancel each other out</h3>
@@ -862,12 +887,21 @@
         clear is your call, not the form's.
       </p>
 
+      <h3>What it writes</h3>
+      <p>
+        Still one line, however many floors you covered. Each floor is named once and its
+        areas follow it:
+      </p>
+
       <div class="log">
         <span class="log-label">The whole walk, one line</span>
-        <span class="t">03:31 PM</span>: Site tour completed. Entrance vestibule: all clear; Lobby waiting area: all clear and organized; Emergency exit: secured; 4th floor sitting area: all clear; GYM: <b>treadmill out of order</b>; Conference room: all clear; Pool area: 3 people.
+        <span class="t">02:19 PM</span>: Site tour completed. <b>1st floor</b> — Entrance vestibule: all clear; Lobby waiting area: all clear and organized; Mail room: all clear; Emergency exit: secured; Loading dock: <b>pallet left by the door</b>. <b>4th floor</b> — Sitting area: all clear; GYM: all clear; Conference room: all clear; Kitchen: all clear; Pool area: all clear (2 people); Grill area: all clear; Terrace: all clear; Fire place: all clear. <b>Parking</b> — P1: all clear; P2: all clear; P3: all clear; Dog wash: clean.
       </div>
 
-      <p>Anything you reported comes out in bold, so it does not get lost in the middle of a long line.</p>
+      <p>
+        Anything you reported comes out in bold, so it does not get lost in the middle of a
+        long line.
+      </p>
     </section>
 
     <section id="stillout">
@@ -914,6 +948,12 @@
       <p>
         A dock booking is two log entries, usually days apart, and they live under
         different roles because different people do them.
+      </p>
+
+      <p>
+        There is a third, unrelated one: the dock is also an area on the
+        <a href="#tour">site tour</a>, on the 1st floor. That is just the walk-past check
+        that it is in order — nothing to do with who booked it.
       </p>
 
       <h3>1 · When they book it</h3>
@@ -1111,6 +1151,10 @@
             <tr>
               <td>Typing <kbd>;;</kbd> does nothing</td>
               <td>Reload the page. A page that was already open when the extension was installed or updated has not loaded it yet.</td>
+            </tr>
+            <tr>
+              <td>Nothing happens in the Outlook app</td>
+              <td>The extension only works inside Chrome. Open Outlook in a browser tab.</td>
             </tr>
             <tr>
               <td>The panel covers what you were typing</td>
