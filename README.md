@@ -4,7 +4,7 @@ A Chrome extension that helps concierges write shift logs faster. Typing
 `;;` in any text box opens a popup with role → reason dropdowns, one-click
 chips (Begin shift, Site tour, Night lockup…), and shift task tracking.
 
-## Two builds
+## Three builds
 
 This repo holds one build per building. They are separate extensions —
 install whichever you need.
@@ -13,32 +13,34 @@ install whichever you need.
 | --- | --- | --- |
 | ORA | repo root | Phrase Snippets — ORA |
 | Benjamin | `benjamin/` | Phrase Snippets — Benjamin |
+| VIA | `via/` | Phrase Snippets — VIA |
 
 ### Installing
 
 1. `chrome://extensions` → turn on **Developer mode** (top right)
-2. **Load unpacked** → pick the repo root for ORA, or the `benjamin/`
-   folder for Benjamin
+2. **Load unpacked** → pick the repo root for ORA, or the `benjamin/` or
+   `via/` folder
 3. Reload the tab you write logs in
 
-The `benjamin/` folder sits inside the ORA build. Chrome ignores it — only
-files the manifest names get loaded — so it costs nothing but disk. If you
-ever zip the root folder for the Chrome Web Store, delete `benjamin/` from
-the zip first: a second `manifest.json` inside the package will be
-rejected.
+The other builds' folders sit inside the ORA build. Chrome ignores them —
+only files the manifest names get loaded — so they cost nothing but disk.
+If you ever zip the root folder for the Chrome Web Store, delete
+`benjamin/` and `via/` from the zip first: a second `manifest.json` inside
+the package will be rejected.
 
-### Running both at once
+### Running more than one at once
 
-Both builds trigger on `;;`, so if you install both in the same Chrome
-profile, **two popups open on every trigger**. Pick one:
+Every build triggers on `;;`, so if you install more than one in the same
+Chrome profile, **a popup opens for each of them on every trigger**. Pick
+one:
 
 - Keep only the building you're working at enabled in `chrome://extensions`
   (the toggle is enough — no need to remove it), or
-- Change one build's trigger: `src/config/triggers.js`, the
+- Change a build's trigger: `src/config/triggers.js`, the
   `TRIGGER_SEQUENCE` line. `;;;` or `,,` both work.
 
 Shift state — tasks, items out, the badge — is stored per extension, so
-the two never mix.
+they never mix.
 
 ## What's different between the builds
 
@@ -55,17 +57,23 @@ Inside the config, the building-specific parts are:
 | --- | --- |
 | Building name in the log header | `SITE_NAME`, top of the file |
 | Site tour walk route | `SITE_TOUR_AREAS`, near the bottom |
+| The manual the Guide button opens | `MANUAL_URL`, top of the file |
 | Which roles and reasons exist | the role list — see below |
 
-The two builds share 12 roles and 59 reasons verbatim: generic front-desk
-work that reads the same at either building. On top of that,
+All three share 12 roles and 59 reasons verbatim: generic front-desk work
+that reads the same at any of them. On top of that,
 
-- **ORA** has a Pilgrim Parking role (4 reasons) — 13 roles, 63 reasons
-- **Benjamin** has two loading-dock reasons, one under Resident (booking
-  it) and one under Concierge (having it ready) — 12 roles, 61 reasons
+| Build | Roles | Reasons | Tour | Extra |
+| --- | --- | --- | --- | --- |
+| ORA | 13 | 63 | 20 areas, 4 floors | a Pilgrim Parking role |
+| Benjamin | 12 | 61 | 17 areas, 3 groups | loading-dock reasons |
+| VIA | 12 | 61 | 21 areas, 6 groups | loading-dock reasons |
 
-Two more things worth checking when you set up a new building — they're
-shared today but are written in ORA's words:
+**Benjamin and VIA are identical apart from `SITE_NAME`, `MANUAL_URL` and
+the walk route** — VIA simply has more amenities, over more floors.
+
+Two more things worth checking when you set up another building — they're
+shared everywhere but are written in ORA's words:
 
 - **Night lockup** chip: "resident vestibule and inner vestibule"
 - **Desk organized** chip: "dog treats and mints by the desk"
@@ -84,6 +92,7 @@ the popup. The URL lives in `MANUAL_URL` at the top of that build's
 | --- | --- |
 | ORA | https://claude.ai/code/artifact/2cef9ea9-eefc-4c43-a608-fcd55c785218 |
 | Benjamin | https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9 |
+| VIA | https://claude.ai/code/artifact/77ec2f86-9a66-4479-bb5c-76a354f44b7c |
 
 `docs/manual.src.html` is the one to edit — it keeps `{{IMG:name}}` tokens
 so it stays readable and diffable. `docs/manual.html` is the built copy
@@ -91,36 +100,40 @@ with the PNGs inlined as data URIs, and that is what gets published.
 Screenshots in `docs/screenshots/` are captured from the running popup,
 not mocked up, so they show each building's own areas and chips.
 
-## Copying a fix from one building to the other
+## Copying a fix to the other builds
 
 Because nothing outside the config, the manifest and `docs/` diverges,
 any fix elsewhere can be copied straight across:
 
 ```sh
-# from the repo root — copies every shared file into the Benjamin build
-for f in $(git ls-files | grep -v '^benjamin/' | grep -v '^docs/' | grep -v -e '^manifest.json$' \
-    -e '^src/config/franklin-helper.js$' -e '^SNIPPETS.md$' -e '^README.md$' -e '^.gitignore$'); do
-  cp "$f" "benjamin/$f"
+# from the repo root — copies every shared file into the other builds
+for f in $(git ls-files | grep -vE '^(benjamin|via|docs)/' \
+    | grep -vE '^(manifest\.json|SNIPPETS\.md|README\.md|\.gitignore)$' \
+    | grep -v '^src/config/franklin-helper\.js$'); do
+  for b in benjamin via; do cp "$f" "$b/$f"; done
 done
 ```
 
 Then check nothing unexpected drifted:
 
 ```sh
-for f in $(git ls-files | grep -v '^benjamin/'); do
-  [ -f "benjamin/$f" ] && { cmp -s "$f" "benjamin/$f" || echo "DIFFERS: $f"; }
+for b in benjamin via; do
+  for f in $(git ls-files | grep -vE '^(benjamin|via)/'); do
+    [ -f "$b/$f" ] && { cmp -s "$f" "$b/$f" || echo "$b DIFFERS: $f"; }
+  done
 done
 ```
 
-Only `manifest.json`, `src/config/franklin-helper.js`, `SNIPPETS.md`,
-`README.md`, `.gitignore` and everything under `docs/` should show up.
+Only `manifest.json`, `src/config/franklin-helper.js`, `SNIPPETS.md` and
+everything under `docs/` should show up.
 
 If you changed a role or reason template, regenerate the reference doc for
 that build:
 
 ```sh
-node generate-snippets-doc.mjs             # ORA
-cd benjamin && node generate-snippets-doc.mjs   # Benjamin
+node generate-snippets-doc.mjs                    # ORA
+(cd benjamin && node generate-snippets-doc.mjs)   # Benjamin
+(cd via && node generate-snippets-doc.mjs)        # VIA
 ```
 
 `SNIPPETS.md` lists every role and reason with a blank and a filled
