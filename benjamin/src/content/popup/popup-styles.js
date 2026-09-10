@@ -52,6 +52,23 @@ export const POPUP_STYLES = `
     overflow-y: auto;
     padding-right: 2px;
   }
+  /* Floor headings inside the walk checklist. Sticky so the floor you are
+     looking at stays named while the list scrolls under it. */
+  .tour-floor {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #ffffff;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #1a73e8;
+    padding: 8px 0 3px;
+    border-bottom: 1px solid rgba(26, 115, 232, 0.22);
+    margin-bottom: 2px;
+  }
+  .tour-floor:first-child { padding-top: 0; }
   .tour-row {
     display: flex;
     align-items: center;

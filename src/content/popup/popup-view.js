@@ -384,7 +384,17 @@ export function createPopupView() {
     } else {
       const list = document.createElement("div");
       list.className = "tour";
+      // A heading each time the floor changes, so the checklist reads in
+      // the order the walk is actually done.
+      let floor = null;
       for (const area of chip.form.areas || []) {
+        if (area.floor && area.floor !== floor) {
+          floor = area.floor;
+          const head = document.createElement("div");
+          head.className = "tour-floor";
+          head.textContent = floor;
+          list.appendChild(head);
+        }
         list.appendChild(renderTourRow(area, state[area.id]));
       }
       root.appendChild(list);

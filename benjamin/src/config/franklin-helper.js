@@ -1428,37 +1428,49 @@ export const HELPER = {
 // sentence — most areas are just "all clear", but some have a specific
 // thing the walker is confirming. `options` adds a status dropdown, and
 // `people: true` adds an occupancy count box.
-// Benjamin's walk route, in walking order. Each entry is one row in the
-// Site tour form:
+// Benjamin's walk route, in walking order, tagged with the floor it is
+// on. Consecutive areas sharing a `floor` form one group: the form heads
+// them with the floor name, and the sentence names the floor once rather
+// than on every area.
 //
-//   { id, label }                     tick box + free-text issue box
-//   { id, label, clear: "..." }       ...with custom wording on the tick
-//   { id, label, options: [...] }     ...plus a status dropdown
-//   { id, label, people: true }       ...plus an occupancy count box
+//   { id, floor, label }              tick box + free-text issue box
+//   { id, floor, label, clear }       ...with custom wording on the tick
+//   { id, floor, label, options }     ...plus a status dropdown
+//   { id, floor, label, people }      ...plus an occupancy count box
 //
-// `id` is internal (any unique string). `label` is what the walker sees
-// and what the sentence names. `clear` is what ticking the box reports;
-// it defaults to "all clear" where no wording is given. Every control is
-// optional — an area left untouched is simply not mentioned in the log.
+// `id` is internal (any unique string). `clear` defaults to "all clear".
+// Every control is optional — an area left untouched is not mentioned.
 export const SITE_TOUR_AREAS = [
-  { id: "entranceVestibule", label: "Entrance vestibule" },
+  { id: "entranceVestibule", floor: "1st floor", label: "Entrance vestibule" },
   {
     id: "lobbyWaiting",
+    floor: "1st floor",
     label: "Lobby waiting area",
     clear: "all clear and organized",
   },
-  { id: "emergencyExit", label: "Emergency exit", clear: "secured" },
-  { id: "sitting4", label: "4th floor sitting area" },
-  { id: "gym", label: "GYM" },
-  { id: "conferenceRoom", label: "Conference room" },
-  { id: "kitchen", label: "Kitchen" },
-  { id: "pool", label: "Pool area", people: true },
-  { id: "grill", label: "Grill area", people: true },
-  { id: "terrace", label: "Terrace" },
-  { id: "fireplace", label: "Fire place" },
-  { id: "p1", label: "P1" },
-  { id: "p2", label: "P2" },
-  { id: "p3", label: "P3" },
+  {
+    id: "emergencyExit",
+    floor: "1st floor",
+    label: "Emergency exit",
+    clear: "secured",
+  },
+
+  { id: "sitting4", floor: "4th floor", label: "Sitting area" },
+  { id: "gym", floor: "4th floor", label: "GYM" },
+  { id: "conferenceRoom", floor: "4th floor", label: "Conference room" },
+  { id: "kitchen", floor: "4th floor", label: "Kitchen" },
+  { id: "pool", floor: "4th floor", label: "Pool area", people: true },
+  { id: "grill", floor: "4th floor", label: "Grill area", people: true },
+  { id: "terrace", floor: "4th floor", label: "Terrace" },
+  { id: "fireplace", floor: "4th floor", label: "Fire place" },
+
+  // The three garage levels are one group: P1 and P2 are checked as
+  // levels with nothing on them to name separately, so heading each with
+  // its own floor would put the same words twice on every row.
+  { id: "p1", floor: "Parking", label: "P1" },
+  { id: "p2", floor: "Parking", label: "P2" },
+  { id: "p3", floor: "Parking", label: "P3" },
+  { id: "dogWash", floor: "Parking", label: "Dog wash", clear: "clean" },
 ];
 
 // Concierge shifts as [start, end) hours on a 24h clock. The hours are
