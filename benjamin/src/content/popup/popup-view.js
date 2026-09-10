@@ -18,6 +18,7 @@ import {
   getQuickLogs,
   getHighlights,
   getManualUrl,
+  getSiteInfoUrl,
 } from "../../config/form-schema.js";
 import {
   buildSentence,
@@ -740,21 +741,28 @@ export function createPopupView() {
     hint.textContent = "Enter = Insert · Esc = Cancel";
     actions.appendChild(hint);
 
-    // The manual, for anyone who needs reminding what a chip does. Opens in
-    // its own tab so nothing typed here is lost. Both this and the hint take
-    // an auto margin, which splits the free space and leaves the link sitting
-    // between them rather than crowding the buttons.
-    const manual = getManualUrl();
-    if (manual) {
-      const guide = document.createElement("button");
-      guide.className = "guide";
-      guide.textContent = "Guide";
-      guide.title = "How to use this — opens in a new tab";
-      guide.addEventListener("click", () => {
-        window.open(manual, "_blank", "noopener,noreferrer");
+    // Two reference pages, for anyone who needs reminding what a chip does
+    // or what the policy is. Each opens in its own tab so nothing typed
+    // here is lost, and each is skipped where this build has no such page.
+    // The group takes the auto margin the hint leaves, so the links sit
+    // between the hint and the buttons rather than crowding them.
+    const links = document.createElement("div");
+    links.className = "links";
+    for (const [label, url, tip] of [
+      ["Guide", getManualUrl(), "How to use this. Opens in a new tab"],
+      ["Site info", getSiteInfoUrl(), "The building and its policies. Opens in a new tab"],
+    ]) {
+      if (!url) continue;
+      const link = document.createElement("button");
+      link.className = "guide";
+      link.textContent = label;
+      link.title = tip;
+      link.addEventListener("click", () => {
+        window.open(url, "_blank", "noopener,noreferrer");
       });
-      actions.appendChild(guide);
+      links.appendChild(link);
     }
+    if (links.children.length) actions.appendChild(links);
 
     const cancel = document.createElement("button");
     cancel.className = "secondary";

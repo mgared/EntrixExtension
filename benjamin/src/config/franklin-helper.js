@@ -461,10 +461,15 @@ const DOCK_PURPOSE_OTHER_FIELD = {
   showWhen: { key: "purpose", value: "Other" },
 };
 
-// The staff manual, opened by the Guide button in the popup. Empty string
-// hides the button.
+// Two reference pages the popup can open, each hidden when its URL is
+// empty. The Guide is how to use the extension; Site info is the building
+// and the policies that apply at it.
 export const MANUAL_URL =
   "https://claude.ai/code/artifact/9048cc3e-0bc0-487e-bf3f-82b3c0ae27d9";
+
+// Building, policies, contacts. Opened by the Site info button.
+export const SITE_INFO_URL =
+  "https://claude.ai/code/artifact/e2fe6aa9-8194-47ef-8064-c2adc6ceddd9";
 
 export const HELPER = {
   defaultRoleId: "resident",

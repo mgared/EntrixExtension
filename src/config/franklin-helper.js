@@ -397,10 +397,15 @@ const OPTIONAL_UNIT_FIELD = {
   placeholder: "(optional)",
 };
 
-// The staff manual, opened by the Guide button in the popup. Empty string
-// hides the button.
+// Two reference pages the popup can open, each hidden when its URL is
+// empty. The Guide is how to use the extension; Site info is the building
+// and the policies that apply at it.
 export const MANUAL_URL =
   "https://claude.ai/code/artifact/2cef9ea9-eefc-4c43-a608-fcd55c785218";
+
+// Building, policies, contacts. Opened by the Site info button.
+export const SITE_INFO_URL =
+  "https://claude.ai/code/artifact/d69c71d1-2f25-4e55-9a40-eedcc93cdfd1";
 
 export const HELPER = {
   defaultRoleId: "resident",

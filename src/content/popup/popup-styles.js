@@ -279,10 +279,14 @@ export const POPUP_STYLES = `
     color: #fff;
   }
   button.primary:hover { background: #1765cc; }
-  /* A way out to the manual, not one of the form's own actions — so it
-     reads as a link rather than a third button competing with Insert. */
-  .guide {
+  /* Ways out to the reference pages, not the form's own actions, so they
+     read as links rather than buttons competing with Insert. */
+  .links {
+    display: flex;
+    gap: 2px;
     margin-right: auto;
+  }
+  .guide {
     background: transparent;
     border-color: transparent;
     color: #1a73e8;

@@ -7,6 +7,7 @@ import {
   QUICK_LOGS,
   HIGHLIGHTS,
   MANUAL_URL,
+  SITE_INFO_URL,
 } from "./franklin-helper.js";
 
 export function getRoles() {
@@ -38,4 +39,10 @@ export function getHighlights() {
 // rather than sending the desk to another building's instructions.
 export function getManualUrl() {
   return MANUAL_URL || "";
+}
+
+// Same rule: no page, no button. Policies are per-building, so pointing a
+// desk at another site's would be worse than showing nothing.
+export function getSiteInfoUrl() {
+  return SITE_INFO_URL || "";
 }
