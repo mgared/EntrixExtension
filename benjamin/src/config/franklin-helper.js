@@ -1448,6 +1448,7 @@ export const SITE_TOUR_AREAS = [
     label: "Lobby waiting area",
     clear: "all clear and organized",
   },
+  { id: "mailRoom", floor: "1st floor", label: "Mail room" },
   {
     id: "emergencyExit",
     floor: "1st floor",
