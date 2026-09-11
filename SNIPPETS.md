@@ -16,7 +16,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ## Roles at a glance
 
 - Resident (11 reasons; role fields: name, unit, contact)
-- Guest (6 reasons; role fields: name, unit, residentName, contact)
+- Guest (5 reasons; role fields: name, unit, residentName, contact)
 - App delivery (4 reasons; role fields: app, appOther, unit)
 - Dog Walker (5 reasons; role fields: name, company, unit)
 - Cleaner (5 reasons; role fields: name, company, unit)
@@ -112,11 +112,6 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - **Empty:** 10:00 AM: Guest returned the unit keys for unit (####) to the front desk and their ID was handed back.
 - **Filled:** 10:00 AM: Guest John returned the unit keys for unit (234 Marry) to the front desk and their ID was handed back.
-
-### Sent up — per earlier request
-
-- **Empty:** 10:00 AM: Guest of unit (####) came to the front desk and was sent up as per the resident's earlier request.
-- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk and was sent up as per the resident's earlier request.
 
 ## App delivery
 

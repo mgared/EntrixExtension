@@ -60,14 +60,14 @@ Inside the config, the building-specific parts are:
 | The manual the Guide button opens | `MANUAL_URL`, top of the file |
 | Which roles and reasons exist | the role list — see below |
 
-All three share 12 roles and 59 reasons verbatim: generic front-desk work
+All three share 12 roles and 58 reasons verbatim: generic front-desk work
 that reads the same at any of them. On top of that,
 
 | Build | Roles | Reasons | Tour | Extra |
 | --- | --- | --- | --- | --- |
-| ORA | 13 | 63 | 20 areas, 4 floors | a Pilgrim Parking role |
-| Benjamin | 12 | 61 | 17 areas, 3 groups | loading-dock reasons |
-| VIA | 12 | 61 | 21 areas, 6 groups | loading-dock reasons |
+| ORA | 13 | 62 | 20 areas, 4 floors | a Pilgrim Parking role |
+| Benjamin | 12 | 60 | 17 areas, 3 groups | loading-dock reasons |
+| VIA | 12 | 60 | 21 areas, 6 groups | loading-dock reasons |
 
 **Benjamin and VIA are identical apart from `SITE_NAME`, `MANUAL_URL` and
 the walk route** — VIA simply has more amenities, over more floors.
