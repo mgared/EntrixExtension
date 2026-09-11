@@ -392,12 +392,13 @@
   }
 </style>
 <style>
-  /* Sections nobody has filled in yet. Loud on purpose: a policy page that
-     looks complete when it is not is worse than no policy page. */
+  /* Something this page does not carry. Quiet on purpose: it is a pointer
+     for the reader, not a note about the page being unfinished. */
   .todo {
-    border: 1px dashed var(--alert);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
     border-radius: 4px;
-    background: var(--alert-soft);
+    background: var(--sunk);
     padding: 16px 20px;
     margin: 0 0 20px;
   }
@@ -408,8 +409,8 @@
     font-size: 10px;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--alert);
-    border: 1px solid var(--alert);
+    color: var(--accent);
+    border: 1px solid var(--accent);
     border-radius: 3px;
     padding: 1px 6px;
     margin-bottom: 9px;
@@ -865,12 +866,8 @@
         </table>
       </div>
       <p>Clear the patio on time. It does not clear itself, and 11 PM is 11 PM.</p>
-      <div class="todo"><div class="todo-tag">Fill in</div>
-        <p>
-          The <strong>pool area</strong> is walked on the site tour but has no rules
-          here: closing time, guest limit, and whether the pets and glass rules match
-          Benjamin's.
-        </p>
+      <div class="todo"><div class="todo-tag">Connecteam</div>
+        <p>Pool area hours, guest limits and pet rules are not on this page. <strong>Check the Connecteam knowledge base.</strong></p>
       </div>
     </section>
 
@@ -1089,13 +1086,8 @@
           </tbody>
         </table>
       </div>
-      <div class="todo"><div class="todo-tag">Fill in</div>
-        <ul>
-          <li><strong>The VIA concierge line.</strong></li>
-          <li>Total units, for the property table.</li>
-          <li>The local police non-emergency number.</li>
-          <li>Apex, and who to reach out of hours.</li>
-        </ul>
+      <div class="todo"><div class="todo-tag">Connecteam</div>
+        <p>Any number not listed above — the VIA concierge line, police non-emergency, after-hours Apex escalation — is in the <strong>Connecteam knowledge base</strong>.</p>
       </div>
     </section>
 
@@ -1119,8 +1111,9 @@
   </main>
 
   <footer>
-    Apex Shift Log Helper · site information for VIA. Soft launch: incomplete by
-    design. The Connecteam knowledge base is the source of truth.
+    Apex Shift Log Helper · site information for VIA.
+    Anything not here is in the Connecteam knowledge base, which is the source
+    of truth.
   </footer>
 
 </div>

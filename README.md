@@ -98,11 +98,13 @@ empty string to hide that link.
 Opening them from a page needs `docs/*` in the manifest's
 `web_accessible_resources`, which is why it is there.
 
-**The site info pages are deliberately part written.** Sections marked
-*Fill in* are policy nobody has supplied yet, and they are loud on the
-page on purpose: a policy page that looks finished when it is not is
-worse than no policy page. `docs/site-info.html` is written by hand, so it
-has no `.src` twin.
+**The site info pages do not carry everything.** Where something is
+missing they say so and point at the Connecteam knowledge base, which is
+the source of truth — the pages are a shortcut, not a replacement. Those
+notes are written for the concierge reading the page, not as a to-do
+list, so adding the missing policy means replacing the note rather than
+filling in a blank. `docs/site-info.html` is written by hand, so it has
+no `.src` twin.
 
 `docs/manual.src.html` is the one to edit — it keeps `{{IMG:name}}` tokens
 so it stays readable and diffable. `docs/manual.html` is the built copy
