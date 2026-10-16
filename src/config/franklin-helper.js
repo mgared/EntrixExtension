@@ -1664,7 +1664,6 @@ export const SHIFT_SECTIONS = [
   "PROPERTY MANAGEMENT NOTES",
   "CONCIERGE TEAM NOTES",
   "FACILITY/MAINTENANCE NOTES",
-  "INCIDENTS OF NOTE",
 ];
 
 // One-click "quick log" chips rendered under the popup preview. A plain
@@ -1773,9 +1772,11 @@ export const HIGHLIGHTS = [
     section: "FACILITY/MAINTENANCE NOTES",
   },
   {
-    key: "incident",
-    label: "Incident",
+    // Incidents go in a Connecteam report, not the log, so the fourth box
+    // is a move-out instead: same tint, filed with the move keys.
+    key: "moveOut",
+    label: "Move out",
     color: HIGHLIGHT_YELLOW,
-    section: "INCIDENTS OF NOTE",
+    section: "MOVE IN/MOVE OUT KEYS",
   },
 ];
