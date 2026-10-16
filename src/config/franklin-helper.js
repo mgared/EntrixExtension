@@ -310,6 +310,8 @@ const PLACES_FOR_ITEM = {
   keys: [PLACE.keyLockBox, PLACE.keytrack],
   "an envelope": [PLACE.keyLockBox, PLACE.packageRoom, PLACE.mailbox, PLACE.leasingOffice],
   "a parking pass": [PLACE.keyLockBox, PLACE.packageRoom, PLACE.mailbox, PLACE.leasingOffice],
+  // Move-out keys are being returned, not stored for collection.
+  "moveout keys": [PLACE.leasingOffice, PLACE.keyLockBox],
   "a package": [PLACE.packageRoom, PLACE.fridge, PLACE.parcelPending],
   "a bag": [PLACE.packageRoom, PLACE.fridge, PLACE.parcelPending],
   Other: EVERY_PLACE,
@@ -361,6 +363,16 @@ const DROP_ITEM_FIELD = {
     { value: "a bag", label: "Bag" },
     { value: "a parking pass", label: "Parking pass" },
     { value: "Other", label: "Other…" },
+  ],
+};
+
+// Only a resident moves out, so only a resident's list carries the keys.
+const RESIDENT_DROP_ITEM_FIELD = {
+  ...DROP_ITEM_FIELD,
+  options: [
+    DROP_ITEM_FIELD.options[0],
+    { value: "moveout keys", label: "Moveout keys" },
+    ...DROP_ITEM_FIELD.options.slice(1),
   ],
 };
 
@@ -460,11 +472,16 @@ export const HELPER = {
           id: "dropKeys",
           label: "Drop off for pickup",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to drop {item} for {recipient} to pick-up later. (stored {storage})",
+            "Resident[ {name}] from unit ({unit}) {contact} to drop {item}[ for {recipient} to pick-up later]. (stored {storage})",
           fields: [
-            DROP_ITEM_FIELD,
+            RESIDENT_DROP_ITEM_FIELD,
             DROP_ITEM_OTHER_FIELD,
-            { key: "recipient", label: "Drop for (name)", kind: "text" },
+            {
+              key: "recipient",
+              label: "Drop for (name)",
+              kind: "text",
+              showWhen: { key: "item", not: "moveout keys" },
+            },
             STORAGE_FIELD,
           ],
         },

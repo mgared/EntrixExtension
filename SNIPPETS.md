@@ -33,7 +33,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### Drop off for pickup
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored ####)
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys. (stored ####)
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored in the key lock box)
 
 ### Pick up something left for them

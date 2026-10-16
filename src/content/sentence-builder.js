@@ -105,13 +105,19 @@ function formatTime(d = new Date()) {
 }
 
 // A field with `showWhen: { key, value }` only applies while another field
-// holds a given value — e.g. the free-text courier box that appears only
+// holds a given value — or `{ key, not: value }` for the inverse. Either
+// takes a single value or a list — e.g. the free-text courier box that appears only
 // once "Other" is picked. Shared with the popup so the form and the
 // rendered sentence agree on which fields count.
 export function isFieldVisible(field, values) {
   const cond = field?.showWhen;
   if (!cond) return true;
-  return String(values?.[cond.key] ?? "") === String(cond.value);
+  const have = String(values?.[cond.key] ?? "");
+  const any = (x) => (Array.isArray(x) ? x : [x]).some((v) => String(v) === have);
+  // `not` is for the field that applies to everything except one case —
+  // a recipient, say, which every drop-off has but a returned key does not.
+  if (cond.not !== undefined) return !any(cond.not);
+  return any(cond.value);
 }
 
 // A field with `optionsWhen: { key, map, default }` offers a different set
