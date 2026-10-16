@@ -17,16 +17,16 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 - Resident (11 reasons; role fields: name, unit, contact)
 - Guest (5 reasons; role fields: name, unit, residentName, contact)
-- App delivery (4 reasons; role fields: app, appOther, unit)
+- App delivery (3 reasons; role fields: app, appOther, unit)
 - Dog Walker (5 reasons; role fields: name, company, unit)
 - Cleaner (5 reasons; role fields: name, company, unit)
 - Vendor (4 reasons; role fields: name, company, forWhat, unit, area)
 - Item / property (2 reasons; role fields: name, unit)
 - Maintenance (4 reasons; role fields: name)
-- Leasing Office (5 reasons; role fields: name)
+- Leasing Office (4 reasons; role fields: name)
 - Prospect (2 reasons; role fields: name, contactInfo)
 - Package (4 reasons; role fields: courier, courierOther)
-- Concierge (7 reasons; role fields: name)
+- Concierge (8 reasons; role fields: name)
 - Pilgrim Parking (4 reasons; role fields: name)
 
 ## Resident
@@ -34,7 +34,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Drop off for pickup
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to drop keys for #### to pick-up later. (stored ####)
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored by desk cabinet)
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to drop keys for Helen to pick-up later. (stored in the key lock box)
 
 ### Pick up something left for them
 
@@ -44,24 +44,24 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Report something
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to report that ####.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to report that their kitchen sink is leaking. Emergency Maintenance contact information was provided for the resident to call directly, and the resident was advised same-evening response could not be guaranteed.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to report that their kitchen sink is leaking. Emergency Maintenance contact information was provided for the resident to call directly.
 
 ### Missing package
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to inquire about a missing package from #### that was delivered on ####.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to inquire about a missing package from Amazon that was delivered on 2026-04-25.
 
-### Unit lockout
+### Master key use to unlock
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request entry into their unit because they forgot their keys.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request entry into their unit because they forgot their keys.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request entry into their unit because they didn't have their keys.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request entry into their unit because they didn't have their keys.
 
 ### Grabbed dolly
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly; the concierge assisted after confirmation.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly; the concierge assisted after confirmation.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to grab a dolly; an ID was held in exchange.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to grab a dolly; an ID was held in exchange.
 
-### Request elevator access
+### Requested elevator access
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request elevator access; access was granted after confirmation.
 - **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request elevator access; access was granted after confirmation.
@@ -73,8 +73,8 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### Send a guest up
 
-- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request that guest #### be sent up.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request that guest Marcus be sent up.
+- **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to request that guest #### be sent up upon arrival.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to request that guest Marcus be sent up upon arrival.
 
 ### Returned dolly
 
@@ -84,7 +84,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Asked to speak with leasing
 
 - **Empty:** 10:00 AM: Resident from unit (####) came to the front desk to speak with the leasing office; ####.
-- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to speak with the leasing office; a member of the leasing team came down to assist.
+- **Filled:** 10:00 AM: Resident John from unit (234) came to the front desk to speak with the leasing office; the leasing office was able to assist.
 
 ## Guest
 
@@ -101,7 +101,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Drop off for pickup
 
 - **Empty:** 10:00 AM: Guest of unit (####) came to the front desk to drop keys for ####. (stored ####)
-- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to drop keys for Helen. (stored by desk cabinet)
+- **Filled:** 10:00 AM: Guest John of unit (234 Marry) came to the front desk to drop keys for Helen. (stored in the key lock box)
 
 ### Given unit keys
 
@@ -117,23 +117,18 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ### Delivered — awaiting pickup
 
-- **Empty:** 10:00 AM: App delivery from #### for unit (####) was delivered and is awaiting pick-up at the front desk; ####.
-- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) was delivered and is awaiting pick-up at the front desk; the resident was reached and notified.
+- **Empty:** 10:00 AM: Delivery from #### for unit (####) was delivered and is awaiting pick-up at the front desk; ####.
+- **Filled:** 10:00 AM: Delivery from DoorDash for unit (234) was delivered and is awaiting pick-up at the front desk; the resident was reached and notified.
 
 ### Not picked up >30 min — stored
 
-- **Empty:** 10:00 AM: App delivery from #### for unit (####) has not been picked-up for more than 30 minutes; ####. The delivery was stored at the front desk.
-- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) has not been picked-up for more than 30 minutes; the resident was reached and notified. The delivery was stored at the front desk.
+- **Empty:** 10:00 AM: Delivery from #### for unit (####) has not been picked-up for more than 30 minutes; ####. The delivery was stored at the front desk.
+- **Filled:** 10:00 AM: Delivery from DoorDash for unit (234) has not been picked-up for more than 30 minutes; the resident was reached and notified. The delivery was stored at the front desk.
 
 ### Collected by resident
 
-- **Empty:** 10:00 AM: App delivery from #### for unit (####) was collected from the front desk.
-- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) was collected from the front desk.
-
-### Sent up / left at door
-
-- **Empty:** 10:00 AM: App delivery from #### for unit (####) was ####.
-- **Filled:** 10:00 AM: App delivery from DoorDash for unit (234) was sent up to the unit after resident confirmation.
+- **Empty:** 10:00 AM: Delivery from #### for unit (####) was collected from the front desk.
+- **Filled:** 10:00 AM: Delivery from DoorDash for unit (234) was collected from the front desk.
 
 ## Dog Walker
 
@@ -209,14 +204,14 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Asked to speak with leasing
 
 - **Empty:** 10:00 AM: Vendor asked to speak with the leasing office; ####.
-- **Filled:** 10:00 AM: Vendor John asked to speak with the leasing office; a member of the leasing team came down to assist.
+- **Filled:** 10:00 AM: Vendor John asked to speak with the leasing office; the leasing office was able to assist.
 
 ## Item / property
 
 ### Left for storage
 
 - **Empty:** 10:00 AM: Resident of unit (####) left keys at the front desk to collect later. Stored ####.
-- **Filled:** 10:00 AM: Resident John of unit (234) left keys at the front desk to collect later. Stored by desk cabinet.
+- **Filled:** 10:00 AM: Resident John of unit (234) left keys at the front desk to collect later. Stored in the key lock box.
 
 ### Found property
 
@@ -247,15 +242,10 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 
 ## Leasing Office
 
-### Staff arrived
-
-- **Empty:** 10:00 AM: Leasing office staff arrived regarding ####.
-- **Filled:** 10:00 AM: Leasing office staff John arrived regarding a maintenance follow-up.
-
 ### Dropped something off
 
 - **Empty:** 10:00 AM: Leasing office staff dropped off #### at the front desk. (stored ####)
-- **Filled:** 10:00 AM: Leasing office staff John dropped off a rent check at the front desk for unit (234). (stored by desk cabinet)
+- **Filled:** 10:00 AM: Leasing office staff John dropped off a rent check at the front desk for unit (234). (stored in the key lock box)
 
 ### Picked something up
 
@@ -277,12 +267,12 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Tour
 
 - **Empty:** 10:00 AM: Prospect walked in for a tour; ####.
-- **Filled:** 10:00 AM: Prospect John walked in for a tour; a member of the leasing team came down to assist.
+- **Filled:** 10:00 AM: Prospect John walked in for a tour; the leasing office was able to assist.
 
 ### Availability inquiry
 
 - **Empty:** 10:00 AM: Prospect came to the front desk to ask about availability; ####.
-- **Filled:** 10:00 AM: Prospect John came to the front desk to ask about availability; a member of the leasing team came down to assist.
+- **Filled:** 10:00 AM: Prospect John came to the front desk to ask about availability; the leasing office was able to assist.
 
 ## Package
 
@@ -323,6 +313,11 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 - **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) regarding ####; ####.
 - **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) regarding ####; the resident was reached and notified.
 
+### Asked resident for entry permission
+
+- **Empty:** 10:00 AM: Concierge contacted the resident in unit (####) to request permission for the maintenance team to enter the unit; ####.
+- **Filled:** 10:00 AM: Concierge John contacted the resident in unit (234) to request permission for the maintenance team to enter the unit, as requested by the maintenance team; permission was granted.
+
 ### Sorted/processed packages
 
 - **Empty:** 10:00 AM: Concierge sorted and processed packages in the package room while maintaining visibility at the front desk.
@@ -358,7 +353,7 @@ Sample values used in the "Filled" line for text/date fields: name=`John`, unit=
 ### Drop something off
 
 - **Empty:** 10:00 AM: Pilgrim Parking staff dropped off #### at the front desk. (stored ####)
-- **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234). (stored by desk cabinet)
+- **Filled:** 10:00 AM: Pilgrim Parking staff John dropped off a rent check at the front desk for unit (234). (stored in the key lock box)
 
 ### Towing / violation
 
