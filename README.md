@@ -60,14 +60,15 @@ Inside the config, the building-specific parts are:
 | The manual the Guide button opens | `MANUAL_URL`, top of the file |
 | Which roles and reasons exist | the role list — see below |
 
-All three share 12 roles and 59 reasons verbatim: generic front-desk work
-that reads the same at any of them. On top of that,
+ORA's reasons have been through a round of real-use corrections that
+Benjamin and VIA have not, so the three configs no longer share wording
+reason-for-reason. On top of the roles they have in common,
 
 | Build | Roles | Reasons | Tour | Extra |
 | --- | --- | --- | --- | --- |
-| ORA | 13 | 63 | 20 areas, 4 floors | a Pilgrim Parking role |
-| Benjamin | 12 | 61 | 17 areas, 3 groups | loading-dock reasons |
-| VIA | 12 | 61 | 21 areas, 6 groups | loading-dock reasons |
+| ORA | 13 | 61 | 20 areas, 4 floors | a Pilgrim Parking role |
+| Benjamin | 12 | 60 | 17 areas, 3 groups | loading-dock reasons |
+| VIA | 12 | 60 | 21 areas, 6 groups | loading-dock reasons |
 
 **Benjamin and VIA are identical apart from `SITE_NAME`, `MANUAL_URL` and
 the walk route** — VIA simply has more amenities, over more floors.
@@ -98,11 +99,13 @@ empty string to hide that link.
 Opening them from a page needs `docs/*` in the manifest's
 `web_accessible_resources`, which is why it is there.
 
-**The site info pages are deliberately part written.** Sections marked
-*Fill in* are policy nobody has supplied yet, and they are loud on the
-page on purpose: a policy page that looks finished when it is not is
-worse than no policy page. `docs/site-info.html` is written by hand, so it
-has no `.src` twin.
+**The site info pages do not carry everything.** Where something is
+missing they say so and point at the Connecteam knowledge base, which is
+the source of truth — the pages are a shortcut, not a replacement. Those
+notes are written for the concierge reading the page, not as a to-do
+list, so adding the missing policy means replacing the note rather than
+filling in a blank. `docs/site-info.html` is written by hand, so it has
+no `.src` twin.
 
 `docs/manual.src.html` is the one to edit — it keeps `{{IMG:name}}` tokens
 so it stays readable and diffable. `docs/manual.html` is the built copy

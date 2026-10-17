@@ -679,6 +679,14 @@ export const HELPER = {
                   label: "Granted — guest list",
                 },
                 {
+                  // The resident already authorised this when they asked for
+                  // the guest to be sent up, so nothing is confirmed afresh
+                  // at the desk. Pairs with the Resident "Send a guest up"
+                  // reason, which is the other half of the same event.
+                  value: "granted as per the resident's earlier request",
+                  label: "Granted — earlier request",
+                },
+                {
                   value: "denied after failing to reach resident",
                   label: "Denied — couldn't reach",
                 },
@@ -719,14 +727,6 @@ export const HELPER = {
           label: "Returned unit keys",
           template:
             "Guest[ {name}] returned the unit keys for unit ({unit}[ {residentName}]) to the front desk and their ID was handed back.",
-        },
-        {
-          id: "sentUpPerRequest",
-          label: "Sent up — per earlier request",
-          // The arrival half of the resident's ;re9 request, where the
-          // authorisation already happened and needs no fresh confirmation.
-          template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} and was sent up as per the resident's earlier request.",
         },
       ],
     },

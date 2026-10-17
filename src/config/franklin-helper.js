@@ -99,6 +99,14 @@ const SERVICE_KEYS_OUTCOME = {
       issuesKeys: true,
     },
     {
+      // The resident authorised this when they asked, so nothing is
+      // confirmed afresh at the desk — but the ID is still held.
+      value:
+        "confirmed by the resident's earlier request, keys exchanged for an ID",
+      label: "Granted — earlier request",
+      issuesKeys: true,
+    },
+    {
       value: "denied, failed to confirm with resident",
       label: "Denied — couldn't reach",
     },
@@ -193,51 +201,45 @@ const PROSPECT_OUTCOME = {
   kind: "select",
   options: [
     {
-      value: "a member of the leasing team came down to assist",
-      label: "Leasing came down",
-    },
-    {
-      value: "the leasing team was informed for follow-up",
-      label: "Leasing informed",
-    },
-    {
-      value: "the prospect was directed to the leasing office",
-      label: "Sent to leasing office",
+      value: "the leasing office was able to assist",
+      label: "Leasing assisted",
     },
     {
       value:
-        "the leasing team could not be reached and the prospect's details were taken for follow-up",
-      label: "No reach — details taken",
-    },
-    {
-      value: "the leasing team could not be reached and the prospect left",
-      label: "No reach — prospect left",
+        "leasing was unavailable at the moment and the prospect was given the leasing email address to follow up",
+      label: "Unavailable — emailed",
     },
   ],
 };
 
 // Someone at the desk asking for leasing, when leasing may or may not be
 // reachable. Kept apart from the prospect wording, which names a prospect.
+// The leasing office is beside the desk, so nobody comes down from
+// anywhere: either they were there, or they were not.
+const LEASING_ASSISTED = "the leasing office was able to assist";
+
 const LEASING_REQUEST_OUTCOME = {
   key: "outcome",
   label: "Outcome",
   kind: "select",
   options: [
-    {
-      value: "a member of the leasing team came down to assist",
-      label: "Leasing came down",
-    },
-    {
-      value: "the leasing team was informed for follow-up",
-      label: "Leasing informed",
-    },
-    { value: "they were directed to the leasing office", label: "Sent to office" },
+    { value: LEASING_ASSISTED, label: "Leasing assisted" },
     {
       value:
-        "the leasing team could not be reached and their details were taken for follow-up",
-      label: "No reach — details taken",
+        "leasing was unavailable at the moment and they were given the leasing email address to follow up",
+      label: "Unavailable — emailed",
     },
   ],
+};
+
+// Only worth asking once leasing actually assisted.
+const LEASING_STAFF_FIELD = {
+  key: "leasingStaff",
+  label: "Who assisted",
+  kind: "text",
+  optional: true,
+  placeholder: "(optional)",
+  showWhen: { key: "outcome", value: LEASING_ASSISTED },
 };
 
 // Opening a unit with the master key is a different act from lending a key
@@ -286,16 +288,41 @@ const COURIER_OTHER_FIELD = {
 
 // Where something handed to the desk ends up. Shared by every reason that
 // takes custody of an item, so the log names the same four places each time.
+// Where a thing can be put. The desk cabinet is deliberately not here —
+// nothing is kept on the desk.
+const PLACE = {
+  keyLockBox: { value: "in the key lock box", label: "Key lock box" },
+  keytrack: { value: "in keytrack", label: "Keytrack" },
+  packageRoom: { value: "in the package room", label: "Package room" },
+  mailbox: { value: "in the mailbox", label: "Mailbox" },
+  leasingOffice: { value: "at the leasing office", label: "Leasing office" },
+  fridge: { value: "in the fridge", label: "Fridge" },
+  parcelPending: { value: "in Parcel Pending", label: "Parcel Pending" },
+};
+
+const EVERY_PLACE = Object.values(PLACE);
+
+// Keys do not go in the package room and a package does not go in the key
+// lock box. Pairing the places to the item here means the form cannot offer
+// somewhere the thing must not go, rather than relying on the concierge to
+// know. "Other" is the one case nobody can predict, so it gets everything.
+const PLACES_FOR_ITEM = {
+  keys: [PLACE.keyLockBox, PLACE.keytrack],
+  "an envelope": [PLACE.keyLockBox, PLACE.packageRoom, PLACE.mailbox, PLACE.leasingOffice],
+  "a parking pass": [PLACE.keyLockBox, PLACE.packageRoom, PLACE.mailbox, PLACE.leasingOffice],
+  // Move-out keys are being returned, not stored for collection.
+  "moveout keys": [PLACE.leasingOffice, PLACE.keyLockBox],
+  "a package": [PLACE.packageRoom, PLACE.fridge, PLACE.parcelPending],
+  "a bag": [PLACE.packageRoom, PLACE.fridge, PLACE.parcelPending],
+  Other: EVERY_PLACE,
+};
+
 const STORAGE_FIELD = {
   key: "storage",
   label: "Stored",
   kind: "select",
-  options: [
-    { value: "by desk cabinet", label: "Desk cabinet" },
-    { value: "by key lock box", label: "Key lock box" },
-    { value: "inside package room", label: "Package room" },
-    { value: "in keytrack", label: "Keytrack" },
-  ],
+  optionsWhen: { key: "item", map: PLACES_FOR_ITEM, default: EVERY_PLACE },
+  options: EVERY_PLACE,
 };
 
 // How an attempt to reach a resident actually went. Whether they picked up
@@ -336,6 +363,16 @@ const DROP_ITEM_FIELD = {
     { value: "a bag", label: "Bag" },
     { value: "a parking pass", label: "Parking pass" },
     { value: "Other", label: "Other…" },
+  ],
+};
+
+// Only a resident moves out, so only a resident's list carries the keys.
+const RESIDENT_DROP_ITEM_FIELD = {
+  ...DROP_ITEM_FIELD,
+  options: [
+    DROP_ITEM_FIELD.options[0],
+    { value: "moveout keys", label: "Moveout keys" },
+    ...DROP_ITEM_FIELD.options.slice(1),
   ],
 };
 
@@ -384,11 +421,24 @@ const DELIVERY_STORAGE = {
   label: "Held",
   kind: "select",
   default: "at the front desk",
+  // A held delivery is a package, so it goes where packages go — with the
+  // front desk kept, since that is where one sits while it waits.
   options: [
     { value: "at the front desk", label: "Front desk" },
-    { value: "in the fridge", label: "Fridge" },
-    { value: "in the package room", label: "Package room" },
+    PLACE.packageRoom,
+    PLACE.fridge,
+    PLACE.parcelPending,
   ],
+};
+
+// Who dropped the thing off, on the pickup half of the exchange. Optional:
+// the desk does not always know, and a #### is worse than silence.
+const LEFT_BY_FIELD = {
+  key: "leftBy",
+  label: "Left by",
+  kind: "text",
+  optional: true,
+  placeholder: "(optional)",
 };
 
 const OPTIONAL_UNIT_FIELD = {
@@ -422,11 +472,16 @@ export const HELPER = {
           id: "dropKeys",
           label: "Drop off for pickup",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to drop {item} for {recipient} to pick-up later. (stored {storage})",
+            "Resident[ {name}] from unit ({unit}) {contact} to drop {item}[ for {recipient} to pick-up later]. (stored {storage})",
           fields: [
-            DROP_ITEM_FIELD,
+            RESIDENT_DROP_ITEM_FIELD,
             DROP_ITEM_OTHER_FIELD,
-            { key: "recipient", label: "Drop for (name)", kind: "text" },
+            {
+              key: "recipient",
+              label: "Drop for (name)",
+              kind: "text",
+              showWhen: { key: "item", not: "moveout keys" },
+            },
             STORAGE_FIELD,
           ],
         },
@@ -434,14 +489,14 @@ export const HELPER = {
           id: "pickupKeys",
           label: "Pick up something left for them",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to pick up {item} left for them after identification was confirmed.",
-          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD],
+            "Resident[ {name}] from unit ({unit}) {contact} to pick up {item} left for them[ by {leftBy}] after identification was confirmed.",
+          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD, LEFT_BY_FIELD],
         },
         {
           id: "report",
           label: "Report something",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to report that {description}.[ The report concerns unit ({aboutUnit}).][ {action}]",
+            "Resident[ {name}] from unit ({unit}) {contact} to report that {description}.[ The report concerns unit ({aboutUnit}).][ {action}][ The concierge was able to {didWhat}.]",
           fields: [
             { key: "description", label: "Report details", kind: "text" },
             {
@@ -463,23 +518,32 @@ export const HELPER = {
               options: [
                 {
                   value:
-                    "Emergency Maintenance contact information was provided for the resident to call directly, and the resident was advised same-evening response could not be guaranteed.",
+                    "Emergency Maintenance contact information was provided for the resident to call directly.",
                   label: "Emergency contact given",
                 },
                 {
+                  // What the desk actually promises, rather than a vague
+                  // "will be notified" the resident cannot act on.
                   value:
-                    "Emergency Maintenance contact information was provided for the resident to call directly.",
-                  label: "Emergency contact given (short)",
-                },
-                {
-                  value: "The maintenance team will be notified for follow-up.",
+                    "They were informed that the concierge will notify the maintenance team and leave a note for them to check first thing tomorrow.",
                   label: "Flagged for maintenance",
                 },
                 {
-                  value: "The leasing office will be notified for follow-up.",
+                  value:
+                    "They were informed that the concierge will notify the leasing office and leave a note for them to check first thing tomorrow.",
                   label: "Flagged for leasing",
                 },
               ],
+            },
+            {
+              // Sometimes the desk just fixes it. Its own segment rather than
+              // an option, so it can be logged alongside a flag as well as
+              // instead of one.
+              key: "didWhat",
+              label: "Concierge was able to",
+              kind: "text",
+              optional: true,
+              placeholder: "reset the breaker in the hallway",
             },
           ],
         },
@@ -496,20 +560,41 @@ export const HELPER = {
         },
         {
           id: "lockout",
-          label: "Unit lockout",
+          label: "Master key use to unlock",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to request entry into their unit because they forgot their keys.",
+            "Resident[ {name}] from unit ({unit}) {contact} to request entry into their unit because they didn't have their keys.",
         },
         {
           id: "grabbedDolly",
           label: "Grabbed dolly",
           tracksOut: { dir: "out", kind: "a dolly" },
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; the concierge assisted after confirmation.",
+            "Resident[ {name}] from unit ({unit}) {contact} to grab a dolly; {collateral} in exchange.",
+          fields: [
+            {
+              key: "collateral",
+              label: "Held in exchange",
+              kind: "radio",
+              default: "an ID was held",
+              options: [
+                { value: "an ID was held", label: "ID" },
+                { value: "Other", label: "Something else…" },
+              ],
+            },
+            {
+              key: "collateralOther",
+              label: "What was held",
+              kind: "text",
+              // Carries its own wording, like the item boxes above.
+              placeholder: "a phone was held",
+              replaces: "collateral",
+              showWhen: { key: "collateral", value: "Other" },
+            },
+          ],
         },
         {
           id: "elevatorAccess",
-          label: "Request elevator access",
+          label: "Requested elevator access",
           template:
             "Resident[ {name}] from unit ({unit}) {contact} to request elevator access; access was granted after confirmation.",
         },
@@ -523,7 +608,7 @@ export const HELPER = {
           id: "sendUpGuest",
           label: "Send a guest up",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to request that guest {guestName} be sent up.",
+            "Resident[ {name}] from unit ({unit}) {contact} to request that guest {guestName} be sent up upon arrival.",
           fields: [{ key: "guestName", label: "Guest name", kind: "text" }],
         },
         {
@@ -537,7 +622,7 @@ export const HELPER = {
           id: "askedLeasing",
           label: "Asked to speak with leasing",
           template:
-            "Resident[ {name}] from unit ({unit}) {contact} to speak with the leasing office[ regarding {purpose}]; {outcome}.",
+            "Resident[ {name}] from unit ({unit}) {contact} to speak with the leasing office[ regarding {purpose}]; {outcome}[ ({leasingStaff})].",
           fields: [
             {
               key: "purpose",
@@ -547,6 +632,7 @@ export const HELPER = {
               placeholder: "(optional)",
             },
             LEASING_REQUEST_OUTCOME,
+            LEASING_STAFF_FIELD,
           ],
         },
       ],
@@ -587,6 +673,14 @@ export const HELPER = {
                   label: "Granted — guest list",
                 },
                 {
+                  // The resident already authorised this when they asked for
+                  // the guest to be sent up, so nothing is confirmed afresh
+                  // at the desk. Pairs with the Resident "Send a guest up"
+                  // reason, which is the other half of the same event.
+                  value: "granted as per the resident's earlier request",
+                  label: "Granted — earlier request",
+                },
+                {
                   value: "denied after failing to reach resident",
                   label: "Denied — couldn't reach",
                 },
@@ -598,8 +692,8 @@ export const HELPER = {
           id: "pickupKeys",
           label: "Pick up something left for them",
           template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to pick up {item} left for them after identification was confirmed.",
-          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD],
+            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} to pick up {item} left for them[ by {leftBy}] after identification was confirmed.",
+          fields: [DROP_ITEM_FIELD, DROP_ITEM_OTHER_FIELD, LEFT_BY_FIELD],
         },
         {
           id: "dropKeys",
@@ -628,14 +722,6 @@ export const HELPER = {
           template:
             "Guest[ {name}] returned the unit keys for unit ({unit}[ {residentName}]) to the front desk and their ID was handed back.",
         },
-        {
-          id: "sentUpPerRequest",
-          label: "Sent up — per earlier request",
-          // The arrival half of the resident's ;re9 request, where the
-          // authorisation already happened and needs no fresh confirmation.
-          template:
-            "Guest[ {name}] of unit ({unit}[ {residentName}]) {contact} and was sent up as per the resident's earlier request.",
-        },
       ],
     },
     {
@@ -647,7 +733,7 @@ export const HELPER = {
           id: "delivered",
           label: "Delivered — awaiting pickup",
           template:
-            "App delivery from {app} for unit ({unit}) was delivered and is awaiting pick-up {storage}; {outcome}.",
+            "Delivery from {app} for unit ({unit}) was delivered and is awaiting pick-up {storage}; {outcome}.",
           fields: [DELIVERY_STORAGE, CONTACT_OUTCOME],
         },
         {
@@ -657,41 +743,14 @@ export const HELPER = {
           // a delivery usually sits thirty minutes precisely because the
           // resident could not be reached, and only food belongs in a fridge.
           template:
-            "App delivery from {app} for unit ({unit}) has not been picked-up for more than 30 minutes; {outcome}. The delivery was stored {storage}.",
+            "Delivery from {app} for unit ({unit}) has not been picked-up for more than 30 minutes; {outcome}. The delivery was stored {storage}.",
           fields: [DELIVERY_STORAGE, CONTACT_OUTCOME],
         },
         {
           id: "collected",
           label: "Collected by resident",
           template:
-            "App delivery from {app} for unit ({unit}) was collected from the front desk.",
-        },
-        {
-          id: "notHeld",
-          label: "Sent up / left at door",
-          template:
-            "App delivery from {app} for unit ({unit}) was {disposition}.",
-          fields: [
-            {
-              key: "disposition",
-              label: "Disposition",
-              kind: "radio",
-              options: [
-                {
-                  value: "sent up to the unit after resident confirmation",
-                  label: "Sent up — confirmed",
-                },
-                {
-                  value: "left at the unit door by the driver",
-                  label: "Left at door",
-                },
-                {
-                  value: "handed to the resident in the lobby",
-                  label: "Handed in lobby",
-                },
-              ],
-            },
-          ],
+            "Delivery from {app} for unit ({unit}) was collected from the front desk.",
         },
       ],
     },
@@ -844,7 +903,7 @@ export const HELPER = {
           id: "askedLeasing",
           label: "Asked to speak with leasing",
           template:
-            "Vendor[ {name}][ from {company}] asked to speak with the leasing office[ regarding {purpose}]; {outcome}.",
+            "Vendor[ {name}][ from {company}] asked to speak with the leasing office[ regarding {purpose}]; {outcome}[ ({leasingStaff})].",
           fields: [
             {
               key: "purpose",
@@ -854,6 +913,7 @@ export const HELPER = {
               placeholder: "(optional)",
             },
             LEASING_REQUEST_OUTCOME,
+            LEASING_STAFF_FIELD,
           ],
         },
       ],
@@ -986,13 +1046,6 @@ export const HELPER = {
       label: "Leasing Office",
       fields: [NAME_FIELD],
       reasons: [
-        {
-          id: "arrived",
-          label: "Staff arrived",
-          template:
-            "Leasing office staff[ {name}] arrived regarding {subject}.",
-          fields: [{ key: "subject", label: "Regarding", kind: "text" }],
-        },
         {
           id: "dropOff",
           label: "Dropped something off",
@@ -1228,6 +1281,58 @@ export const HELPER = {
             UNIT_FIELD,
             { key: "message", label: "Regarding", kind: "text" },
             CONTACT_OUTCOME,
+          ],
+        },
+        {
+          // Maintenance and leasing ask the desk to get permission; the
+          // resident answers yes, no, or "come at this time", and the third
+          // answer is the one a flat yes/no would lose.
+          id: "entryPermission",
+          label: "Asked resident for entry permission",
+          template:
+            "Concierge[ {name}] contacted the resident in unit ({unit}) to request permission for {entrant} to enter the unit[, as requested by {requestedBy}]; {entryOutcome}.",
+          fields: [
+            UNIT_FIELD,
+            {
+              key: "entrant",
+              label: "To let in",
+              kind: "select",
+              default: "the maintenance team",
+              options: [
+                { value: "the maintenance team", label: "Maintenance" },
+                { value: "pest control", label: "Pest control" },
+              ],
+            },
+            {
+              key: "requestedBy",
+              label: "Asked by",
+              kind: "select",
+              optional: true,
+              placeholder: "(not stated)",
+              options: [
+                { value: "the maintenance team", label: "Maintenance" },
+                { value: "the leasing office", label: "Leasing" },
+              ],
+            },
+            {
+              key: "entryOutcome",
+              label: "Resident said",
+              kind: "radio",
+              options: [
+                { value: "permission was granted", label: "Yes" },
+                { value: "permission was declined", label: "No" },
+                { value: "Other", label: "Asked for a time…" },
+              ],
+            },
+            {
+              key: "entryTime",
+              label: "What they said",
+              kind: "text",
+              // Carries its own wording, like the other free-text boxes.
+              placeholder: "they asked that entry be arranged for Thursday morning",
+              replaces: "entryOutcome",
+              showWhen: { key: "entryOutcome", value: "Other" },
+            },
           ],
         },
         {
@@ -1559,7 +1664,6 @@ export const SHIFT_SECTIONS = [
   "PROPERTY MANAGEMENT NOTES",
   "CONCIERGE TEAM NOTES",
   "FACILITY/MAINTENANCE NOTES",
-  "INCIDENTS OF NOTE",
 ];
 
 // One-click "quick log" chips rendered under the popup preview. A plain
@@ -1668,9 +1772,11 @@ export const HIGHLIGHTS = [
     section: "FACILITY/MAINTENANCE NOTES",
   },
   {
-    key: "incident",
-    label: "Incident",
+    // Incidents go in a Connecteam report, not the log, so the fourth box
+    // is a move-out instead: same tint, filed with the move keys.
+    key: "moveOut",
+    label: "Move out",
     color: HIGHLIGHT_YELLOW,
-    section: "INCIDENTS OF NOTE",
+    section: "MOVE IN/MOVE OUT KEYS",
   },
 ];

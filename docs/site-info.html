@@ -392,12 +392,13 @@
   }
 </style>
 <style>
-  /* Sections nobody has filled in yet. Loud on purpose: a policy page that
-     looks complete when it is not is worse than no policy page. */
+  /* Something this page does not carry. Quiet on purpose: it is a pointer
+     for the reader, not a note about the page being unfinished. */
   .todo {
-    border: 1px dashed var(--alert);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
     border-radius: 4px;
-    background: var(--alert-soft);
+    background: var(--sunk);
     padding: 16px 20px;
     margin: 0 0 20px;
   }
@@ -408,8 +409,8 @@
     font-size: 10px;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--alert);
-    border: 1px solid var(--alert);
+    color: var(--accent);
+    border: 1px solid var(--accent);
     border-radius: 3px;
     padding: 1px 6px;
     margin-bottom: 9px;
@@ -1004,11 +1005,8 @@
           write one down at the desk.
         </p>
       </div>
-      <div class="todo"><div class="todo-tag">Fill in</div>
-        <p>
-          One line saying exactly where a concierge should go for them, so this
-          section answers the question instead of just refusing it.
-        </p>
+      <div class="todo"><div class="todo-tag">Connecteam</div>
+        <p>Logins and codes are not on this page. <strong>Check the Connecteam knowledge base</strong>, or ask leadership.</p>
       </div>
     </section>
 
@@ -1020,13 +1018,8 @@
         presence, situational awareness, accurate logging, timely reporting, and
         resident-first service.
       </p>
-      <div class="todo"><div class="todo-tag">Fill in</div>
-        <ul>
-          <li>Who a concierge reports to, and who to escalate to.</li>
-          <li>Timekeeping, scheduling, and how to request time off.</li>
-          <li>Uniform and appearance standards.</li>
-          <li>What a new starter is expected to have read before their first shift.</li>
-        </ul>
+      <div class="todo"><div class="todo-tag">Connecteam</div>
+        <p>Reporting lines, scheduling, time off and appearance standards are not on this page. <strong>Check the Connecteam knowledge base.</strong></p>
       </div>
     </section>
 
@@ -1044,23 +1037,17 @@
           </tbody>
         </table>
       </div>
-      <div class="todo"><div class="todo-tag">Fill in</div>
-        <p>Still missing, and worth having on one page at three in the morning:</p>
-        <ul>
-          <li>The local police non-emergency number, written out.</li>
-          <li>Property manager, and who to reach after hours.</li>
-          <li>Leasing office.</li>
-          <li>Cleaning team.</li>
-          <li>Apex, and out-of-hours escalation.</li>
-        </ul>
+      <div class="todo"><div class="todo-tag">Connecteam</div>
+        <p>Any number not listed above — police non-emergency, the property manager, after-hours escalation — is in the <strong>Connecteam knowledge base</strong>.</p>
       </div>
     </section>
 
   </main>
 
   <footer>
-    Apex Shift Log Helper · site information for ORA. Soft launch: incomplete by
-    design. The Connecteam knowledge base is the source of truth.
+    Apex Shift Log Helper · site information for ORA.
+    Anything not here is in the Connecteam knowledge base, which is the source
+    of truth.
   </footer>
 
 </div>

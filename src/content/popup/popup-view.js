@@ -31,6 +31,8 @@ import {
   applyHighlight,
   withNote,
   isFieldVisible,
+  fieldOptions,
+  isOptionAllowed,
 } from "../sentence-builder.js";
 import {
   getShiftState,
@@ -166,9 +168,18 @@ export function createPopupView() {
   // doesn't reappear after switching roles, reasons, or a `showWhen`
   // parent (e.g. moving the courier off "Other").
   function pruneStaleValues() {
-    const visible = new Set(currentFields().map((f) => f.key));
+    const fields = currentFields();
+    const visible = new Set(fields.map((f) => f.key));
     for (const k of Object.keys(values)) {
       if (!visible.has(k)) delete values[k];
+    }
+    // A place that was valid for the last item may not be valid for this
+    // one, so the selection goes rather than quietly standing.
+    for (const f of fields) {
+      if (!isOptionAllowed(f, values, values[f.key])) {
+        delete values[f.key];
+        inputCache.delete(f.key);
+      }
     }
     for (const k of [...inputCache.keys()]) {
       if (!visible.has(k)) inputCache.delete(k);
@@ -897,7 +908,7 @@ export function createPopupView() {
       blank.textContent = def.placeholder || "Select…";
       select.appendChild(blank);
     }
-    for (const opt of def.options || []) {
+    for (const opt of fieldOptions(def, values)) {
       const option = document.createElement("option");
       const value = typeof opt === "string" ? opt : opt.value;
       const text = typeof opt === "string" ? opt : opt.label || opt.value;
@@ -920,7 +931,7 @@ export function createPopupView() {
     const group = document.createElement("div");
     group.className = "radio-group";
     const groupName = `radio-${def.key}`;
-    for (const opt of def.options || []) {
+    for (const opt of fieldOptions(def, values)) {
       const value = typeof opt === "string" ? opt : opt.value;
       const text = typeof opt === "string" ? opt : opt.label || opt.value;
       const item = document.createElement("label");

@@ -105,13 +105,41 @@ function formatTime(d = new Date()) {
 }
 
 // A field with `showWhen: { key, value }` only applies while another field
-// holds a given value — e.g. the free-text courier box that appears only
+// holds a given value — or `{ key, not: value }` for the inverse. Either
+// takes a single value or a list — e.g. the free-text courier box that appears only
 // once "Other" is picked. Shared with the popup so the form and the
 // rendered sentence agree on which fields count.
 export function isFieldVisible(field, values) {
   const cond = field?.showWhen;
   if (!cond) return true;
-  return String(values?.[cond.key] ?? "") === String(cond.value);
+  const have = String(values?.[cond.key] ?? "");
+  const any = (x) => (Array.isArray(x) ? x : [x]).some((v) => String(v) === have);
+  // `not` is for the field that applies to everything except one case —
+  // a recipient, say, which every drop-off has but a returned key does not.
+  if (cond.not !== undefined) return !any(cond.not);
+  return any(cond.value);
+}
+
+// A field with `optionsWhen: { key, map, default }` offers a different set
+// of options depending on another field's value — keys go in the key lock
+// box, packages go in the package room, and the form should not offer the
+// wrong one. Shared with the popup so the dropdown and the rendered
+// sentence agree on what was selectable.
+export function fieldOptions(field, values) {
+  const cond = field?.optionsWhen;
+  if (!cond) return field?.options || [];
+  const key = String(values?.[cond.key] ?? "");
+  return cond.map?.[key] || cond.default || field?.options || [];
+}
+
+const optionValue = (o) => (typeof o === "string" ? o : o?.value);
+
+// True when a value is still one the field currently offers. A storage
+// place picked for keys is not a place a package may go, so changing the
+// item has to invalidate it rather than silently keep it.
+export function isOptionAllowed(field, values, value) {
+  if (!field?.optionsWhen || isEmpty(value)) return true;
+  return fieldOptions(field, values).some((o) => optionValue(o) === value);
 }
 
 // Pull defaults from role + reason field definitions onto the value map,
@@ -134,6 +162,13 @@ function applyDefaults({ role, reason }, values) {
   for (const fields of groups) {
     for (const f of fields || []) {
       if (f.showWhen && !isFieldVisible(f, out)) delete out[f.key];
+    }
+  }
+  // A value the field no longer offers is dropped, so a storage place
+  // chosen for one item cannot survive a switch to another.
+  for (const fields of groups) {
+    for (const f of fields || []) {
+      if (!isOptionAllowed(f, out, out[f.key])) delete out[f.key];
     }
   }
   // `replaces: "otherKey"` hands this field's value to another key once it
